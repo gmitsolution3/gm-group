@@ -42,7 +42,7 @@ export default function Venture() {
   return (
     <section className="py-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-center text-5xl font-semibold mb-12">
+        <h2 className="text-center text-2xl lg:text-5xl font-semibold mb-12">
           <span className="text-amber-400">One Group</span> <br />{" "}
           Multiple Engines of Growth
         </h2>

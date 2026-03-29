@@ -35,7 +35,7 @@ export default function Header() {
                 alt="Betopia Group Logo"
                 width={120}
                 height={60}
-                className="h-auto w-24 object-contain"
+                className="h-auto w-18 lg:w-24 object-contain"
                 priority
               />
             </Link>

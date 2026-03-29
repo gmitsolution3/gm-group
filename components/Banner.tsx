@@ -20,7 +20,7 @@ export default function Banner() {
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Content */}
-      <div className="absolute bottom-25 left-50 z-10 h-full px-6 pb-8 flex items-end">
+      <div className="absolute bottom-10 lg:bottom-25 left-0 lg:left-50 z-10 h-full px-6 pb-8 flex items-end">
         <h1 className="text-4xl md:text-5xl lg:text-8xl font-bold text-white tracking-tight">
           <span className="text-amber-400">Limitless,</span> Together
         </h1>
