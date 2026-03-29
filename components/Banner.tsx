@@ -20,10 +20,9 @@ export default function Banner() {
       <div className="absolute inset-0 bg-black/40" />
 
       {/* Content */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-4">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white text-center max-w-4xl">
-          <span className="text-amber-400">Limitless,</span>
-          <span className="block">Together</span>
+      <div className="absolute bottom-25 left-50 z-10 h-full px-6 pb-8 flex items-end">
+        <h1 className="text-4xl md:text-5xl lg:text-8xl font-bold text-white tracking-tight">
+          <span className="text-amber-400">Limitless,</span> Together
         </h1>
       </div>
     </section>

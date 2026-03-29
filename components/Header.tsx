@@ -25,10 +25,10 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/40 via-black/30 to-transparent">
-      <div className="px-6 sm:px-8 lg:px-12">
+      <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-start h-20">
           {/* Left: Logo */}
-          <div className="flex-shrink-0 group cursor-pointer pt-3">
+          <div className="group cursor-pointer pt-3">
             <Link href="/">
               <Image
                 src="/logo.png"
@@ -42,15 +42,15 @@ export default function Header() {
           </div>
 
           {/* Right: All Navigation Content */}
-          <div className="flex flex-col items-end">
+          <div className="basis-3/5 flex flex-col items-end">
             {/* Secondary Top Navigation */}
             <div className="hidden md:block py-3 pb-5">
-              <nav className="flex items-center gap-8">
+              <nav className="flex items-center gap-4">
                 {secondaryMenuItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-white text-xs font-medium hover:text-amber-400 transition-colors tracking-wide"
+                    className="text-white/90 text-sm font-medium hover:text-amber-400 transition-colors tracking-wide"
                   >
                     {item.label}
                   </Link>
@@ -59,13 +59,13 @@ export default function Header() {
             </div>
 
             {/* Main Navigation */}
-            <div className="hidden md:flex items-center gap-12 pt-5 border-t border-white/20">
-              <nav className="flex items-center gap-12">
+            <div className="hidden md:flex items-center justify-end gap-12 pt-5 border-t border-white/20 w-full">
+              <nav className="flex items-center justify-end gap-12">
                 {menuItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-white text-sm font-semibold hover:text-amber-400 transition-colors duration-300 tracking-wide"
+                    className="text-white/90 text-base font-semibold hover:text-amber-400 transition-colors duration-300 tracking-wide"
                   >
                     {item.label}
                   </Link>
