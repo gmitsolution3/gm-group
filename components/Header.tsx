@@ -19,7 +19,7 @@ export default function Header() {
     { label: "Vision 2030", href: "#" },
     { label: "About Us", href: "#" },
     { label: "Leadership", href: "#" },
-    { label: "Ventures", href: "#" },
+    { label: "Ventures", href: "/ventures" },
     { label: "Industries", href: "#" },
   ];
 
@@ -31,7 +31,7 @@ export default function Header() {
           <div className="group cursor-pointer pt-3">
             <Link href="/">
               <Image
-                src="/logo.png"
+                src="/logo-white.png"
                 alt="Betopia Group Logo"
                 width={120}
                 height={60}
@@ -59,7 +59,7 @@ export default function Header() {
             </div>
 
             {/* Main Navigation */}
-            <div className="hidden md:flex items-center justify-end gap-12 pt-5 border-t border-white/20 w-full">
+            <div className="hidden md:flex items-center justify-end gap-12 pt-3 border-t border-white/20 w-full">
               <nav className="flex items-center justify-end gap-12">
                 {menuItems.map((item) => (
                   <Link
