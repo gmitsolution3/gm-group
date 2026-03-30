@@ -1,7 +1,7 @@
-import Header from "@/components/Header";
 import Banner from "@/components/Banner";
 import Venture from "@/components/Venture";
 import Achivements from "./../components/Achivements";
+import Services from "@/components/Services";
 
 export default function Home() {
   return (
@@ -9,6 +9,7 @@ export default function Home() {
       <Banner />
       <Venture />
       <Achivements />
+      <Services />
     </>
   );
 }

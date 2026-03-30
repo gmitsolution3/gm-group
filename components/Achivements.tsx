@@ -31,7 +31,7 @@ export default function Achivements() {
   return (
     <section className="py-16 bg-white dark:bg-slate-950 dark:text-slate-100">
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start justify-between">
           <h2 className="text-4xl font-semibold tracking-tight">
             Intelligence at Scale
           </h2>
