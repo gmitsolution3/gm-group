@@ -15,7 +15,7 @@ const achievements = [
     label: "Strategic Business Units",
     description:
       "Focused excellence across industries with domain expertise.",
-    image: "/stats.jpg",
+    image: "/employee-2.jpg",
     Icon: Building2,
   },
   {
@@ -23,7 +23,7 @@ const achievements = [
     label: "Lives Touched",
     description:
       "Impacting communities with technology, jobs, and ideas.",
-    image: "/stats.jpg",
+    image: "/employee-3.jpg",
     Icon: Heart,
   },
 ];
