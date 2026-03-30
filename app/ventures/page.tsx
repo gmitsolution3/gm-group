@@ -8,7 +8,7 @@ const ventures = [
   },
   {
     name: "GM Food Point",
-    url: "#",
+    url: "https://www.facebook.com/gmfoodpoint",
     logo: "/gm-foodpoint.png",
   },
   {
@@ -23,7 +23,7 @@ const ventures = [
   },
   {
     name: "GM Logistic",
-    url: "#",
+    url: "https://www.gmlogistic.net",
     logo: "/gm-logistic.png",
   },
   {
@@ -38,7 +38,7 @@ const ventures = [
   },
   {
     name: "AI Learning Academy",
-    url: "#",
+    url: "https://www.facebook.com/profile.php?id=61584815173172",
     logo: "/ai-learning-academy.png",
   },
 ];

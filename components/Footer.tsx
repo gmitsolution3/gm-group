@@ -164,8 +164,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-sm text-slate-400">
-          © 2026, GM Group, All Rights Reserved.
+        <div className="mt-10 border-t border-white/10 pt-6 flex items-center justify-between text-sm text-slate-400">
+          <div>© 2026, GM Group, All Rights Reserved.</div>
+          <div>
+            Developed by{" "}
+            <a
+              href="https://www.gmitsolution.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors font-semibold"
+            >
+              GM IT Solution
+            </a>
+          </div>
         </div>
       </div>
     </footer>
