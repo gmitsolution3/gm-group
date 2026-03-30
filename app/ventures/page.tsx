@@ -32,7 +32,7 @@ const ventures = [
     logo: "/graphic-multimedia.png",
   },
   {
-    name: "Uttar Bango Organic",
+    name: "Uttar Banga Organic",
     url: "https://uttarbangaorganic.com",
     logo: "/uttor-bangoorganic.png",
   },

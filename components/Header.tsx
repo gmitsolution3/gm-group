@@ -15,9 +15,11 @@ export default function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const currentY = window.scrollY;
+    setIsScrolled(currentY > 100);
+    
     const handleScroll = () => {
       const currentY = window.scrollY;
-
       if (currentY > lastScrollY.current && currentY > 50) {
         setShowSecondary(false);
       } else {
