@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Heart, UsersRound, Building2 } from "lucide-react";
 
 const achievements = [
   {
@@ -7,7 +8,7 @@ const achievements = [
     description:
       "A world-class team of talented professionals delivering growth.",
     image: "/stats.jpg",
-    icon: "👥",
+    Icon: UsersRound,
   },
   {
     value: "22+",
@@ -15,7 +16,7 @@ const achievements = [
     description:
       "Focused excellence across industries with domain expertise.",
     image: "/stats.jpg",
-    icon: "🏢",
+    Icon: Building2,
   },
   {
     value: "10M+",
@@ -23,7 +24,7 @@ const achievements = [
     description:
       "Impacting communities with technology, jobs, and ideas.",
     image: "/stats.jpg",
-    icon: "💖",
+    Icon: Heart,
   },
 ];
 
@@ -55,7 +56,7 @@ export default function Achivements() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent z-10" />
               <div className="absolute left-4 top-4 w-12 h-12 rounded-xl bg-white/90 dark:bg-slate-800/90 flex items-center justify-center text-lg z-20">
-                {item.icon}
+                <item.Icon className="text-amber-600 dark:text-slate-100" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 text-white z-20">
                 <div className="text-4xl font-bold">{item.value}</div>
