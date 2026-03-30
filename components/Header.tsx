@@ -3,18 +3,31 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(true);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+      const currentY = window.scrollY;
+
+      if (currentY > lastScrollY.current && currentY > 50) {
+        setShowSecondary(false);
+      } else {
+        setShowSecondary(true);
+      }
+
+      lastScrollY.current = currentY;
+      setIsScrolled(currentY > 100);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -59,7 +72,7 @@ export default function Header() {
           >
             {/* Secondary Top Navigation */}
             <div
-              className={`hidden md:block py-3 pb-5 transition-all duration-300 ${isScrolled ? "opacity-0 translate-y-4 pointer-events-none" : ""}`}
+              className={`hidden md:block py-3 pb-5 transition-opacity duration-300 ${showSecondary ? "opacity-100" : "opacity-0 pointer-events-none"}`}
             >
               <nav className="flex items-center gap-4">
                 {secondaryMenuItems.map((item) => (
@@ -76,7 +89,7 @@ export default function Header() {
 
             {/* Main Navigation */}
             <div
-              className={`hidden md:flex items-center justify-end gap-12 pt-3 border-t border-white/20 w-full transition-all duration-300 ${isScrolled ? "border-t-0 pt-0 justify-center -translate-y-5" : ""}`}
+              className={`hidden md:flex items-center justify-end gap-12 pt-3 border-t border-white/20 w-full transition-all duration-300 ${!showSecondary ? "border-t-0 pt-0 justify-center -translate-y-5" : ""}`}
             >
               <nav className="flex items-center justify-end gap-12">
                 {menuItems.map((item) => (
