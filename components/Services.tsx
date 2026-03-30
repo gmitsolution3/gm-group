@@ -169,7 +169,7 @@ export default function Services() {
   };
 
   return (
-    <section className="container relative overflow-hidden text-white">
+    <section className="relative overflow-hidden text-white">
       {/* Background Image with Gradient Overlay */}
       <div className="absolute inset-0">
         <Image
@@ -184,7 +184,7 @@ export default function Services() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32">
+      <div className="relative z-10 mx-auto container px-4 sm:px-6 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32">
         {/* Header Section */}
         <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-2xl">
@@ -209,7 +209,7 @@ export default function Services() {
         </div>
 
         {/* Two Column Layout: Sidebar + Carousel Section */}
-        <div className="mt-10 sm:mt-12 md:mt-14 lg:mt-20 grid gap-6 md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="mt-10 sm:mt-12 md:mt-14 lg:mt-20 grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
           {/* Sidebar Tabs - Desktop */}
           <aside className="hidden lg:block rounded-2xl border border-white/20 bg-white/5 p-1.5 backdrop-blur-lg h-fit sticky top-24">
             <div className="px-3 pt-4 pb-2">
