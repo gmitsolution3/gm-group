@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import SmoothScroll from "@/components/SmoothScroll";
+import Footer from '@/components/Footer';
 
 export const outfit = Outfit({
   subsets: ["latin"],
@@ -30,6 +31,8 @@ export default function RootLayout({
         <Header />
 
         <SmoothScroll>{children}</SmoothScroll>
+
+        <Footer />
       </body>
     </html>
   );

@@ -82,7 +82,7 @@ export default function Header() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-white/90 text-sm font-medium hover:text-amber-400 transition-colors tracking-wide"
+                    className="text-white/90 text-sm font-medium hover:text-amber-400 transition-colors tracking-wide whitespace-nowrap"
                   >
                     {item.label}
                   </Link>
@@ -99,7 +99,7 @@ export default function Header() {
                   <Link
                     key={item.label}
                     href={item.href}
-                    className="text-white/90 text-base font-semibold hover:text-amber-400 transition-colors duration-300 tracking-wide"
+                    className="text-white/90 text-base font-semibold hover:text-amber-400 transition-colors duration-300 tracking-wide whitespace-nowrap"
                   >
                     {item.label}
                   </Link>
