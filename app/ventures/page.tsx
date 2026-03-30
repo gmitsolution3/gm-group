@@ -7,7 +7,7 @@ const ventures = [
     logo: "/gm-collection.png",
   },
   {
-    name: "GM Foodpoint",
+    name: "GM Food Point",
     url: "#",
     logo: "/gm-foodpoint.png",
   },
@@ -32,7 +32,7 @@ const ventures = [
     logo: "/graphic-multimedia.png",
   },
   {
-    name: "Uttor Bango Organic",
+    name: "Uttar Bango Organic",
     url: "https://uttarbangaorganic.com",
     logo: "/uttor-bangoorganic.png",
   },
@@ -40,10 +40,10 @@ const ventures = [
 
 export default function VenturesPage() {
   return (
-    <section className="py-24">
+    <section className="py-[200px]">
       <div className="container mx-auto px-4">
         <h2 className="text-center text-5xl font-semibold mb-12">
-          <span className="text-amber-400">One Group</span> <br />{" "}
+          <span className="text-amber-500">One Group</span> <br />{" "}
           Multiple Engines of Growth
         </h2>
 
