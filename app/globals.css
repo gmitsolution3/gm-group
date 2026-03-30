@@ -132,8 +132,6 @@
       BlinkMacSystemFont,
       "Segoe UI",
       sans-serif;
-
-    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground;
