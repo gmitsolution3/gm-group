@@ -36,6 +36,11 @@ const ventures = [
     url: "https://uttarbangaorganic.com",
     logo: "/uttor-bangoorganic.png",
   },
+  {
+    name: "AI Learning Academy",
+    url: "#",
+    logo: "/ai-learning-academy.png",
+  },
 ];
 
 export default function VenturesPage() {
