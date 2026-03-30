@@ -38,7 +38,7 @@ export default function Header() {
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isScrolled ? "bg-black" : "bg-gradient-to-b from-black/40 via-black/30 to-transparent"} pb-10`}
     >
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex justify-between items-start h-20">
+        <div className="flex justify-between items-center lg:items-start h-20">
           {/* Left: Logo */}
           <div className="group cursor-pointer pt-3">
             <Link href="/">
@@ -55,7 +55,7 @@ export default function Header() {
 
           {/* Right: All Navigation Content */}
           <div
-            className={`basis-3/5 flex flex-col transition-all duration-300 ${isScrolled ? "items-center" : "items-end"}`}
+            className={`basis-3/5 flex flex-col transition-all duration-300 items-end`}
           >
             {/* Secondary Top Navigation */}
             <div
