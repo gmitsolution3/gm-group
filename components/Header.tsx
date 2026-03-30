@@ -60,7 +60,7 @@ export default function Header() {
             <Link href="/">
               <Image
                 src="/logo-white.png"
-                alt="Betopia Group Logo"
+                alt="GM Group Logo"
                 width={120}
                 height={60}
                 className="h-auto w-18 lg:w-24 object-contain"
