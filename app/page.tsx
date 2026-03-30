@@ -5,7 +5,6 @@ import Venture from "@/components/Venture";
 export default function Home() {
   return (
     <>
-      <Header />
       <Banner />
       <Venture />
     </>
