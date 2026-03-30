@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 
 const OPTIONS = [
@@ -10,6 +10,27 @@ const OPTIONS = [
     description:
       "AI-first product ecosystem that powers data workflows, edge automation, and life-scale impact.",
     cards: [
+      {
+        id: "count-trust",
+        title: "Count Trust",
+        subtitle: "Supply chain reliability in real-time.",
+        text: "A data-backed, AI enabled risk scoring platform that protects margin and trust across procurement pipelines.",
+        accent: "bg-emerald-400",
+      },
+      {
+        id: "agentic-ai",
+        title: "Agentic AI",
+        subtitle: "Autonomous decision automation.",
+        text: "Context-aware agents that see across systems, execute operations, and improve with feedback loops.",
+        accent: "bg-amber-400",
+      },
+      {
+        id: "talkora-ai",
+        title: "Talkora AI",
+        subtitle: "Conversational intelligence for enterprises.",
+        text: "Multilingual voice and text interface that turns any workflow into a personalized, coach-like experience.",
+        accent: "bg-fuchsia-400",
+      },
       {
         id: "count-trust",
         title: "Count Trust",
@@ -96,18 +117,48 @@ const OPTIONS = [
 export default function Services() {
   const [activeTab, setActiveTab] = useState(OPTIONS[0].key);
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(1);
 
   const selected = useMemo(
     () => OPTIONS.find((o) => o.key === activeTab) ?? OPTIONS[0],
     [activeTab],
   );
   const cards = selected.cards;
-  const maxIndex = cards.length - 1;
+
+  // Update visible cards on mount and resize
+  useEffect(() => {
+    const updateVisibleCards = () => {
+      if (typeof window !== "undefined") {
+        if (window.innerWidth >= 1024)
+          setVisibleCards(3); // lg and up
+        else if (window.innerWidth >= 768)
+          setVisibleCards(2); // md and up
+        else setVisibleCards(1); // sm and below
+      }
+    };
+
+    updateVisibleCards();
+    window.addEventListener("resize", updateVisibleCards);
+    return () =>
+      window.removeEventListener("resize", updateVisibleCards);
+  }, []);
+
+  // Reset carousel when tab changes
+  useEffect(() => {
+    setCarouselIndex(0);
+  }, [activeTab]);
+
+  const totalSlides = Math.ceil(cards.length / visibleCards);
+  const maxSlideIndex = totalSlides - 1;
 
   const handlePrev = () =>
-    setCarouselIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setCarouselIndex((prev) =>
+      prev <= 0 ? maxSlideIndex : prev - 1,
+    );
   const handleNext = () =>
-    setCarouselIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setCarouselIndex((prev) =>
+      prev >= maxSlideIndex ? 0 : prev + 1,
+    );
 
   return (
     <section className="relative overflow-hidden text-white">
@@ -164,7 +215,6 @@ export default function Services() {
                   <button
                     onClick={() => {
                       setActiveTab(option.key);
-                      setCarouselIndex(0);
                     }}
                     className={`flex w-full items-center gap-4 rounded-xl px-4 py-3.5 text-left text-base font-semibold transition-all duration-200 ${
                       option.key === activeTab
@@ -224,13 +274,19 @@ export default function Services() {
                 <div
                   className="flex transition-transform duration-500 ease-out"
                   style={{
-                    transform: `translateX(-${carouselIndex * 100}%)`,
+                    transform: `translateX(-${carouselIndex * (100 / visibleCards)}%)`,
                   }}
                 >
                   {cards.map((card) => (
                     <div
                       key={card.id}
-                      className="min-w-full flex-shrink-0 px-3 md:px-4"
+                      className={`flex-shrink-0 px-3 md:px-4 ${
+                        visibleCards === 3
+                          ? "w-1/3"
+                          : visibleCards === 2
+                            ? "w-1/2"
+                            : "w-full"
+                      }`}
                     >
                       <div className="h-full rounded-2xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-sm transition-all duration-300 hover:bg-white/15">
                         <div
@@ -252,16 +308,16 @@ export default function Services() {
 
               {/* Dots Pagination */}
               <div className="mt-8 flex justify-center gap-2.5">
-                {cards.map((card, idx) => (
+                {Array.from({ length: totalSlides }, (_, idx) => (
                   <button
-                    key={card.id}
+                    key={idx}
                     onClick={() => setCarouselIndex(idx)}
                     className={`h-2.5 w-2.5 rounded-full transition-all duration-200 ${
                       idx === carouselIndex
                         ? "scale-110 bg-cyan-300"
                         : "bg-white/40 hover:bg-white/60"
                     }`}
-                    aria-label={`Go to card ${idx + 1}`}
+                    aria-label={`Go to slide ${idx + 1}`}
                   />
                 ))}
               </div>
