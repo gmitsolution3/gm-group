@@ -3,10 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const secondaryMenuItems = [
     { label: "Tech Recruitment Program", href: "#" },
@@ -24,7 +34,9 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/40 via-black/30 to-transparent">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${isScrolled ? "bg-black" : "bg-gradient-to-b from-black/40 via-black/30 to-transparent"} pb-10`}
+    >
       <div className="container mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-start h-20">
           {/* Left: Logo */}
