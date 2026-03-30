@@ -54,9 +54,13 @@ export default function Header() {
           </div>
 
           {/* Right: All Navigation Content */}
-          <div className="basis-3/5 flex flex-col items-end">
+          <div
+            className={`basis-3/5 flex flex-col transition-all duration-300 ${isScrolled ? "items-center" : "items-end"}`}
+          >
             {/* Secondary Top Navigation */}
-            <div className="hidden md:block py-3 pb-5">
+            <div
+              className={`hidden md:block py-3 pb-5 transition-all duration-300 ${isScrolled ? "opacity-0 translate-y-4 pointer-events-none" : ""}`}
+            >
               <nav className="flex items-center gap-4">
                 {secondaryMenuItems.map((item) => (
                   <Link
@@ -71,7 +75,9 @@ export default function Header() {
             </div>
 
             {/* Main Navigation */}
-            <div className="hidden md:flex items-center justify-end gap-12 pt-3 border-t border-white/20 w-full">
+            <div
+              className={`hidden md:flex items-center justify-end gap-12 pt-3 border-t border-white/20 w-full transition-all duration-300 ${isScrolled ? "border-t-0 pt-0 justify-center -translate-y-5" : ""}`}
+            >
               <nav className="flex items-center justify-end gap-12">
                 {menuItems.map((item) => (
                   <Link
