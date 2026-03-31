@@ -27,7 +27,7 @@ const ventures = [
     logo: "/gm-logistic.png",
   },
   {
-    name: "Graphic Multimedia",
+    name: "Graphics Multimedia",
     url: "https://www.graphicsmultimedia.net",
     logo: "/graphic-multimedia.png",
   },

@@ -1,5 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import Facebook from "./icons/Facebook";
+import Twitter from "./icons/Twitter";
+import LinkedIn from "./icons/LinkedIn";
+import Youtube from "./icons/Youtube";
+import Instagram from "./icons/Instagram";
 
 const offices = [
   {
@@ -23,7 +28,37 @@ const offices = [
   },
 ];
 
+const socials = [
+  {
+    name: "facebook",
+    icon: Facebook,
+    link: "#",
+  },
+  {
+    name: "twitter",
+    icon: Twitter,
+    link: "#",
+  },
+  {
+    name: "linkedin",
+    icon: LinkedIn,
+    link: "#",
+  },
+  {
+    name: "youtube",
+    icon: Youtube,
+    link: "#",
+  },
+  {
+    name: "instagram",
+    icon: Instagram,
+    link: "#",
+  },
+];
+
 export default function Footer() {
+  const date = new Date();
+
   return (
     <footer className="bg-slate-950 text-slate-100">
       <div className="container mx-auto px-6 py-12 md:px-10 md:py-14">
@@ -59,30 +94,28 @@ export default function Footer() {
                 />
               </Link>
             </div>
+
             <p className="max-w-[480px] text-sm text-slate-300">
               Asia&#39;s Largest AI Powerhouse. We fuse deep tech with
               essential industries providing the code behind the crop
               and the intelligence powering the grid.
             </p>
-            <div className="flex items-center gap-3 text-white/80">
-              <a href="#" className="hover:text-white">
-                f
-              </a>
-              <a href="#" className="hover:text-white">
-                t
-              </a>
-              <a href="#" className="hover:text-white">
-                in
-              </a>
-              <a href="#" className="hover:text-white">
-                yt
-              </a>
-              <a href="#" className="hover:text-white">
-                ig
-              </a>
-            </div>
+
+            <ul className="flex items-center gap-4 text-white/80">
+              {socials.map((item) => (
+                <li key={item.name}>
+                  <a
+                    href={item.link}
+                    className="hover:text-white hover:scale-110 transition"
+                  >
+                    {<item.icon />}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
+          {/* Rest unchanged */}
           <div>
             <h5 className="text-lg font-bold text-white">Company</h5>
             <ul className="mt-3 space-y-2 text-sm text-slate-300">
@@ -164,8 +197,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-6 flex items-center justify-between text-sm text-slate-400">
-          <div>© 2026, GM Group, All Rights Reserved.</div>
+        <div className="mt-10 border-t border-white/10 pt-6 flex flex-col lg:flex-row items-center justify-between text-sm text-slate-400 gap-5">
+          <div>© {date.getFullYear()}, GM Group, All Rights Reserved.</div>
           <div>
             Developed by{" "}
             <a
