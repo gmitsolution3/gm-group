@@ -12,7 +12,7 @@ export default function Banner() {
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover"
       >
-        <source src="/HeroBackground.mp4" type="video/mp4" />
+        <source src="/images/HeroBackground.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
