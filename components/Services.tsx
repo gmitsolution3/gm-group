@@ -173,7 +173,7 @@ export default function Services() {
       {/* Background Image with Gradient Overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/employee.jpg"
+          src="/images/employee.jpg"
           alt="Services background"
           fill
           className="object-cover opacity-90"

@@ -86,7 +86,7 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <Link href="/">
                 <Image
-                  src="/logo-white.png"
+                  src="/images/logo-white.png"
                   alt="GM Group"
                   width={140}
                   height={48}

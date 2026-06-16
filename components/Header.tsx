@@ -61,7 +61,7 @@ export default function Header() {
           <div className="group cursor-pointer pt-3">
             <Link href="/">
               <Image
-                src="/logo-white.png"
+                src="/images/logo-white.png"
                 alt="GM Group Logo"
                 width={120}
                 height={60}
