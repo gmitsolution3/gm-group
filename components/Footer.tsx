@@ -1,30 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
 import Facebook from "./icons/Facebook";
-import Twitter from "./icons/Twitter";
-import LinkedIn from "./icons/LinkedIn";
+import TikTok from "./icons/TikTok";
 import Youtube from "./icons/Youtube";
-import Instagram from "./icons/Instagram";
+
+import BangladeshFlag from "./icons/flags/BangladeshFlag";
+import ChinaFlag from "./icons/flags/ChinaFlag";
+import MalaysiaFlag from "./icons/flags/MalaysiaFlag";
+import ThailandFlag from "./icons/flags/ThailandFlag";
 
 const offices = [
   {
     country: "Bangladesh",
+    city: "Dhaka, Mirpur",
     address:
-      "Lotus Kamal Tower-2, Level 6, 59 & 61 Gulshan South Avenue, Gulshan-1, Dhaka-1212",
+      "House 1, Road 1, Section 7, Mirpur 11, Dhaka-1216, Dhaka, Bangladesh, 1216",
+    Flag: BangladeshFlag,
   },
   {
-    country: "United Arab Emirates",
-    address: "Meydan Grandstand, 6th Floor, Meydan Road, UAE",
+    country: "Bangladesh",
+    city: "Bogura",
+    address:
+      "Rakhi Manson (3rd Floor), Jalesharitola,, Puran Bogra, Bangladesh",
+    Flag: BangladeshFlag,
   },
   {
-    country: "Philippines",
+    country: "China",
+    city: "Guangzhou",
     address:
-      "Business Center 4, Philexcel Business Park M.A. Roxas Highway, Clark Freeport Zone, Angeles City, Pampanga, Region III Philippines",
+      "No. 84 Nan'an Road, Liwan District, Guangzhou, Guangdong, Guangzhou, China, 510010",
+    Flag: ChinaFlag,
   },
   {
-    country: "United States",
+    country: "Thailand",
+    city: "Bangkok",
+    address: "Bangkok, Bangkok, Thailand, 10100",
+    Flag: ThailandFlag,
+  },
+  {
+    country: "Malaysia",
+    city: "Kuala Lumpur",
     address:
-      "3651 Peachtree Pkwy STE. E #116, Suwanee, GA 30024, United States of America",
+      "Jalan PJS 8/9 Mentari, Petaling Jaya, Kuala Lumpur, Malaysia, 46150",
+    Flag: MalaysiaFlag,
   },
 ];
 
@@ -32,27 +50,17 @@ const socials = [
   {
     name: "facebook",
     icon: Facebook,
-    link: "#",
-  },
-  {
-    name: "twitter",
-    icon: Twitter,
-    link: "#",
-  },
-  {
-    name: "linkedin",
-    icon: LinkedIn,
-    link: "#",
+    link: "https://www.facebook.com/gminternational.live",
   },
   {
     name: "youtube",
     icon: Youtube,
-    link: "#",
+    link: "https://www.youtube.com/@gminternationalvisaagency",
   },
   {
-    name: "instagram",
-    icon: Instagram,
-    link: "#",
+    name: "tiktok",
+    icon: TikTok,
+    link: "https://www.tiktok.com/@gminternational.live",
   },
 ];
 
@@ -62,17 +70,22 @@ export default function Footer() {
   return (
     <footer className="bg-slate-950 text-slate-100">
       <div className="container mx-auto px-6 py-12 md:px-10 md:py-14">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {offices.map((office) => (
             <div
               key={office.country}
               className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-lg"
             >
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-md bg-white/10" />
-                <h4 className="text-xl font-bold text-white">
-                  {office.country}
-                </h4>
+                <div className="h-auto w-auto p-1 rounded-md bg-white/10 flex items-center justify-center">
+                  <office.Flag />
+                </div>
+                <div className="flex flex-col">
+                  <h4 className="text-xl font-bold text-white">
+                    {office.country}
+                  </h4>
+                  <p>{office.city}</p>
+                </div>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-200">
                 {office.address}
@@ -96,9 +109,8 @@ export default function Footer() {
             </div>
 
             <p className="max-w-[480px] text-sm text-slate-300">
-              Asia&#39;s Largest AI Powerhouse. We fuse deep tech with
-              essential industries providing the code behind the crop
-              and the intelligence powering the grid.
+              We're here for you every step of the way. So count on us
+              as we ensure your success and satisfaction.
             </p>
 
             <ul className="flex items-center gap-4 text-white/80">
@@ -198,7 +210,9 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 border-t border-white/10 pt-6 flex flex-col lg:flex-row items-center justify-between text-sm text-slate-400 gap-5">
-          <div>© {date.getFullYear()}, GM Group, All Rights Reserved.</div>
+          <div>
+            © {date.getFullYear()}, GM Group, All Rights Reserved.
+          </div>
           <div>
             Developed by{" "}
             <a
