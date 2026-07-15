@@ -9,6 +9,10 @@ import ChinaFlag from "./icons/flags/ChinaFlag";
 import MalaysiaFlag from "./icons/flags/MalaysiaFlag";
 import ThailandFlag from "./icons/flags/ThailandFlag";
 
+import { Phone } from "lucide-react";
+
+import { ventures } from "@/utils/data";
+
 const offices = [
   {
     country: "Bangladesh",
@@ -129,33 +133,18 @@ export default function Footer() {
 
           {/* Rest unchanged */}
           <div>
-            <h5 className="text-lg font-bold text-white">Company</h5>
+            <h5 className="text-lg font-bold text-white">Ventures</h5>
             <ul className="mt-3 space-y-2 text-sm text-slate-300">
-              <li>
-                <a href="#" className="hover:text-white">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Leadership
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Vision 2030
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Ventures
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white">
-                  Career
-                </a>
-              </li>
+              {ventures
+                .sort((a, b) => a.order - b.order)
+                .slice(0, 6)
+                .map((venture) => (
+                  <li className="hover:text-white">
+                    <Link href={venture.url} target="_blank">
+                      {venture.name}
+                    </Link>
+                  </li>
+                ))}
             </ul>
           </div>
 
@@ -188,8 +177,15 @@ export default function Footer() {
           </div>
 
           <div>
-            <h5 className="text-lg font-bold text-white">Connect</h5>
+            <h5 className="text-lg font-bold text-white">
+              Legal & Contact
+            </h5>
             <ul className="mt-3 space-y-2 text-sm text-slate-300">
+              <li>
+                <a href="#" className="hover:text-white">
+                  About Us
+                </a>
+              </li>
               <li>
                 <a href="#" className="hover:text-white">
                   Contact Us
@@ -204,6 +200,17 @@ export default function Footer() {
                 <a href="#" className="hover:text-white">
                   Privacy Policy
                 </a>
+              </li>
+              <li className="flex items-center gap-1">
+                <span>
+                  <Phone size={16} />
+                </span>
+                <Link
+                  href="tell:+8801896042360"
+                  className="hover:text-white"
+                >
+                  : +880 1896042360
+                </Link>
               </li>
             </ul>
           </div>
