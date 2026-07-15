@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { Menu, X } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +17,7 @@ export default function Header() {
   useEffect(() => {
     const currentY = window.scrollY;
     setIsScrolled(currentY > 100);
-    
+
     const handleScroll = () => {
       const currentY = window.scrollY;
       if (currentY > lastScrollY.current && currentY > 50) {
@@ -37,18 +37,18 @@ export default function Header() {
   }, []);
 
   const secondaryMenuItems = [
-    { label: "Tech Recruitment Program", href: "#" },
-    { label: "News & Media", href: "#" },
-    { label: "Contact Us", href: "#" },
+    { label: "Newsroom", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Contact", href: "#" },
     { label: "Sitemap", href: "#" },
   ];
 
   const menuItems = [
-    { label: "Vision 2030", href: "#" },
-    { label: "About Us", href: "#" },
+    { label: "Who We Are", href: "#" },
     { label: "Leadership", href: "#" },
     { label: "Ventures", href: "/ventures" },
     { label: "Industries", href: "#" },
+    { label: "Global Presence", href: "#" },
   ];
 
   return (
@@ -109,10 +109,10 @@ export default function Header() {
               </nav>
 
               <Link
-                href="#career"
+                href="/ventures"
                 className="px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-amber-500/50 text-sm whitespace-nowrap"
               >
-                Career
+                Explore Ventures
               </Link>
             </div>
 
@@ -150,10 +150,10 @@ export default function Header() {
               ))}
             </div>
             <Link
-              href="#career"
+              href="/ventures"
               className="block px-8 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-full transition-all duration-300 text-center mt-4 text-sm"
             >
-              Career
+              Explore Ventures
             </Link>
           </nav>
         )}
