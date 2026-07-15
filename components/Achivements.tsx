@@ -1,30 +1,43 @@
+import {
+  BriefcaseBusiness,
+  Building2,
+  Globe2,
+  UsersRound,
+} from "lucide-react";
 import Image from "next/image";
-import { Heart, UsersRound, Building2 } from "lucide-react";
 
 const achievements = [
   {
-    value: "5,000+",
-    label: "Associates",
-    description:
-      "A world-class team of talented professionals delivering growth.",
-    image: "/images/stats.jpg",
-    Icon: UsersRound,
-  },
-  {
-    value: "22+",
+    value: "10+",
     label: "Strategic Business Units",
     description:
-      "Focused excellence across industries with domain expertise.",
-    image: "/images/employee-2.jpg",
+      "A diversified portfolio of businesses spanning technology, logistics, education, agriculture, media, food, retail, and international services.",
+    image: "/images/stats.jpg",
     Icon: Building2,
   },
   {
-    value: "10M+",
-    label: "Lives Touched",
+    value: "20+",
+    label: "Team Members",
     description:
-      "Impacting communities with technology, jobs, and ideas.",
+      "A passionate team of professionals working together to build innovative businesses and deliver value across every venture.",
+    image: "/images/employee-2.jpg",
+    Icon: UsersRound,
+  },
+  {
+    value: "10+",
+    label: "Business Operations",
+    description:
+      "Successfully operating multiple businesses across diverse industries with a shared commitment to quality, innovation, and sustainable growth.",
     image: "/images/employee-3.jpg",
-    Icon: Heart,
+    Icon: BriefcaseBusiness,
+  },
+  {
+    value: "5",
+    label: "Global Presence",
+    description:
+      "Serving clients and operating through offices in Bangladesh, China, Malaysia, Thailand, and beyond with a growing international footprint.",
+    image: "/images/global-presence.jpg",
+    Icon: Globe2,
   },
 ];
 
@@ -34,15 +47,18 @@ export default function Achivements() {
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex flex-col items-start justify-between">
           <h2 className="text-4xl font-semibold tracking-tight">
-            Intelligence at Scale
+            Building Businesses, Creating Impact
           </h2>
-          <p className="mt-4 text-xl text-slate-600 dark:text-slate-300 max-w-md">
-            5,000+ Minds. 22+ SBU. One Vision. Engineering Asia’s
-            largest AI powerhouse for the world.
+          <p className="mt-4 text-xl text-slate-600 dark:text-slate-300 max-w-4xl">
+            GM Group is a diversified business conglomerate with 10+
+            strategic business units, a growing team of professionals,
+            and operations across multiple industries, driving
+            innovation and sustainable growth from Bangladesh to the
+            global market.
           </p>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {achievements.map((item) => (
             <article
               key={item.label}
