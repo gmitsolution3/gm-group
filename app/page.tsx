@@ -1,5 +1,11 @@
-import Hero from "@/components/home/Hero";
+import HeroSection from "@/components/home/Hero";
+import GroupIdentitySection from "@/components/home/GroupIdentity";
 
 export default function HomePage() {
-  return <Hero />;
+  return (
+    <>
+      <HeroSection />
+      <GroupIdentitySection />
+    </>
+  );
 }

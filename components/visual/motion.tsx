@@ -1,7 +1,12 @@
-'use client';
+"use client";
 
-import { motion, useReducedMotion, type Variants } from 'motion/react';
-import type { ReactNode } from 'react';
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "motion/react";
+import { useRef, type ReactNode } from "react";
 
 export function useReveal() {
   const reduce = useReducedMotion();
@@ -18,7 +23,10 @@ export function useReveal() {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: reduce ? 0 : 0.6, ease: [0.22, 1, 0.36, 1] },
+      transition: {
+        duration: reduce ? 0 : 0.6,
+        ease: [0.22, 1, 0.36, 1],
+      },
     },
   };
 
@@ -43,8 +51,12 @@ export function Reveal({
       className={className}
       initial={reduce ? { opacity: 0 } : { opacity: 0, y }}
       whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : delay, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: reduce ? 0 : 0.6,
+        delay: reduce ? 0 : delay,
+        ease: [0.22, 1, 0.36, 1],
+      }}
     >
       {children}
     </motion.div>
@@ -56,7 +68,7 @@ export function RevealWords({
   text,
   className,
   highlightIndices,
-  highlightClass = 'text-indigo',
+  highlightClass = "text-indigo",
   delay = 0,
 }: {
   text: string;
@@ -66,17 +78,27 @@ export function RevealWords({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
-  const words = text.split(' ');
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0 });
+  const words = text.split(" ");
 
   return (
-    <span className={className}>
+    <span ref={ref} className={className}>
       {words.map((word, i) => (
-        <span key={i} className="inline-block overflow-hidden align-bottom">
+        <span
+          key={i}
+          className="inline-block overflow-hidden align-bottom"
+        >
           <motion.span
-            className={`inline-block ${highlightIndices?.includes(i) ? highlightClass : ''}`}
-            initial={reduce ? { opacity: 0 } : { y: '110%' }}
-            whileInView={reduce ? { opacity: 1 } : { y: 0 }}
-            viewport={{ once: true }}
+            className={`inline-block ${highlightIndices?.includes(i) ? highlightClass : ""}`}
+            initial={reduce ? { opacity: 0 } : { y: "110%" }}
+            animate={
+              inView
+                ? reduce
+                  ? { opacity: 1 }
+                  : { y: 0 }
+                : undefined
+            }
             transition={{
               duration: reduce ? 0 : 0.7,
               delay: delay + i * 0.06,
@@ -84,7 +106,7 @@ export function RevealWords({
             }}
           >
             {word}
-            {i < words.length - 1 ? '\u00A0' : ''}
+            {i < words.length - 1 ? "\u00A0" : ""}
           </motion.span>
         </span>
       ))}
@@ -107,7 +129,7 @@ export function StaggerGroup({
       variants={container}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-80px' }}
+      viewport={{ once: true, margin: "-80px" }}
     >
       {children}
     </motion.div>
