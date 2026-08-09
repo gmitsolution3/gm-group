@@ -2,6 +2,7 @@ import { VisualIdentity } from "@/components/visual/visual-identity";
 import { siteConfig } from "@/content/company";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { Logo } from '@/components/visual/logo';
 
 export default function Footer() {
   return (
@@ -13,53 +14,7 @@ export default function Footer() {
         <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-20">
           <div>
             <Link href="/" aria-label="GM Group home">
-              <span className="inline-flex items-center gap-2.5">
-                <svg
-                  viewBox="0 0 48 48"
-                  className="h-9 w-9"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <circle
-                    cx="19"
-                    cy="20"
-                    r="14"
-                    fill="#5B5FEF"
-                    opacity="0.88"
-                  />
-                  <circle
-                    cx="29"
-                    cy="28"
-                    r="13"
-                    fill="#00BFA6"
-                    opacity="0.82"
-                    style={{ mixBlendMode: "screen" }}
-                  />
-                  <circle
-                    cx="24"
-                    cy="16"
-                    r="8"
-                    fill="#FFD23F"
-                    opacity="0.78"
-                    style={{ mixBlendMode: "screen" }}
-                  />
-                  <circle
-                    cx="31"
-                    cy="22"
-                    r="6"
-                    fill="#F43F5E"
-                    opacity="0.7"
-                    style={{ mixBlendMode: "screen" }}
-                  />
-                </svg>
-                <span className="font-display text-2xl font-extrabold tracking-tightest">
-                  GM
-                  <span className="font-medium text-white/50">
-                    {" "}
-                    Group
-                  </span>
-                </span>
-              </span>
+              <Logo variant={"light"} />
             </Link>
             <p className="mt-8 max-w-md font-display text-3xl font-bold leading-tight tracking-tightest text-balance">
               Building businesses.
