@@ -116,6 +116,56 @@ export const ventures: Venture[] = [
       { label: "Role", value: "Expansion Venture" },
     ],
   },
+  {
+    slug: "gm-venture-four",
+    name: "GM Venture Four",
+    tagline: "Expanding into new territory.",
+    industry: "Consumer Goods",
+    shortDescription:
+      "[Placeholder] A consumer goods venture expanding into new industries.",
+    description:
+      "[Placeholder] GM Venture Four is the group’s consumer goods business — representing the group’s expansion into new industries and adjacent markets.",
+    whatItDoes:
+      "[Placeholder] GM Venture Four builds and markets consumer products, with a focus on quality and brand development.",
+    roleInGroup:
+      "[Placeholder] GM Venture Four reflects the group’s expansion philosophy — moving into new industries where the group’s strengths can create lasting value.",
+    website: "#",
+    featured: false,
+    accent: "coral",
+    established: "[Year]",
+    gallery: [],
+    keyInfo: [
+      { label: "Industry", value: "Consumer Goods" },
+      { label: "Established", value: "[Year]" },
+      { label: "Status", value: "Active" },
+      { label: "Role", value: "Expansion Venture" },
+    ],
+  },
+  {
+    slug: "gm-venture-four",
+    name: "GM Venture Four",
+    tagline: "Expanding into new territory.",
+    industry: "Consumer Goods",
+    shortDescription:
+      "[Placeholder] A consumer goods venture expanding into new industries.",
+    description:
+      "[Placeholder] GM Venture Four is the group’s consumer goods business — representing the group’s expansion into new industries and adjacent markets.",
+    whatItDoes:
+      "[Placeholder] GM Venture Four builds and markets consumer products, with a focus on quality and brand development.",
+    roleInGroup:
+      "[Placeholder] GM Venture Four reflects the group’s expansion philosophy — moving into new industries where the group’s strengths can create lasting value.",
+    website: "#",
+    featured: false,
+    accent: "coral",
+    established: "[Year]",
+    gallery: [],
+    keyInfo: [
+      { label: "Industry", value: "Consumer Goods" },
+      { label: "Established", value: "[Year]" },
+      { label: "Status", value: "Active" },
+      { label: "Role", value: "Expansion Venture" },
+    ],
+  },
 ];
 
 export function getVenture(slug: string): Venture | undefined {
