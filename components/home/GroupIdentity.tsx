@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { groupIdentity } from '@/content/company';
 import { RevealWords } from '@/components/visual/motion';
 
-export default function GroupIdentitySection() {
+export default function GroupIdentity() {
   const reduce = useReducedMotion();
 
   return (
