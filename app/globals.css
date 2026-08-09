@@ -47,6 +47,43 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* GM Group brand palette */
+  --color-ink: #171717;
+  --color-indigo: #5b5fef;
+  --color-teal: #00bfa6;
+  --color-yellow: #ffd23f;
+  --color-coral: #f43f5e;
+
+  --color-canvas: #fafafa;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-mutedText: #6b7280;
+
+  /* Typography */
+  --font-display: var(--font-jakarta), system-ui, sans-serif;
+
+  --text-display: clamp(2.75rem, 8vw, 6rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 800;
+
+  --text-h1: clamp(2.5rem, 6vw, 4rem);
+  --text-h1--line-height: 1;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: clamp(2.25rem, 5vw, 3.5rem);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.025em;
+  --text-h2--font-weight: 700;
+
+  --text-h3: clamp(1.75rem, 3vw, 2.25rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h3--font-weight: 600;
+
+  --tracking-tightest: -0.04em;
 }
 
 :root {
@@ -165,6 +202,11 @@
     background: var(--gm-indigo);
     color: white;
   }
+
+  :focus-visible {
+    outline: 2px solid var(--gm-indigo);
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
@@ -195,5 +237,68 @@
   .gm-dark-section {
     background: var(--gm-charcoal);
     color: white;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .blend-difference {
+    mix-blend-mode: difference;
+  }
+
+  .blend-screen {
+    mix-blend-mode: screen;
+  }
+
+  .blend-multiply {
+    mix-blend-mode: multiply;
+  }
+
+  .blend-overlay {
+    mix-blend-mode: overlay;
+  }
+
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
+  }
+
+  .text-stroke {
+    -webkit-text-stroke: 1px currentColor;
+    color: transparent;
+  }
+
+  .text-stroke-white {
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.25);
+    color: transparent;
+  }
+
+  .mask-fade-r {
+    mask-image: linear-gradient(to right, black 70%, transparent);
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 70%, transparent);
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }
