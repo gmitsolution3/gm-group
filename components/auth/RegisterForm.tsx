@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
@@ -20,9 +20,7 @@ const signupSchema = z
       .min(2, "Name must be at least 2 characters.")
       .max(100, "Name is too long."),
 
-    email: z
-      .string()
-      .email("Please enter a valid email address."),
+    email: z.string().email("Please enter a valid email address."),
 
     phone: z
       .string()
@@ -34,8 +32,7 @@ const signupSchema = z
       .min(8, "Password must be at least 8 characters.")
       .max(128, "Password is too long."),
 
-    confirmPassword: z
-      .string(),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -75,12 +72,13 @@ export function SignupForm() {
 
     if (error) {
       setServerError(
-        error.message || "Unable to create your account. Please try again."
+        error.message ||
+          "Unable to create your account. Please try again.",
       );
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/verify-email");
     router.refresh();
   }
 

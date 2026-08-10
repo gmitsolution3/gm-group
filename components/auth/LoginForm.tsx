@@ -57,7 +57,14 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
     });
 
     if (error) {
-      setServerError(error.message || "Invalid email or password.");
+      if (error.status === 403) {
+        setServerError(
+          "Please verify your email address before signing in.",
+        );
+      } else {
+        setServerError(error.message || "Invalid email or password.");
+      }
+
       return;
     }
 
