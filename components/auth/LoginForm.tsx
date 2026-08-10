@@ -32,7 +32,11 @@ function getSafeRedirectUrl(callbackUrl?: string) {
   return callbackUrl;
 }
 
-export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
+export function LoginForm({
+  callbackUrl,
+}: {
+  callbackUrl?: string;
+}) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -59,10 +63,12 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
     if (error) {
       if (error.status === 403) {
         setServerError(
-          "Please verify your email address before signing in.",
+          "Please verify your email address before logging in.",
         );
       } else {
-        setServerError(error.message || "Invalid email or password.");
+        setServerError(
+          error.message || "Invalid email or password.",
+        );
       }
 
       return;
@@ -73,9 +79,13 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div className="space-y-2">
-        <Label htmlFor="email" className="text-white/80">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
+      {/* Email */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="email"
+          className="text-sm font-medium text-white/80"
+        >
           Email
         </Label>
 
@@ -84,26 +94,30 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
-          className="border-white/10 bg-white/[0.06] text-white placeholder:text-white/25 focus-visible:ring-indigo"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("email")}
         />
 
         {errors.email && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.email.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password" className="text-white/80">
+      {/* Password */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <Label
+            htmlFor="password"
+            className="text-sm font-medium text-white/80"
+          >
             Password
           </Label>
 
           <Link
             href="/forgot-password"
-            className="text-sm text-white/40 transition-colors hover:text-indigo"
+            className="shrink-0 text-sm text-white/40 transition-colors hover:text-indigo"
           >
             Forgot password?
           </Link>
@@ -114,36 +128,39 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
           type="password"
           autoComplete="current-password"
           placeholder="Your password"
-          className="border-white/10 bg-white/[0.06] text-white placeholder:text-white/25 focus-visible:ring-indigo"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("password")}
         />
 
         {errors.password && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.password.message}
           </p>
         )}
       </div>
 
+      {/* Server error */}
       {serverError && (
         <div
           role="alert"
-          className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive"
+          className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-relaxed text-destructive"
         >
           {serverError}
         </div>
       )}
 
+      {/* Submit */}
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-full bg-white py-6 text-sm font-semibold text-ink transition-all hover:bg-indigo hover:text-white"
+        className="h-12 w-full rounded-full bg-white text-sm font-semibold text-ink transition-all hover:bg-indigo hover:text-white"
       >
-        {isSubmitting ? "Signing in..." : "Sign in"}
+        {isSubmitting ? "Logging in..." : "Login"}
       </Button>
 
-      <p className="text-center text-sm text-white/40">
-        Don't have an account?{" "}
+      {/* Signup */}
+      <p className="pt-2 text-center text-sm text-white/40">
+        Don&apos;t have an account?{" "}
         <Link
           href="/signup"
           className="font-medium text-white transition-colors hover:text-indigo"
