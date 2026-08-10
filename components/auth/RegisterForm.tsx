@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const signupSchema = z
+const registerSchema = z
   .object({
     name: z
       .string()
@@ -39,9 +39,9 @@ const signupSchema = z
     path: ["confirmPassword"],
   });
 
-type SignupFormValues = z.infer<typeof signupSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export function SignupForm() {
+export function RegisterForm() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -49,8 +49,8 @@ export function SignupForm() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -60,7 +60,7 @@ export function SignupForm() {
     },
   });
 
-  async function onSubmit(values: SignupFormValues) {
+  async function onSubmit(values: RegisterFormValues) {
     setServerError(null);
 
     const { error } = await authClient.signUp.email({
@@ -83,110 +83,159 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-      <div className="space-y-2">
-        <Label htmlFor="name">Full name</Label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-7">
+      {/* Full name */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="name"
+          className="text-sm font-medium text-white/80"
+        >
+          Full name
+        </Label>
+
         <Input
           id="name"
+          type="text"
           autoComplete="name"
           placeholder="Your name"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("name")}
         />
+
         {errors.name && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.name.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      {/* Email */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="email"
+          className="text-sm font-medium text-white/80"
+        >
+          Email
+        </Label>
+
         <Input
           id="email"
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("email")}
         />
+
         {errors.email && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.email.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="phone">Phone</Label>
+      {/* Phone */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="phone"
+          className="text-sm font-medium text-white/80"
+        >
+          Phone
+        </Label>
+
         <Input
           id="phone"
           type="tel"
           autoComplete="tel"
           placeholder="+1 555 000 0000"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("phone")}
         />
+
         {errors.phone && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.phone.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+      {/* Password */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="password"
+          className="text-sm font-medium text-white/80"
+        >
+          Password
+        </Label>
+
         <Input
           id="password"
           type="password"
           autoComplete="new-password"
           placeholder="Create a password"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("password")}
         />
+
         {errors.password && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.password.message}
           </p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirm password</Label>
+      {/* Confirm password */}
+      <div className="space-y-3">
+        <Label
+          htmlFor="confirmPassword"
+          className="text-sm font-medium text-white/80"
+        >
+          Confirm password
+        </Label>
+
         <Input
           id="confirmPassword"
           type="password"
           autoComplete="new-password"
           placeholder="Confirm your password"
+          className="h-12 border-white/10 bg-white/[0.06] px-4 text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("confirmPassword")}
         />
+
         {errors.confirmPassword && (
-          <p className="text-sm text-destructive">
+          <p className="text-sm leading-relaxed text-destructive">
             {errors.confirmPassword.message}
           </p>
         )}
       </div>
 
+      {/* Server error */}
       {serverError && (
         <div
           role="alert"
-          className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive"
+          className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-relaxed text-destructive"
         >
           {serverError}
         </div>
       )}
 
+      {/* Register */}
       <Button
         type="submit"
-        className="w-full"
         disabled={isSubmitting}
+        className="h-12 w-full rounded-full bg-white text-sm font-semibold text-ink transition-all hover:bg-indigo hover:text-white"
       >
-        {isSubmitting ? "Creating account..." : "Create account"}
+        {isSubmitting ? "Registering..." : "Register"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      {/* Login */}
+      <p className="pt-2 text-center text-sm text-white/40">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-medium text-foreground underline underline-offset-4"
+          className="font-medium text-white transition-colors hover:text-indigo"
         >
-          Sign in
+          Login
         </Link>
       </p>
     </form>

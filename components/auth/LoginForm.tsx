@@ -32,11 +32,7 @@ function getSafeRedirectUrl(callbackUrl?: string) {
   return callbackUrl;
 }
 
-export function LoginForm({
-  callbackUrl,
-}: {
-  callbackUrl?: string;
-}) {
+export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -66,9 +62,7 @@ export function LoginForm({
           "Please verify your email address before logging in.",
         );
       } else {
-        setServerError(
-          error.message || "Invalid email or password.",
-        );
+        setServerError(error.message || "Invalid email or password.");
       }
 
       return;
@@ -162,10 +156,10 @@ export function LoginForm({
       <p className="pt-2 text-center text-sm text-white/40">
         Don&apos;t have an account?{" "}
         <Link
-          href="/signup"
+          href="/register"
           className="font-medium text-white transition-colors hover:text-indigo"
         >
-          Create one
+          Register
         </Link>
       </p>
     </form>
