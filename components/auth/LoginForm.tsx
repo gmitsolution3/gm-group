@@ -75,13 +75,16 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-white/80">
+          Email
+        </Label>
 
         <Input
           id="email"
           type="email"
           autoComplete="email"
           placeholder="you@example.com"
+          className="border-white/10 bg-white/[0.06] text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("email")}
         />
 
@@ -94,11 +97,13 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-white/80">
+            Password
+          </Label>
 
           <Link
             href="/forgot-password"
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="text-sm text-white/40 transition-colors hover:text-indigo"
           >
             Forgot password?
           </Link>
@@ -109,6 +114,7 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
           type="password"
           autoComplete="current-password"
           placeholder="Your password"
+          className="border-white/10 bg-white/[0.06] text-white placeholder:text-white/25 focus-visible:ring-indigo"
           {...register("password")}
         />
 
@@ -130,17 +136,17 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
 
       <Button
         type="submit"
-        className="w-full"
         disabled={isSubmitting}
+        className="w-full rounded-full bg-white py-6 text-sm font-semibold text-ink transition-all hover:bg-indigo hover:text-white"
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </Button>
 
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-white/40">
         Don't have an account?{" "}
         <Link
           href="/signup"
-          className="font-medium text-foreground underline underline-offset-4"
+          className="font-medium text-white transition-colors hover:text-indigo"
         >
           Create one
         </Link>

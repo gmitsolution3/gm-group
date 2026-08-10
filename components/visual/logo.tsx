@@ -14,9 +14,9 @@ export function Logo({ className, variant = "light" }: LogoProps) {
       <Image
         src="/images/logo.png"
         alt="GM Group"
-        width={42}
-        height={42}
-        className="h-9 w-9 object-contain"
+        width={150}
+        height={150}
+        className="h-32 w-32 object-contain mt-5"
         priority
       />
       <span
