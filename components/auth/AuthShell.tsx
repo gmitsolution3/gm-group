@@ -3,8 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-
-import { Logo } from "@/components/visual/logo";
+import { Logo } from "../visual/logo";
 
 interface AuthShellProps {
   children: React.ReactNode;
@@ -70,11 +69,7 @@ export function AuthShell({
       </div>
 
       {/* Top navigation */}
-      <div className="relative z-10 mx-auto flex w-full max-w-[1400px] items-center justify-between px-5 py-6 sm:px-8 lg:px-12">
-        <Link href="/" aria-label="GM Group home">
-          <Logo variant="light" />
-        </Link>
-
+      <div className="relative z-10 mx-auto flex w-full max-w-[1400px] items-center px-5 py-6 sm:px-8 lg:px-12">
         <Link
           href={backHref}
           className="group inline-flex items-center gap-2 text-sm font-medium text-white/50 transition-colors hover:text-white"
@@ -97,9 +92,13 @@ export function AuthShell({
         >
           {/* Heading */}
           <div className="mb-8 text-center">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-indigo">
-              GM Group
-            </p>
+            <Link
+              href="/"
+              aria-label="GM Group home"
+              className="mb-8 inline-flex"
+            >
+              <Logo variant="light" />
+            </Link>
 
             <h1 className="font-display text-4xl font-extrabold tracking-tightest sm:text-5xl">
               {title}
