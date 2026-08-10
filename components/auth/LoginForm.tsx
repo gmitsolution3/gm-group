@@ -20,7 +20,19 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+function getSafeRedirectUrl(callbackUrl?: string) {
+  if (!callbackUrl) {
+    return "/dashboard";
+  }
+
+  if (!callbackUrl.startsWith("/") || callbackUrl.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return callbackUrl;
+}
+
+export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -49,7 +61,7 @@ export function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push(getSafeRedirectUrl(callbackUrl));
     router.refresh();
   }
 

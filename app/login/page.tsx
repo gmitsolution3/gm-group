@@ -1,6 +1,16 @@
 import { LoginForm } from "@/components/auth/LoginForm";
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    callbackUrl?: string;
+  }>;
+};
+
+export default async function LoginPage({
+  searchParams,
+}: LoginPageProps) {
+  const params = await searchParams;
+
   return (
     <main className="min-h-screen">
       <div className="mx-auto flex min-h-screen w-full max-w-md items-center px-6 py-16">
@@ -19,7 +29,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <LoginForm />
+          <LoginForm callbackUrl={params.callbackUrl} />
         </div>
       </div>
     </main>
