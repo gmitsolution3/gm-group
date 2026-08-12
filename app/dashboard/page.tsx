@@ -1,31 +1,24 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { dashboardNavigation } from "@/config/dashboard/navigation";
+import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { UserDashboard } from "@/components/dashboard/user/UserDashboard";
 
-import { auth } from "@/lib/auth";
-import { LogoutButton } from "@/components/auth/LogoutButton";
+export default function DashboardPage() {
+  const user = {
+    name: "GM User",
+    email: "user@example.com",
+    image: null,
+  };
 
-export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/login");
-  }
+  const role = "user" as const;
+  console.log(dashboardNavigation.user)
 
   return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold">
-        Welcome, {session.user.name}
-      </h1>
-
-      <p className="mt-2 text-muted-foreground">
-        You are signed in.
-      </p>
-
-      <div className="mt-6">
-        <LogoutButton />
-      </div>
-    </main>
+    <DashboardShell
+      role={role}
+      user={user}
+      navigation={dashboardNavigation[role]}
+    >
+      <UserDashboard user={user} />
+    </DashboardShell>
   );
 }
