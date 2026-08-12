@@ -1,18 +1,10 @@
-import { auth } from "@/lib/auth";
 import { dashboardNavigation } from "@/config/dashboard/navigation";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { UserDashboard } from "@/components/dashboard/user/UserDashboard";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { requireAuth } from "@/lib/auth-guards";
 
 export default async function DashboardPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("/login?callbackUrl=/dashboard");
-  }
+  const session = await requireAuth();
 
   const role = session.user.role ?? "user";
 
