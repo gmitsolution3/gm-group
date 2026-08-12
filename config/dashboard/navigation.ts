@@ -1,18 +1,29 @@
-import type { LucideIcon } from "lucide-react";
 import {
+  BarChart3,
+  Building2,
+  FileText,
+  FolderKanban,
   LayoutDashboard,
-  User,
   Settings,
-  Shield,
+  User,
+  Users,
+  type LucideIcon,
 } from "lucide-react";
 
-export type DashboardRole = "user" | "admin";
+export const dashboardIcons = {
+  dashboard: LayoutDashboard,
+  user: User,
+  settings: Settings,
+  users: Users,
+  building: Building2,
+  documents: FileText,
+  analytics: BarChart3,
+  projects: FolderKanban,
+} satisfies Record<string, LucideIcon>;
 
-export type DashboardIcon =
-  | "dashboard"
-  | "user"
-  | "settings"
-  | "shield";
+export type DashboardIcon = keyof typeof dashboardIcons;
+
+export type DashboardRole = "user" | "admin";
 
 export type DashboardNavItem = {
   title: string;
@@ -29,6 +40,11 @@ export const dashboardNavigation: Record<
       title: "Dashboard",
       href: "/dashboard",
       icon: "dashboard",
+    },
+    {
+      title: "Applications",
+      href: "/dashboard/applications",
+      icon: "documents",
     },
     {
       title: "Profile",
@@ -49,29 +65,19 @@ export const dashboardNavigation: Record<
       icon: "dashboard",
     },
     {
-      title: "Profile",
-      href: "/dashboard/profile",
-      icon: "user",
+      title: "Ventures",
+      href: "/dashboard/ventures",
+      icon: "building",
     },
     {
-      title: "Administration",
-      href: "/dashboard/admin",
-      icon: "shield",
+      title: "Projects",
+      href: "/dashboard/projects",
+      icon: "projects",
     },
     {
-      title: "Settings",
-      href: "/dashboard/settings",
-      icon: "settings",
+      title: "Users",
+      href: "/dashboard/users",
+      icon: "users",
     },
   ],
-};
-
-export const dashboardIcons: Record<
-  DashboardIcon,
-  LucideIcon
-> = {
-  dashboard: LayoutDashboard,
-  user: User,
-  settings: Settings,
-  shield: Shield,
 };
