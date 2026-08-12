@@ -32,12 +32,19 @@ interface ProfileFormProps {
     email: string;
     phone?: string | null;
     image?: string | null;
+    imagePublicId?: string | null;
     role: string;
   };
 }
 
+type ProfileImage = {
+  url: string;
+  publicId: string;
+};
+
 export function ProfileForm({ user }: ProfileFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
+
   const [successMessage, setSuccessMessage] = useState<string | null>(
     null,
   );
@@ -80,34 +87,37 @@ export function ProfileForm({ user }: ProfileFormProps) {
     setSuccessMessage("Your profile has been updated.");
   }
 
+  async function handleImageChange(image: ProfileImage | null) {
+    setServerError(null);
+    setSuccessMessage(null);
+
+    const { error } = await authClient.updateUser({
+      image: image?.url ?? "",
+      imagePublicId: image?.publicId ?? "",
+    });
+
+    if (error) {
+      setServerError(
+        error.message || "Unable to update your profile image.",
+      );
+      return;
+    }
+
+    setSuccessMessage(
+      image
+        ? "Your profile photo has been updated."
+        : "Your profile photo has been removed.",
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Profile image */}
       <div className="flex items-start gap-5">
         <ImageUploader
           value={user.image}
-          onChange={async (url) => {
-            setServerError(null);
-            setSuccessMessage(null);
-
-            const { error } = await authClient.updateUser({
-              image: url ?? "",
-            });
-
-            if (error) {
-              setServerError(
-                error.message ||
-                  "Unable to update your profile image.",
-              );
-              return;
-            }
-
-            setSuccessMessage(
-              url
-                ? "Your profile photo has been updated."
-                : "Your profile photo has been removed.",
-            );
-          }}
+          publicId={user.imagePublicId}
+          onChange={handleImageChange}
         />
 
         <div>

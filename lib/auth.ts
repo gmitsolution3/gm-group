@@ -20,6 +20,11 @@ export const auth = betterAuth({
         required: false,
       },
 
+      imagePublicId: {
+        type: "string",
+        required: false,
+      },
+
       role: {
         type: ["user", "admin"],
         required: false,

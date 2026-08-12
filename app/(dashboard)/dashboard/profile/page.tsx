@@ -10,6 +10,7 @@ export default async function ProfilePage() {
     email: session.user.email,
     phone: session.user.phone ?? null,
     image: session.user.image ?? null,
+    imagePublicId: session.user.imagePublicId ?? null,
     role: session.user.role ?? "user",
   };
 
