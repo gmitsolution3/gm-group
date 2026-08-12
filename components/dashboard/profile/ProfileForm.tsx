@@ -7,12 +7,8 @@ import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ImageUploader } from "@/components/ui/image-uploader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -87,17 +83,32 @@ export function ProfileForm({ user }: ProfileFormProps) {
   return (
     <div className="space-y-8">
       {/* Profile image */}
-      <div className="flex items-center gap-5">
-        <Avatar className="h-20 w-20">
-          <AvatarImage
-            src={user.image ?? undefined}
-            alt={user.name}
-          />
+      <div className="flex items-start gap-5">
+        <ImageUploader
+          value={user.image}
+          onChange={async (url) => {
+            setServerError(null);
+            setSuccessMessage(null);
 
-          <AvatarFallback className="text-lg">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+            const { error } = await authClient.updateUser({
+              image: url ?? "",
+            });
+
+            if (error) {
+              setServerError(
+                error.message ||
+                  "Unable to update your profile image.",
+              );
+              return;
+            }
+
+            setSuccessMessage(
+              url
+                ? "Your profile photo has been updated."
+                : "Your profile photo has been removed.",
+            );
+          }}
+        />
 
         <div>
           <h2 className="font-display text-xl font-bold tracking-tight">
@@ -105,7 +116,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
           </h2>
 
           <p className="mt-1 text-sm text-muted-foreground">
-            Profile image management will be added next.
+            Upload a square image for your profile.
+          </p>
+
+          <p className="mt-2 text-xs text-muted-foreground">
+            JPG, PNG, WebP · Maximum 5 MB
           </p>
         </div>
       </div>
