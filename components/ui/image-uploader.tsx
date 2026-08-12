@@ -41,6 +41,7 @@ export function ImageUploader({
   const [isRemoving, setIsRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  //todo: problem here: public id is not being stored in mongodb database. as a result the preview image is not working. need to fix that.
   const existingImage: UploadedImage | null =
     value && publicId
       ? {
