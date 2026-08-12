@@ -1,14 +1,15 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   LogOut,
-  Menu,
   Settings,
   User,
 } from "lucide-react";
 
-import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 import {
   SidebarTrigger,
@@ -45,12 +46,21 @@ interface DashboardHeaderProps {
 export function DashboardHeader({
   user,
 }: DashboardHeaderProps) {
+  const router = useRouter();
+
   const initials = user.name
     .split(" ")
     .map((part) => part[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  async function handleLogout() {
+    await authClient.signOut();
+
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-4">
@@ -76,6 +86,7 @@ export function DashboardHeader({
           className="text-muted-foreground"
         >
           <Bell className="h-4 w-4" />
+
           <span className="sr-only">
             Notifications
           </span>
@@ -120,7 +131,10 @@ export function DashboardHeader({
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-destructive focus:text-destructive"
+            >
               <LogOut />
               Logout
             </DropdownMenuItem>
