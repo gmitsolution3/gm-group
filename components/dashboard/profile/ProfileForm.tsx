@@ -18,6 +18,7 @@ import {
 import { ImageUploader } from "@/components/ui/image-uploader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IUser } from "@/types";
 
 const profileSchema = z.object({
   name: z
@@ -34,17 +35,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
-  user: {
-    name: string;
-    email: string;
-    phone?: string | null;
-    image?: string | null;
-    imagePublicId?: string | null;
-    role: string;
-    emailVerified: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  };
+  user: IUser;
 }
 
 type ProfileImage = {
@@ -258,7 +249,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
                 <Input
                   id="role"
-                  value={user.role}
+                  value={user.role ?? "user"}
                   disabled
                   className="h-11 rounded-xl bg-muted/50 pl-10 capitalize"
                 />

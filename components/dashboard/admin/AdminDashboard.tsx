@@ -13,12 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { IUser } from "@/types";
 
 interface AdminDashboardProps {
-  user: {
-    name: string;
-    email: string;
-  };
+  user: IUser;
 }
 
 export function AdminDashboard({ user }: AdminDashboardProps) {
