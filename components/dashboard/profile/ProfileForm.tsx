@@ -53,7 +53,6 @@ type ProfileImage = {
 };
 
 export function ProfileForm({ user }: ProfileFormProps) {
-  console.log(user)
   const [serverError, setServerError] = useState<string | null>(null);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(

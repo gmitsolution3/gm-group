@@ -1,3 +1,4 @@
+import { ChangePasswordForm } from "@/components/dashboard/profile/ChangePasswordForm";
 import { ProfileForm } from "@/components/dashboard/profile/ProfileForm";
 import { requireAuth } from "@/lib/auth-guards";
 
@@ -34,6 +35,8 @@ export default async function ProfilePage() {
       </section>
 
       <ProfileForm user={user} />
+
+      <ChangePasswordForm />
     </div>
   );
 }
