@@ -7,6 +7,7 @@ import {
   Settings,
   User,
   Users,
+   Menu as MenuIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -19,6 +20,7 @@ export const dashboardIcons = {
   documents: FileText,
   analytics: BarChart3,
   projects: FolderKanban,
+  menu: MenuIcon,
 } satisfies Record<string, LucideIcon>;
 
 export type DashboardIcon = keyof typeof dashboardIcons;
@@ -65,14 +67,9 @@ export const dashboardNavigation: Record<
       icon: "dashboard",
     },
     {
-      title: "Ventures",
-      href: "/dashboard/ventures",
-      icon: "building",
-    },
-    {
-      title: "Projects",
-      href: "/dashboard/projects",
-      icon: "projects",
+      title: "Menu",
+      href: "/dashboard/menu",
+      icon: "menu",
     },
     {
       title: "Users",
