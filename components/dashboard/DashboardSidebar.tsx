@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,7 +25,6 @@ import {
   type DashboardNavItem,
   type DashboardRole,
 } from "@/config/dashboard/navigation";
-import Image from "next/image";
 
 interface DashboardSidebarProps {
   role: DashboardRole;
@@ -62,18 +62,20 @@ export function DashboardSidebar({
           href="/dashboard"
           className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted/60"
         >
-          <div className="flex min-w-0 items-center">
+          {/* Logo */}
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center">
             <Image
               src="/images/logo.png"
               alt="GM Group"
               width={150}
               height={150}
-              className="h-12 w-12 object-contain mt-5"
+              className="h-10 w-10 object-contain"
               priority
             />
           </div>
 
-          <div className="min-w-0">
+          {/* Brand text */}
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
             <p className="font-display text-sm font-bold tracking-tight text-foreground">
               GM Group
             </p>
@@ -87,7 +89,8 @@ export function DashboardSidebar({
 
       {/* Navigation */}
       <SidebarContent className="px-3 py-5">
-        <div className="mb-3 px-2">
+        {/* Section label */}
+        <div className="mb-3 px-2 group-data-[collapsible=icon]:hidden">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/70">
             Workspace
           </p>
@@ -117,11 +120,15 @@ export function DashboardSidebar({
                     "data-[active=true]:text-indigo",
                     "data-[active=true]:shadow-none",
                     "data-[active=true]:hover:bg-indigo/[0.10]",
+                    "group-data-[collapsible=icon]:justify-center",
+                    "group-data-[collapsible=icon]:px-0",
                   ].join(" ")}
                 >
                   <Link href={item.href}>
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span>{item.title}</span>
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -132,7 +139,7 @@ export function DashboardSidebar({
 
       {/* Current user */}
       <SidebarFooter className="border-t border-border/70 p-3">
-        <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+        <div className="flex items-center gap-3 rounded-xl px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Avatar className="h-9 w-9 shrink-0 border border-border/70">
             <AvatarImage
               src={user.image ?? undefined}
@@ -144,7 +151,7 @@ export function DashboardSidebar({
             </AvatarFallback>
           </Avatar>
 
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
             <p className="truncate text-sm font-medium text-foreground">
               {user.name}
             </p>
