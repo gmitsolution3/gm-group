@@ -1,11 +1,8 @@
 import {
   Building2,
-  FileText,
-  FolderKanban,
-  Mosque,
+  ChartNoAxesCombined,
   LayoutDashboard,
-  Settings,
-  Users,
+  Mosque,
   type LucideIcon,
 } from "lucide-react";
 
@@ -29,28 +26,10 @@ export const dashboardMenus = [
     icon: Mosque,
   },
   {
-    name: "Projects",
-    description: "Manage projects and initiatives",
-    href: "/dashboard/projects",
-    icon: FolderKanban,
-  },
-  {
-    name: "Users",
-    description: "Manage registered users",
-    href: "/dashboard/users",
-    icon: Users,
-  },
-  {
-    name: "Applications",
-    description: "Review user applications",
-    href: "/dashboard/applications",
-    icon: FileText,
-  },
-  {
-    name: "Settings",
-    description: "Manage dashboard settings",
-    href: "/dashboard/settings",
-    icon: Settings,
+    name: "Account Analysis",
+    description: "Analyze account financial performance",
+    href: "/dashboard/account-analysis",
+    icon: ChartNoAxesCombined,
   },
 ] satisfies {
   name: string;
