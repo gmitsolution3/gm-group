@@ -24,6 +24,7 @@ import {
   type DashboardNavItem,
   type DashboardRole,
 } from "@/config/dashboard/navigation";
+import Image from "next/image";
 
 interface DashboardSidebarProps {
   role: DashboardRole;
@@ -50,30 +51,49 @@ export function DashboardSidebar({
     .toUpperCase();
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b">
+    <Sidebar
+      variant="sidebar"
+      collapsible="icon"
+      className="border-r border-border/70"
+    >
+      {/* Brand */}
+      <SidebarHeader className="border-b border-border/70 px-3 py-4">
         <Link
           href="/dashboard"
-          className="flex items-center gap-3 px-2 py-2"
+          className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted/60"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-ink text-sm font-bold text-white">
-            GM
+          <div className="flex min-w-0 items-center">
+            <Image
+              src="/images/logo.png"
+              alt="GM Group"
+              width={150}
+              height={150}
+              className="h-12 w-12 object-contain mt-5"
+              priority
+            />
           </div>
 
-          <div className="flex flex-col">
-            <span className="font-display text-sm font-bold tracking-tight">
+          <div className="min-w-0">
+            <p className="font-display text-sm font-bold tracking-tight text-foreground">
               GM Group
-            </span>
+            </p>
 
-            <span className="text-xs text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {role === "admin" ? "Administration" : "Workspace"}
-            </span>
+            </p>
           </div>
         </Link>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 py-4">
-        <SidebarMenu>
+      {/* Navigation */}
+      <SidebarContent className="px-3 py-5">
+        <div className="mb-3 px-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/70">
+            Workspace
+          </p>
+        </div>
+
+        <SidebarMenu className="gap-1">
           {navigation.map((item) => {
             const Icon = dashboardIcons[item.icon];
 
@@ -88,9 +108,19 @@ export function DashboardSidebar({
                   asChild
                   isActive={isActive}
                   tooltip={item.title}
+                  className={[
+                    "h-10 rounded-xl px-3",
+                    "text-sm font-medium",
+                    "transition-all duration-200",
+                    "hover:bg-muted/70",
+                    "data-[active=true]:bg-indigo/[0.08]",
+                    "data-[active=true]:text-indigo",
+                    "data-[active=true]:shadow-none",
+                    "data-[active=true]:hover:bg-indigo/[0.10]",
+                  ].join(" ")}
                 >
                   <Link href={item.href}>
-                    <Icon />
+                    <Icon className="h-4 w-4 shrink-0" />
                     <span>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
@@ -100,19 +130,22 @@ export function DashboardSidebar({
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="border-t">
-        <div className="flex items-center gap-3 px-2 py-3">
-          <Avatar className="h-9 w-9">
+      {/* Current user */}
+      <SidebarFooter className="border-t border-border/70 p-3">
+        <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+          <Avatar className="h-9 w-9 shrink-0 border border-border/70">
             <AvatarImage
               src={user.image ?? undefined}
               alt={user.name}
             />
 
-            <AvatarFallback>{initials}</AvatarFallback>
+            <AvatarFallback className="bg-ink text-xs font-semibold text-white">
+              {initials}
+            </AvatarFallback>
           </Avatar>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">
+            <p className="truncate text-sm font-medium text-foreground">
               {user.name}
             </p>
 

@@ -2,12 +2,12 @@
 
 import type { ReactNode } from "react";
 
+import { authClient } from "@/lib/auth-client";
+
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar";
-
-import { authClient } from "@/lib/auth-client";
 
 import type {
   DashboardNavItem,
@@ -52,11 +52,30 @@ export function DashboardShell({
         navigation={navigation}
       />
 
-      <SidebarInset>
+      <SidebarInset className="bg-muted/30">
         <DashboardHeader user={user} />
 
-        <main className="min-h-[calc(100vh-4rem)] bg-muted/30">
-          {children}
+        <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-muted/30">
+          {/* Subtle GM Group visual texture */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 grain opacity-[0.025]"
+          />
+
+          {/* Very subtle brand ambience */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-40 -top-40 h-[420px] w-[420px] rounded-full bg-indigo/[0.035] blur-[120px]"
+          />
+
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-teal/[0.025] blur-[120px]"
+          />
+
+          <div className="relative">
+            {children}
+          </div>
         </main>
       </SidebarInset>
     </SidebarProvider>
