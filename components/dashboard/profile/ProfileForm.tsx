@@ -49,13 +49,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
     null,
   );
 
-  const initials = user.name
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-
   const {
     register,
     handleSubmit,
