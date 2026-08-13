@@ -1,23 +1,23 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Camera, Mail, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Camera, Mail, ShieldCheck } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
 
 import { Button } from "@/components/ui/button";
-import { ImageUploader } from "@/components/ui/image-uploader";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ImageUploader } from "@/components/ui/image-uploader";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const profileSchema = z.object({
   name: z
@@ -41,6 +41,9 @@ interface ProfileFormProps {
     image?: string | null;
     imagePublicId?: string | null;
     role: string;
+    emailVerified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
   };
 }
 
@@ -50,10 +53,12 @@ type ProfileImage = {
 };
 
 export function ProfileForm({ user }: ProfileFormProps) {
+  console.log(user)
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const [successMessage, setSuccessMessage] =
-    useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(
+    null,
+  );
 
   const {
     register,
@@ -86,9 +91,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
     setSuccessMessage("Your profile has been updated.");
   }
 
-  async function handleImageChange(
-    image: ProfileImage | null,
-  ) {
+  async function handleImageChange(image: ProfileImage | null) {
     setServerError(null);
     setSuccessMessage(null);
 
@@ -99,8 +102,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
     if (error) {
       setServerError(
-        error.message ||
-          "Unable to update your profile image.",
+        error.message || "Unable to update your profile image.",
       );
       return;
     }
@@ -148,9 +150,9 @@ export function ProfileForm({ user }: ProfileFormProps) {
               </p>
 
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                Use a clear image that represents you. It will
-                appear in your dashboard navigation and other
-                GM Group interfaces.
+                Use a clear image that represents you. It will appear
+                in your dashboard navigation and other GM Group
+                interfaces.
               </p>
 
               <p className="mt-3 text-xs text-muted-foreground/70">
@@ -173,17 +175,12 @@ export function ProfileForm({ user }: ProfileFormProps) {
           </p>
         </CardHeader>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-7 px-6 py-7 sm:px-7">
             {/* Name + Phone */}
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label
-                  htmlFor="name"
-                  className="text-sm font-medium"
-                >
+                <Label htmlFor="name" className="text-sm font-medium">
                   Full name
                 </Label>
 
@@ -229,10 +226,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label
-                htmlFor="email"
-                className="text-sm font-medium"
-              >
+              <Label htmlFor="email" className="text-sm font-medium">
                 Email address
               </Label>
 
@@ -249,17 +243,14 @@ export function ProfileForm({ user }: ProfileFormProps) {
               </div>
 
               <p className="text-xs leading-relaxed text-muted-foreground">
-                Your email address is managed separately from
-                your profile.
+                Your email address is managed separately from your
+                profile.
               </p>
             </div>
 
             {/* Role */}
             <div className="space-y-2">
-              <Label
-                htmlFor="role"
-                className="text-sm font-medium"
-              >
+              <Label htmlFor="role" className="text-sm font-medium">
                 Account role
               </Label>
 
@@ -278,6 +269,63 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 Your account role can only be changed by an
                 administrator.
               </p>
+            </div>
+
+            <div className="border-t border-border/60 pt-7">
+              <div className="grid gap-7 sm:grid-cols-3">
+                {/* Email verification */}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+                    Email status
+                  </p>
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        user.emailVerified
+                          ? "bg-teal"
+                          : "bg-muted-foreground/40"
+                      }`}
+                    />
+
+                    <p className="text-sm font-medium">
+                      {user.emailVerified
+                        ? "Verified"
+                        : "Not verified"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Joined */}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+                    Joined
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium">
+                    {user?.createdAt?.toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+
+                {/* Last updated */}
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground/70">
+                    Last profile update
+                  </p>
+
+                  <p className="mt-2 text-sm font-medium">
+                    {user?.updatedAt?.toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Messages */}
@@ -306,9 +354,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 disabled={isSubmitting}
                 className="h-10 rounded-full px-6"
               >
-                {isSubmitting
-                  ? "Saving..."
-                  : "Save changes"}
+                {isSubmitting ? "Saving..." : "Save changes"}
               </Button>
             </div>
           </CardContent>
