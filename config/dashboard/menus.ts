@@ -2,6 +2,7 @@ import {
   Building2,
   FileText,
   FolderKanban,
+  Mosque,
   LayoutDashboard,
   Settings,
   Users,
@@ -20,6 +21,12 @@ export const dashboardMenus = [
     description: "Manage GM Group ventures",
     href: "/dashboard/ventures",
     icon: Building2,
+  },
+  {
+    name: "Umrah & Hajj",
+    description: "GM International Umrah & Hajj services",
+    href: "/dashboard/umrah-hajj",
+    icon: Mosque,
   },
   {
     name: "Projects",
