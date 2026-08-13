@@ -5,12 +5,15 @@ import {
   Clock3,
   CreditCard,
   DollarSign,
-  Users,
+  Package,
   UserRound,
+  Users,
   XCircle,
 } from "lucide-react";
 
 import { useFetch } from "@/hooks/api/useFetch";
+
+import { Badge } from "@/components/ui/badge";
 
 import {
   Card,
@@ -18,8 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import { Badge } from "@/components/ui/badge";
 
 type DashboardSummary = {
   documentCount: {
@@ -111,18 +112,26 @@ function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
 }
 
-function statusVariant(
-  status: string,
-): "default" | "secondary" | "destructive" {
-  if (status === "approved" || status === "paid") {
-    return "default";
-  }
+function statusBadgeClass(status: string) {
+  switch (status) {
+    case "approved":
+      return "border-emerald-200 bg-emerald-50 text-emerald-700";
 
-  if (status === "rejected") {
-    return "destructive";
-  }
+    case "rejected":
+      return "border-red-200 bg-red-50 text-red-700";
 
-  return "secondary";
+    case "paid":
+      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+
+    case "partial":
+      return "border-blue-200 bg-blue-50 text-blue-700";
+
+    case "pending":
+      return "border-amber-200 bg-amber-50 text-amber-700";
+
+    default:
+      return "border-muted bg-muted text-muted-foreground";
+  }
 }
 
 export function UmrahHajjDashboard() {
@@ -150,11 +159,20 @@ export function UmrahHajjDashboard() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
               className="h-32 animate-pulse rounded-2xl bg-muted"
+            />
+          ))}
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-72 animate-pulse rounded-2xl bg-muted"
             />
           ))}
         </div>
@@ -166,7 +184,11 @@ export function UmrahHajjDashboard() {
     return (
       <div className="flex min-h-[400px] items-center justify-center p-6">
         <div className="text-center">
-          <h2 className="font-display text-xl font-bold">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+            <XCircle className="h-6 w-6" />
+          </div>
+
+          <h2 className="mt-4 font-display text-xl font-bold">
             Unable to load dashboard
           </h2>
 
@@ -178,7 +200,7 @@ export function UmrahHajjDashboard() {
           <button
             type="button"
             onClick={() => refetch()}
-            className="mt-4 rounded-full bg-ink px-5 py-2 text-sm font-medium text-white"
+            className="mt-4 rounded-full bg-ink px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
           >
             Try again
           </button>
@@ -187,11 +209,8 @@ export function UmrahHajjDashboard() {
     );
   }
 
-  const applications =
-    data.documentCount.applications;
-
-  const payment =
-    data.documentCount.payment;
+  const applications = data.documentCount.applications;
+  const payment = data.documentCount.payment;
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
@@ -206,90 +225,100 @@ export function UmrahHajjDashboard() {
         </h1>
 
         <p className="mt-2 text-muted-foreground">
-          Overview of bookings, applications, payments, and
-          package performance.
+          Overview of bookings, applications, payments, and package
+          performance.
         </p>
       </div>
 
       {/* Main stats */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card>
+        {/* Total bookings */}
+        <Card className="border-blue-100 bg-gradient-to-br from-blue-50/80 to-background">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-blue-700">
               Total bookings
             </CardTitle>
 
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+              <Users className="h-5 w-5" />
+            </div>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-blue-950">
               {data.documentCount.totalBookings}
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-blue-700/70">
               Total registered bookings
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Revenue */}
+        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-background">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-emerald-700">
               Revenue
             </CardTitle>
 
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+              <DollarSign className="h-5 w-5" />
+            </div>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">
-              {formatCurrency(
-                data.summary.totalRevenue,
-              )}
+            <p className="text-3xl font-bold text-emerald-950">
+              {formatCurrency(data.summary.totalRevenue)}
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-emerald-700/70">
               Total package revenue
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Pending */}
+        <Card className="border-amber-100 bg-gradient-to-br from-amber-50/80 to-background">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-amber-700">
               Pending applications
             </CardTitle>
 
-            <Clock3 className="h-4 w-4 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+              <Clock3 className="h-5 w-5" />
+            </div>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-amber-950">
               {applications.pending}
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-amber-700/70">
               Awaiting review
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Paid */}
+        <Card className="border-violet-100 bg-gradient-to-br from-violet-50/80 to-background">
           <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle className="text-sm font-medium text-violet-700">
               Paid bookings
             </CardTitle>
 
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+              <CreditCard className="h-5 w-5" />
+            </div>
           </CardHeader>
 
           <CardContent>
-            <p className="text-3xl font-bold">
+            <p className="text-3xl font-bold text-violet-950">
               {payment.paid}
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-violet-700/70">
               Fully paid bookings
             </p>
           </CardContent>
@@ -298,6 +327,7 @@ export function UmrahHajjDashboard() {
 
       {/* Application + payment status */}
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* Application status */}
         <Card>
           <CardHeader>
             <CardTitle>Application status</CardTitle>
@@ -309,6 +339,8 @@ export function UmrahHajjDashboard() {
               value={applications.pending}
               total={data.documentCount.totalBookings}
               icon={<Clock3 />}
+              iconClassName="bg-amber-100 text-amber-600"
+              barClassName="bg-amber-500"
             />
 
             <StatusRow
@@ -316,6 +348,8 @@ export function UmrahHajjDashboard() {
               value={applications.approved}
               total={data.documentCount.totalBookings}
               icon={<CheckCircle2 />}
+              iconClassName="bg-emerald-100 text-emerald-600"
+              barClassName="bg-emerald-500"
             />
 
             <StatusRow
@@ -323,10 +357,13 @@ export function UmrahHajjDashboard() {
               value={applications.rejected}
               total={data.documentCount.totalBookings}
               icon={<XCircle />}
+              iconClassName="bg-red-100 text-red-600"
+              barClassName="bg-red-500"
             />
           </CardContent>
         </Card>
 
+        {/* Payment status */}
         <Card>
           <CardHeader>
             <CardTitle>Payment status</CardTitle>
@@ -338,6 +375,8 @@ export function UmrahHajjDashboard() {
               value={payment.pending}
               total={data.documentCount.totalBookings}
               icon={<Clock3 />}
+              iconClassName="bg-amber-100 text-amber-600"
+              barClassName="bg-amber-500"
             />
 
             <StatusRow
@@ -345,6 +384,8 @@ export function UmrahHajjDashboard() {
               value={payment.partial}
               total={data.documentCount.totalBookings}
               icon={<CreditCard />}
+              iconClassName="bg-blue-100 text-blue-600"
+              barClassName="bg-blue-500"
             />
 
             <StatusRow
@@ -352,6 +393,8 @@ export function UmrahHajjDashboard() {
               value={payment.paid}
               total={data.documentCount.totalBookings}
               icon={<CheckCircle2 />}
+              iconClassName="bg-emerald-100 text-emerald-600"
+              barClassName="bg-emerald-500"
             />
           </CardContent>
         </Card>
@@ -359,6 +402,7 @@ export function UmrahHajjDashboard() {
 
       {/* Gender + packages */}
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* Gender distribution */}
         <Card>
           <CardHeader>
             <CardTitle>Gender distribution</CardTitle>
@@ -366,32 +410,48 @@ export function UmrahHajjDashboard() {
 
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
-              {data.genderStats.map((item) => (
-                <div
-                  key={item.gender}
-                  className="rounded-2xl border bg-muted/20 p-5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
-                      <UserRound className="h-5 w-5" />
-                    </div>
+              {data.genderStats.map((item) => {
+                const isMale =
+                  item.gender.toLowerCase() === "male";
 
-                    <div>
-                      <p className="text-sm capitalize text-muted-foreground">
-                        {item.gender}
-                      </p>
+                return (
+                  <div
+                    key={item.gender}
+                    className={
+                      isMale
+                        ? "rounded-2xl border border-blue-100 bg-blue-50/50 p-5"
+                        : "rounded-2xl border border-rose-100 bg-rose-50/50 p-5"
+                    }
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={
+                          isMale
+                            ? "flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600"
+                            : "flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600"
+                        }
+                      >
+                        <UserRound className="h-5 w-5" />
+                      </div>
 
-                      <p className="text-2xl font-bold">
-                        {item.count}
-                      </p>
+                      <div>
+                        <p className="text-sm capitalize text-muted-foreground">
+                          {item.gender}
+                        </p>
+
+                        <p className="text-2xl font-bold">
+                          {item.count}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
+        {/* Top packages */}
         <Card>
           <CardHeader>
             <CardTitle>Top packages</CardTitle>
@@ -401,22 +461,26 @@ export function UmrahHajjDashboard() {
             {data.topPackages.map((packageItem) => (
               <div
                 key={packageItem._id}
-                className="flex items-center justify-between gap-4 rounded-2xl border p-4"
+                className="flex items-center justify-between gap-4 rounded-2xl border border-teal-100 bg-teal-50/40 p-4"
               >
-                <div className="min-w-0">
-                  <p className="truncate font-medium">
-                    {packageItem._id}
-                  </p>
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
+                    <Package className="h-5 w-5" />
+                  </div>
 
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {packageItem.count} bookings
-                  </p>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">
+                      {packageItem._id}
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {packageItem.count} bookings
+                    </p>
+                  </div>
                 </div>
 
-                <p className="shrink-0 font-semibold">
-                  {formatCurrency(
-                    packageItem.totalRevenue,
-                  )}
+                <p className="shrink-0 font-semibold text-teal-700">
+                  {formatCurrency(packageItem.totalRevenue)}
                 </p>
               </div>
             ))}
@@ -431,7 +495,7 @@ export function UmrahHajjDashboard() {
         </CardHeader>
 
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-5">
             {data.monthlyTrend.map((item) => {
               const max =
                 Math.max(
@@ -448,14 +512,11 @@ export function UmrahHajjDashboard() {
                   key={`${item._id.year}-${item._id.month}`}
                 >
                   <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {new Intl.DateTimeFormat(
-                        "en",
-                        {
-                          month: "long",
-                          year: "numeric",
-                        },
-                      ).format(
+                    <span className="font-medium text-muted-foreground">
+                      {new Intl.DateTimeFormat("en", {
+                        month: "long",
+                        year: "numeric",
+                      }).format(
                         new Date(
                           item._id.year,
                           item._id.month - 1,
@@ -463,14 +524,14 @@ export function UmrahHajjDashboard() {
                       )}
                     </span>
 
-                    <span className="font-medium">
-                      {item.count}
+                    <span className="font-semibold text-indigo-700">
+                      {item.count} bookings
                     </span>
                   </div>
 
-                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div className="h-3 overflow-hidden rounded-full bg-indigo-50">
                     <div
-                      className="h-full rounded-full bg-ink transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all"
                       style={{
                         width: `${width}%`,
                       }}
@@ -494,25 +555,32 @@ export function UmrahHajjDashboard() {
             {data.recentBookings.map((booking) => (
               <div
                 key={booking._id}
-                className="flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 rounded-2xl border p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="min-w-0">
-                  <p className="font-medium">
-                    {booking.applicantInfo.fullName}
-                  </p>
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+                    <UserRound className="h-5 w-5" />
+                  </div>
 
-                  <p className="mt-1 truncate text-sm text-muted-foreground">
-                    {booking.pkgInfo.pkgName}
-                  </p>
+                  <div className="min-w-0">
+                    <p className="font-medium">
+                      {booking.applicantInfo.fullName}
+                    </p>
 
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {formatDate(booking.createdAt)}
-                  </p>
+                    <p className="mt-1 truncate text-sm text-muted-foreground">
+                      {booking.pkgInfo.pkgName}
+                    </p>
+
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {formatDate(booking.createdAt)}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Badge
-                    variant={statusVariant(
+                    variant="outline"
+                    className={statusBadgeClass(
                       booking.applicationStatus,
                     )}
                   >
@@ -521,7 +589,12 @@ export function UmrahHajjDashboard() {
                     )}
                   </Badge>
 
-                  <Badge variant="secondary">
+                  <Badge
+                    variant="outline"
+                    className={statusBadgeClass(
+                      booking.payment.paymentStatus,
+                    )}
+                  >
                     {formatStatus(
                       booking.payment.paymentStatus,
                     )}
@@ -541,11 +614,15 @@ function StatusRow({
   value,
   total,
   icon,
+  iconClassName,
+  barClassName,
 }: {
   label: string;
   value: number;
   total: number;
   icon: React.ReactNode;
+  iconClassName: string;
+  barClassName: string;
 }) {
   const percentage =
     total > 0
@@ -554,34 +631,40 @@ function StatusRow({
 
   return (
     <div>
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground [&_svg]:h-4 [&_svg]:w-4">
-            {icon}
-          </span>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconClassName}`}
+          >
+            <span className="[&_svg]:h-4 [&_svg]:w-4">
+              {icon}
+            </span>
+          </div>
 
           <span className="text-sm font-medium">
             {label}
           </span>
         </div>
 
-        <span className="text-sm font-semibold">
-          {value}
-        </span>
+        <div className="text-right">
+          <span className="text-sm font-semibold">
+            {value}
+          </span>
+
+          <span className="ml-1 text-xs text-muted-foreground">
+            ({percentage}%)
+          </span>
+        </div>
       </div>
 
       <div className="h-2 overflow-hidden rounded-full bg-muted">
         <div
-          className="h-full rounded-full bg-ink transition-all"
+          className={`h-full rounded-full transition-all ${barClassName}`}
           style={{
             width: `${percentage}%`,
           }}
         />
       </div>
-
-      <p className="mt-1 text-right text-xs text-muted-foreground">
-        {percentage}%
-      </p>
     </div>
   );
 }

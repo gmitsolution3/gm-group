@@ -5,6 +5,7 @@ type TFetchParams = Record<string, any>;
 export const fetcher = async (
   key: string | [string, TFetchParams],
 ) => {
+
   if (typeof key === "string") {
     const res = await axiosInstance.get(key);
 
