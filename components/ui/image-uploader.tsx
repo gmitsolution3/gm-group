@@ -1,7 +1,7 @@
 "use client";
 
 import { ImagePlus, Loader2, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -34,21 +34,38 @@ export function ImageUploader({
 }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [uploadedImage, setUploadedImage] =
-    useState<UploadedImage | null>(null);
+  const [currentImage, setCurrentImage] =
+    useState<UploadedImage | null>(
+      value && publicId
+        ? {
+            url: value,
+            publicId,
+          }
+        : null,
+    );
 
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //todo: problem here: public id is not being stored in mongodb database. as a result the preview image is not working. need to fix that.
-  const existingImage: UploadedImage | null =
-    value && publicId
-      ? {
-          url: value,
-          publicId,
-        }
-      : null;
+  /*
+   * Sync with external value changes.
+   *
+   * This allows the parent to provide a new image
+   * after a profile refresh or another external update.
+   *
+   * We intentionally do not clear the local image here
+   * merely because the parent still has the old props while
+   * a remove operation is in progress.
+   */
+  useEffect(() => {
+    if (value && publicId) {
+      setCurrentImage({
+        url: value,
+        publicId,
+      });
+    }
+  }, [value, publicId]);
 
   async function handleFileChange(
     event: React.ChangeEvent<HTMLInputElement>,
@@ -130,19 +147,18 @@ export function ImageUploader({
         );
       }
 
-      const image = {
+      const image: UploadedImage = {
         url: uploadResult.secure_url,
         publicId: uploadResult.public_id,
       };
 
       /*
-       * Keep Cloudinary's public ID internally so
-       * we can delete the asset later.
+       * Update the uploader UI immediately.
        */
-      setUploadedImage(image);
+      setCurrentImage(image);
 
       /*
-       * Give only the URL to the parent.
+       * Give the image information to the parent.
        */
       onChange(image);
     } catch (uploadError) {
@@ -163,9 +179,7 @@ export function ImageUploader({
 
     setError(null);
 
-    const imageToRemove = uploadedImage ?? existingImage;
-
-    if (!imageToRemove?.publicId) {
+    if (!currentImage?.publicId) {
       setError("Unable to identify this image.");
       return;
     }
@@ -179,7 +193,7 @@ export function ImageUploader({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          publicId: imageToRemove.publicId,
+          publicId: currentImage.publicId,
         }),
       });
 
@@ -189,8 +203,17 @@ export function ImageUploader({
         throw new Error(result?.message || "Unable to remove image.");
       }
 
-      setUploadedImage(null);
+      /*
+       * Cloudinary deletion succeeded.
+       *
+       * Clear the local UI immediately.
+       */
+      setCurrentImage(null);
 
+      /*
+       * Tell the parent that the image
+       * has been removed.
+       */
       onChange(null);
     } catch (removeError) {
       setError(
@@ -211,10 +234,6 @@ export function ImageUploader({
     inputRef.current?.click();
   }
 
-  const currentImage = uploadedImage ?? existingImage;
-
-  const previewUrl = currentImage?.url ?? null;
-
   return (
     <div className={className}>
       <input
@@ -226,11 +245,11 @@ export function ImageUploader({
         className="hidden"
       />
 
-      {previewUrl ? (
+      {currentImage ? (
         <div className="space-y-3">
           <div className="relative h-32 w-32 overflow-hidden rounded-2xl border bg-muted">
             <img
-              src={previewUrl}
+              src={currentImage.url}
               alt="Uploaded image"
               className="h-full w-full object-cover"
             />
