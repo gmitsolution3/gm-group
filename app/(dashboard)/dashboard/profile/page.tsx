@@ -5,19 +5,6 @@ import { requireAuth } from "@/lib/auth-guards";
 export default async function ProfilePage() {
   const session = await requireAuth();
 
-  const user = {
-    name: session.user.name,
-    email: session.user.email,
-    phone: session.user.phone ?? null,
-    image: session.user.image ?? null,
-    imagePublicId: session.user.imagePublicId ?? null,
-    role: session.user.role ?? "user",
-
-    emailVerified: session.user.emailVerified,
-    createdAt: session.user.createdAt,
-    updatedAt: session.user.updatedAt,
-  };
-
   return (
     <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
       <section>
@@ -34,7 +21,7 @@ export default async function ProfilePage() {
         </p>
       </section>
 
-      <ProfileForm user={user} />
+      <ProfileForm user={session.user} />
 
       <ChangePasswordForm />
     </div>

@@ -2,8 +2,8 @@
 
 import {
   AlertCircle,
-  Building2,
   BriefcaseBusiness,
+  Building2,
   CheckCircle2,
   CreditCard,
   FileText,
@@ -11,14 +11,18 @@ import {
   HeartPulse,
   Plane,
   TrendingDown,
-  TrendingUp,
   UserRound,
   Users,
 } from "lucide-react";
 
 import { useFetch } from "@/hooks/api/useFetch";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -216,12 +220,8 @@ export function AccountAnalysisDashboard({
     email,
   )}`;
 
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetch<AccountDashboardResponse>(API_URL);
+  const { data, isLoading, isError, refetch } =
+    useFetch<AccountDashboardResponse>(API_URL);
 
   if (isLoading) {
     return (
@@ -371,9 +371,7 @@ export function AccountAnalysisDashboard({
 
         <StatCard
           title="Total records"
-          value={formatNumber(
-            documentCount.totalCounts.totalRecords,
-          )}
+          value={formatNumber(documentCount.totalCounts.totalRecords)}
           description="Total account records"
           icon={<FileText className="h-5 w-5" />}
           cardClassName="border-violet-100 bg-gradient-to-br from-violet-50/80 to-background"
@@ -405,9 +403,7 @@ export function AccountAnalysisDashboard({
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium">
-                  Due ratio
-                </span>
+                <span className="text-sm font-medium">Due ratio</span>
 
                 <span className="text-lg font-bold text-amber-700">
                   {dueAnalysis.dueRatio.toFixed(1)}%
@@ -418,10 +414,7 @@ export function AccountAnalysisDashboard({
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
                   style={{
-                    width: `${Math.min(
-                      dueAnalysis.dueRatio,
-                      100,
-                    )}%`,
+                    width: `${Math.min(dueAnalysis.dueRatio, 100)}%`,
                   }}
                 />
               </div>
@@ -454,82 +447,77 @@ export function AccountAnalysisDashboard({
 
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-            {Object.entries(serviceWise).map(
-              ([service, stats]) => {
-                const Icon = serviceIcon(service);
-                const colors = serviceColors(service);
+            {Object.entries(serviceWise).map(([service, stats]) => {
+              const Icon = serviceIcon(service);
+              const colors = serviceColors(service);
 
-                const percentage =
-                  totalAmount > 0
-                    ? (stats.total / totalAmount) * 100
-                    : 0;
+              const percentage =
+                totalAmount > 0
+                  ? (stats.total / totalAmount) * 100
+                  : 0;
 
-                return (
-                  <div
-                    key={service}
-                    className={`rounded-2xl border p-5 ${colors.card}`}
+              return (
+                <div
+                  key={service}
+                  className={`rounded-2xl border p-5 ${colors.card}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.icon}`}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </div>
+
+                    <span
+                      className={`text-xs font-semibold ${colors.value}`}
+                    >
+                      {percentage.toFixed(1)}%
+                    </span>
+                  </div>
+
+                  <p className="mt-4 text-sm font-medium capitalize text-muted-foreground">
+                    {service}
+                  </p>
+
+                  <p
+                    className={`mt-1 text-xl font-bold ${colors.value}`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div
-                        className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.icon}`}
-                      >
-                        <Icon className="h-5 w-5" />
-                      </div>
+                    {formatCurrency(stats.total)}
+                  </p>
 
-                      <span
-                        className={`text-xs font-semibold ${colors.value}`}
-                      >
-                        {percentage.toFixed(1)}%
+                  <div className="mt-4 space-y-2 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Advance
+                      </span>
+
+                      <span className="font-medium">
+                        {formatCurrency(stats.advance)}
                       </span>
                     </div>
 
-                    <p className="mt-4 text-sm font-medium capitalize text-muted-foreground">
-                      {service}
-                    </p>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Due
+                      </span>
 
-                    <p
-                      className={`mt-1 text-xl font-bold ${colors.value}`}
-                    >
-                      {formatCurrency(stats.total)}
-                    </p>
-
-                    <div className="mt-4 space-y-2 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          Advance
-                        </span>
-
-                        <span className="font-medium">
-                          {formatCurrency(stats.advance)}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          Due
-                        </span>
-
-                        <span className="font-medium">
-                          {formatCurrency(stats.due)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/80">
-                      <div
-                        className={`h-full rounded-full ${colors.bar}`}
-                        style={{
-                          width: `${Math.min(
-                            percentage,
-                            100,
-                          )}%`,
-                        }}
-                      />
+                      <span className="font-medium">
+                        {formatCurrency(stats.due)}
+                      </span>
                     </div>
                   </div>
-                );
-              },
-            )}
+
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/80">
+                    <div
+                      className={`h-full rounded-full ${colors.bar}`}
+                      style={{
+                        width: `${Math.min(percentage, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -551,19 +539,14 @@ export function AccountAnalysisDashboard({
             {monthlyTrend.map((item) => {
               const max =
                 Math.max(
-                  ...monthlyTrend.map(
-                    (trend) => trend.total,
-                  ),
+                  ...monthlyTrend.map((trend) => trend.total),
                 ) || 1;
 
-              const totalWidth =
-                (item.total / max) * 100;
+              const totalWidth = (item.total / max) * 100;
 
-              const advanceWidth =
-                (item.advance / max) * 100;
+              const advanceWidth = (item.advance / max) * 100;
 
-              const dueWidth =
-                (item.due / max) * 100;
+              const dueWidth = (item.due / max) * 100;
 
               return (
                 <div key={item.month}>
@@ -634,9 +617,7 @@ export function AccountAnalysisDashboard({
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium">
-                      {branch.branch}
-                    </p>
+                    <p className="font-medium">{branch.branch}</p>
 
                     <p className="mt-1 text-xs text-muted-foreground">
                       Total business
@@ -732,9 +713,7 @@ export function AccountAnalysisDashboard({
         <CardContent>
           <div className="grid gap-6 lg:grid-cols-2">
             <div>
-              <p className="mb-4 text-sm font-semibold">
-                By service
-              </p>
+              <p className="mb-4 text-sm font-semibold">By service</p>
 
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <CountCard
@@ -776,33 +755,29 @@ export function AccountAnalysisDashboard({
             </div>
 
             <div>
-              <p className="mb-4 text-sm font-semibold">
-                By branch
-              </p>
+              <p className="mb-4 text-sm font-semibold">By branch</p>
 
               <div className="space-y-3">
-                {documentCount.branchCounts.map(
-                  (branch) => (
-                    <div
-                      key={branch.branch}
-                      className="flex items-center justify-between rounded-xl border bg-muted/20 px-4 py-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600">
-                          <Building2 className="h-4 w-4" />
-                        </div>
-
-                        <span className="text-sm font-medium">
-                          {branch.branch}
-                        </span>
+                {documentCount.branchCounts.map((branch) => (
+                  <div
+                    key={branch.branch}
+                    className="flex items-center justify-between rounded-xl border bg-muted/20 px-4 py-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600">
+                        <Building2 className="h-4 w-4" />
                       </div>
 
-                      <span className="font-bold text-cyan-700">
-                        {branch.count}
+                      <span className="text-sm font-medium">
+                        {branch.branch}
                       </span>
                     </div>
-                  ),
-                )}
+
+                    <span className="font-bold text-cyan-700">
+                      {branch.count}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -857,22 +832,18 @@ export function AccountAnalysisDashboard({
           ) : (
             <div className="space-y-3">
               <p className="text-sm font-medium text-red-700">
-                {
-                  missingDocsAnalysis.totalMissingAccounts
-                }{" "}
-                accounts have missing documents.
+                {missingDocsAnalysis.totalMissingAccounts} accounts
+                have missing documents.
               </p>
 
-              {missingDocsAnalysis.documents.map(
-                (document) => (
-                  <div
-                    key={document}
-                    className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700"
-                  >
-                    {document}
-                  </div>
-                ),
-              )}
+              {missingDocsAnalysis.documents.map((document) => (
+                <div
+                  key={document}
+                  className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {document}
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
@@ -903,9 +874,7 @@ function StatCard({
   return (
     <Card className={cardClassName}>
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-sm font-medium">
-          {title}
-        </CardTitle>
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
 
         <div
           className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClassName}`}
@@ -919,9 +888,7 @@ function StatCard({
           {value}
         </p>
 
-        <p
-          className={`mt-1 text-xs ${descriptionClassName}`}
-        >
+        <p className={`mt-1 text-xs ${descriptionClassName}`}>
           {description}
         </p>
       </CardContent>
@@ -977,9 +944,7 @@ function MiniMetric({
         {label}
       </p>
 
-      <p className="mt-0.5 truncate text-xs font-bold">
-        {value}
-      </p>
+      <p className="mt-0.5 truncate text-xs font-bold">{value}</p>
     </div>
   );
 }
@@ -994,16 +959,10 @@ function CountCard({
   className: string;
 }) {
   return (
-    <div
-      className={`rounded-2xl border p-4 ${className}`}
-    >
-      <p className="text-xs font-medium opacity-70">
-        {label}
-      </p>
+    <div className={`rounded-2xl border p-4 ${className}`}>
+      <p className="text-xs font-medium opacity-70">{label}</p>
 
-      <p className="mt-1 text-2xl font-bold">
-        {formatNumber(count)}
-      </p>
+      <p className="mt-1 text-2xl font-bold">{formatNumber(count)}</p>
     </div>
   );
 }
