@@ -7,10 +7,13 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
+import { authClient } from "@/lib/auth-client";
+
 import type {
   DashboardNavItem,
   DashboardRole,
 } from "@/config/dashboard/navigation";
+
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardSidebar } from "./DashboardSidebar";
 
@@ -28,9 +31,19 @@ interface DashboardShellProps {
 export function DashboardShell({
   children,
   role,
-  user,
+  user: initialUser,
   navigation,
 }: DashboardShellProps) {
+  const { data: session } = authClient.useSession();
+
+  const user = session?.user
+    ? {
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image ?? null,
+      }
+    : initialUser;
+
   return (
     <SidebarProvider>
       <DashboardSidebar
