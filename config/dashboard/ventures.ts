@@ -29,13 +29,13 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "Hajj & Umrah",
         description: "Manage GM International Hajj & Umrah services.",
-        href: "/dashboard/umrah-hajj",
+        href: "/dashboard/venture-dashboards/umrah-hajj",
         icon: Mosque,
       },
       {
         name: "Account Analysis",
         description: "Analyze account financial performance.",
-        href: "/dashboard/account-analysis",
+        href: "/dashboard/venture-dashboards/account-analysis",
         icon: ChartNoAxesCombined,
       },
     ],
@@ -50,7 +50,7 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "IT Dashboard",
         description: "Manage GM IT Solution operations.",
-        href: "/dashboard/gm-it",
+        href: "/dashboard/venture-dashboards/gm-it",
         icon: LayoutDashboard,
       },
     ],
@@ -65,7 +65,7 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "Food Dashboard",
         description: "Manage GM Food Point operations.",
-        href: "/dashboard/gm-food",
+        href: "/dashboard/venture-dashboards/gm-food",
         icon: LayoutDashboard,
       },
     ],

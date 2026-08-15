@@ -19,9 +19,7 @@ export function VentureDashboards() {
   const [selectedVenture, setSelectedVenture] =
     useState<DashboardVenture | null>(null);
 
-  function handleVentureClick(
-    venture: DashboardVenture,
-  ) {
+  function handleVentureClick(venture: DashboardVenture) {
     if (venture.dashboards.length === 1) {
       router.push(venture.dashboards[0].href);
       return;
@@ -64,8 +62,8 @@ export function VentureDashboards() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base">
-            Access dashboards and tools across GM Group
-            ventures from one place.
+            Access dashboards and tools across GM Group ventures from
+            one place.
           </p>
         </div>
       </section>
@@ -93,9 +91,7 @@ export function VentureDashboards() {
             <button
               key={venture.name}
               type="button"
-              onClick={() =>
-                handleVentureClick(venture)
-              }
+              onClick={() => handleVentureClick(venture)}
               className="group text-left"
             >
               <Card className="relative h-full overflow-hidden rounded-3xl border-border/70 bg-background shadow-none transition-all duration-300 hover:-translate-y-1 hover:border-indigo/20 hover:shadow-[0_18px_50px_-20px_rgba(79,70,229,0.25)]">
