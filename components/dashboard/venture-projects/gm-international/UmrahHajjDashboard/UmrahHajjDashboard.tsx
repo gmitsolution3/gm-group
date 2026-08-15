@@ -22,6 +22,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
+import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
+
 type DashboardSummary = {
   documentCount: {
     totalBookings: number;
@@ -90,7 +93,7 @@ type DashboardSummary = {
 };
 
 const API_URL =
-  "https://gm-group-backend.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
+  "https://gm-group-backensd.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-BD", {
@@ -135,78 +138,15 @@ function statusBadgeClass(status: string) {
 }
 
 export function UmrahHajjDashboard() {
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetch<DashboardSummary>(API_URL);
+  const { data, isLoading, isError, refetch } =
+    useFetch<DashboardSummary>(API_URL);
 
   if (isLoading) {
-    return (
-      <div className="space-y-8 p-6 lg:p-8">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            GM Group
-          </p>
-
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight">
-            Umrah & Hajj
-          </h1>
-
-          <p className="mt-2 text-muted-foreground">
-            Overview of Umrah and Hajj bookings.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-32 animate-pulse rounded-2xl bg-muted"
-            />
-          ))}
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-72 animate-pulse rounded-2xl bg-muted"
-            />
-          ))}
-        </div>
-      </div>
-    );
+    return <UmrahHajjDashboardLoader />;
   }
 
   if (isError || !data) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center p-6">
-        <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-            <XCircle className="h-6 w-6" />
-          </div>
-
-          <h2 className="mt-4 font-display text-xl font-bold">
-            Unable to load dashboard
-          </h2>
-
-          <p className="mt-2 text-sm text-muted-foreground">
-            Something went wrong while loading the Umrah & Hajj
-            statistics.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="mt-4 rounded-full bg-ink px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Try again
-          </button>
-        </div>
-      </div>
-    );
+    return <UmrahHajjDashboardError onRetry={refetch} />;
   }
 
   const applications = data.documentCount.applications;
@@ -411,8 +351,7 @@ export function UmrahHajjDashboard() {
           <CardContent>
             <div className="grid grid-cols-2 gap-4">
               {data.genderStats.map((item) => {
-                const isMale =
-                  item.gender.toLowerCase() === "male";
+                const isMale = item.gender.toLowerCase() === "male";
 
                 return (
                   <div
@@ -499,28 +438,20 @@ export function UmrahHajjDashboard() {
             {data.monthlyTrend.map((item) => {
               const max =
                 Math.max(
-                  ...data.monthlyTrend.map(
-                    (trend) => trend.count,
-                  ),
+                  ...data.monthlyTrend.map((trend) => trend.count),
                 ) || 1;
 
-              const width =
-                (item.count / max) * 100;
+              const width = (item.count / max) * 100;
 
               return (
-                <div
-                  key={`${item._id.year}-${item._id.month}`}
-                >
+                <div key={`${item._id.year}-${item._id.month}`}>
                   <div className="mb-2 flex items-center justify-between text-sm">
                     <span className="font-medium text-muted-foreground">
                       {new Intl.DateTimeFormat("en", {
                         month: "long",
                         year: "numeric",
                       }).format(
-                        new Date(
-                          item._id.year,
-                          item._id.month - 1,
-                        ),
+                        new Date(item._id.year, item._id.month - 1),
                       )}
                     </span>
 
@@ -584,9 +515,7 @@ export function UmrahHajjDashboard() {
                       booking.applicationStatus,
                     )}
                   >
-                    {formatStatus(
-                      booking.applicationStatus,
-                    )}
+                    {formatStatus(booking.applicationStatus)}
                   </Badge>
 
                   <Badge
@@ -595,9 +524,7 @@ export function UmrahHajjDashboard() {
                       booking.payment.paymentStatus,
                     )}
                   >
-                    {formatStatus(
-                      booking.payment.paymentStatus,
-                    )}
+                    {formatStatus(booking.payment.paymentStatus)}
                   </Badge>
                 </div>
               </div>
@@ -625,9 +552,7 @@ function StatusRow({
   barClassName: string;
 }) {
   const percentage =
-    total > 0
-      ? Math.round((value / total) * 100)
-      : 0;
+    total > 0 ? Math.round((value / total) * 100) : 0;
 
   return (
     <div>
@@ -636,20 +561,14 @@ function StatusRow({
           <div
             className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconClassName}`}
           >
-            <span className="[&_svg]:h-4 [&_svg]:w-4">
-              {icon}
-            </span>
+            <span className="[&_svg]:h-4 [&_svg]:w-4">{icon}</span>
           </div>
 
-          <span className="text-sm font-medium">
-            {label}
-          </span>
+          <span className="text-sm font-medium">{label}</span>
         </div>
 
         <div className="text-right">
-          <span className="text-sm font-semibold">
-            {value}
-          </span>
+          <span className="text-sm font-semibold">{value}</span>
 
           <span className="ml-1 text-xs text-muted-foreground">
             ({percentage}%)
