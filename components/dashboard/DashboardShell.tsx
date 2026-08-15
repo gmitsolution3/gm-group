@@ -14,17 +14,14 @@ import type {
   DashboardRole,
 } from "@/config/dashboard/navigation";
 
+import { IUser } from "@/types";
 import { DashboardHeader } from "./DashboardHeader";
 import { DashboardSidebar } from "./DashboardSidebar";
 
 interface DashboardShellProps {
   children: ReactNode;
   role: DashboardRole;
-  user: {
-    name: string;
-    email: string;
-    image?: string | null;
-  };
+  user: IUser;
   navigation: DashboardNavItem[];
 }
 
@@ -73,9 +70,7 @@ export function DashboardShell({
             className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-teal/[0.025] blur-[120px]"
           />
 
-          <div className="relative">
-            {children}
-          </div>
+          <div className="relative">{children}</div>
         </main>
       </SidebarInset>
     </SidebarProvider>

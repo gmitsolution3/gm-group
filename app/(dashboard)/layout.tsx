@@ -13,16 +13,10 @@ export default async function DashboardLayout({
 
   const role = session.user.role ?? "user";
 
-  const user = {
-    name: session.user.name,
-    email: session.user.email,
-    image: session.user.image ?? null,
-  };
-
   return (
     <DashboardShell
       role={role}
-      user={user}
+      user={session.user}
       navigation={dashboardNavigation[role]}
     >
       {children}
