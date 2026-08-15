@@ -24,6 +24,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { AccountAnalysisDashboardError } from "./AccountAnalysisDashboardError";
+import { AccountAnalysisDashboardLoader } from "./AccountAnalysisDashboardLoader";
+
 import { Badge } from "@/components/ui/badge";
 
 type AccountDashboardResponse = {
@@ -224,69 +227,15 @@ export function AccountAnalysisDashboard({
     useFetch<AccountDashboardResponse>(API_URL);
 
   if (isLoading) {
-    return (
-      <div className="space-y-8 p-6 lg:p-8">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
-            GM Group
-          </p>
-
-          <h1 className="mt-1 font-display text-3xl font-bold tracking-tight">
-            Account Analysis
-          </h1>
-
-          <p className="mt-2 text-muted-foreground">
-            Loading account performance and financial statistics.
-          </p>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-32 animate-pulse rounded-2xl bg-muted"
-            />
-          ))}
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={index}
-              className="h-72 animate-pulse rounded-2xl bg-muted"
-            />
-          ))}
-        </div>
-      </div>
-    );
+     return <AccountAnalysisDashboardLoader />;
   }
 
   if (isError || !data?.success || !data.data) {
     return (
-      <div className="flex min-h-[400px] items-center justify-center p-6">
-        <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-red-500">
-            <AlertCircle className="h-6 w-6" />
-          </div>
-
-          <h2 className="mt-4 font-display text-xl font-bold">
-            Unable to load account analysis
-          </h2>
-
-          <p className="mt-2 text-sm text-muted-foreground">
-            {data?.message ||
-              "Something went wrong while loading the account statistics."}
-          </p>
-
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="mt-4 rounded-full bg-ink px-5 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-          >
-            Try again
-          </button>
-        </div>
-      </div>
+      <AccountAnalysisDashboardError
+      message={data?.message}
+      onRetry={() => refetch()}
+    />
     );
   }
 
