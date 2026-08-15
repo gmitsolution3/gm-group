@@ -1,6 +1,6 @@
 import { requireAuth } from "@/lib/auth-guards";
 
-import { VentureDashboards } from "@/components/dashboard/admin/VentureDashboards";
+import { VentureDashboards } from "@/components/dashboard/venture-dashboard/VentureDashboards";
 
 export default async function VentureDashboardsPage() {
   await requireAuth();
