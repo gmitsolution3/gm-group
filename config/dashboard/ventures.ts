@@ -44,7 +44,7 @@ export const dashboardVentures: DashboardVenture[] = [
   {
     name: "GM IT Solution",
     description: "Technology and software solutions.",
-    logo: "/images/ventures/gm-it-solution.png",
+    logo: "/images/ventures/gm-it-solution.webp",
 
     dashboards: [
       {
