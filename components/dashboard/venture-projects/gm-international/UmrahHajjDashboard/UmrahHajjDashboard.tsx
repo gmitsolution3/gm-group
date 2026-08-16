@@ -56,7 +56,7 @@ function statusBadgeClass(status: string) {
   }
 }
 
-export function UmrahHajjDashboard() {
+export default function UmrahHajjDashboard() {
   const { data, isLoading, isError, refetch } =
     useFetch<DashboardSummary>(
       API_ENDPOINTS.gmInternational.umrahHajjDashboard,

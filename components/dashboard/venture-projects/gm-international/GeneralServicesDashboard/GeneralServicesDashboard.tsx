@@ -44,7 +44,7 @@ function formatMonth(item: TrendItem) {
   }).format(new Date(item._id.year, item._id.month - 1));
 }
 
-export function GeneralServicesDashboard({
+export default function GeneralServicesDashboard({
   student = true,
   tourist = true,
   medical = true,

@@ -120,7 +120,7 @@ function serviceColors(service: string) {
   }
 }
 
-export function AccountAnalysisDashboard({
+export default function AccountAnalysisDashboard({
   email,
 }: {
   email: string;
