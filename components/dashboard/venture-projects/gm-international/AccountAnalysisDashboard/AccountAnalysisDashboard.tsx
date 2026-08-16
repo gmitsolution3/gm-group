@@ -32,6 +32,10 @@ import { AccountDashboardResponse } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils";
 
 import { API_ENDPOINTS } from "@/config/api/api";
+import StatCard from "./StatCard";
+import TrendBar from "./TrendBar";
+import MiniMetric from "./MiniMetric";
+import CountCard from "./CountCard";
 
 function formatMonth(value: string) {
   const [year, month] = value.split("-").map(Number);
@@ -699,121 +703,6 @@ export function AccountAnalysisDashboard({
           )}
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function StatCard({
-  title,
-  value,
-  description,
-  icon,
-  cardClassName,
-  iconClassName,
-  valueClassName,
-  descriptionClassName,
-}: {
-  title: string;
-  value: string;
-  description: string;
-  icon: React.ReactNode;
-  cardClassName: string;
-  iconClassName: string;
-  valueClassName: string;
-  descriptionClassName: string;
-}) {
-  return (
-    <Card className={cardClassName}>
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClassName}`}
-        >
-          {icon}
-        </div>
-      </CardHeader>
-
-      <CardContent>
-        <p className={`text-2xl font-bold ${valueClassName}`}>
-          {value}
-        </p>
-
-        <p className={`mt-1 text-xs ${descriptionClassName}`}>
-          {description}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function TrendBar({
-  label,
-  value,
-  width,
-  color,
-}: {
-  label: string;
-  value: number;
-  width: number;
-  color: string;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="w-16 text-xs text-muted-foreground">
-        {label}
-      </span>
-
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-        <div
-          className={`h-full rounded-full ${color}`}
-          style={{
-            width: `${Math.min(width, 100)}%`,
-          }}
-        />
-      </div>
-
-      <span className="w-28 text-right text-xs font-medium">
-        {formatCurrency(value)}
-      </span>
-    </div>
-  );
-}
-
-function MiniMetric({
-  label,
-  value,
-  className,
-}: {
-  label: string;
-  value: string;
-  className: string;
-}) {
-  return (
-    <div className={`rounded-xl px-3 py-2 ${className}`}>
-      <p className="text-[10px] font-medium uppercase tracking-wide opacity-70">
-        {label}
-      </p>
-
-      <p className="mt-0.5 truncate text-xs font-bold">{value}</p>
-    </div>
-  );
-}
-
-function CountCard({
-  label,
-  count,
-  className,
-}: {
-  label: string;
-  count: number;
-  className: string;
-}) {
-  return (
-    <div className={`rounded-2xl border p-4 ${className}`}>
-      <p className="text-xs font-medium opacity-70">{label}</p>
-
-      <p className="mt-1 text-2xl font-bold">{formatNumber(count)}</p>
     </div>
   );
 }
