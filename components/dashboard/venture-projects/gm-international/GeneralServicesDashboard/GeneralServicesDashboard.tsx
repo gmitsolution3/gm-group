@@ -24,17 +24,11 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { GeneralDashboardResponse, TrendItem } from "@/types";
+import { formatCurrency, formatDate, formatNumber } from "@/utils";
 import GeneralServicesDashboardError from "./GeneralServicesDashboardError";
 import GeneralServicesDashboardLoader from "./GeneralServicesDashboardLoader";
-import { formatCurrency, formatDate, formatNumber } from "@/utils";
 
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
-/* -------------------------------------------------------------------------- */
-
-const API_BASE =
-  "https://gm-group-backend.vercel.app/api/v1/gm-int/get-general-dashboard-summary";
-
+import { API_ENDPOINTS } from "@/config/api/api";
 
 function formatMonth(item: TrendItem) {
   return new Intl.DateTimeFormat("en", {
@@ -80,7 +74,7 @@ export function GeneralServicesDashboard({
   business?: boolean;
 }) {
   const API_URL =
-    `${API_BASE}?student=${student}` +
+    `${API_ENDPOINTS.gmInternational.generalServicesDashboard}?student=${student}` +
     `&tourist=${tourist}` +
     `&medical=${medical}` +
     `&business=${business}`;

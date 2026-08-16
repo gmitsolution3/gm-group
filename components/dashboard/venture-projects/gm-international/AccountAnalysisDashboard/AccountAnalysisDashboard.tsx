@@ -31,6 +31,8 @@ import { Badge } from "@/components/ui/badge";
 import { AccountDashboardResponse } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils";
 
+import { API_ENDPOINTS } from "@/config/api/api";
+
 function formatMonth(value: string) {
   const [year, month] = value.split("-").map(Number);
 
@@ -119,7 +121,7 @@ export function AccountAnalysisDashboard({
 }: {
   email: string;
 }) {
-  const API_URL = `https://gm-group-backend.vercel.app/api/v1/gm-int/get-account-dashboard-summery-stats/${encodeURIComponent(
+  const API_URL = `${API_ENDPOINTS.gmInternational.accountAnalysisDashboard}/${encodeURIComponent(
     email,
   )}`;
 

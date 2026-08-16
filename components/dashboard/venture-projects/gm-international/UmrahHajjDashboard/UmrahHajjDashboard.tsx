@@ -27,8 +27,7 @@ import { formatCurrency, formatDate } from "@/utils";
 import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
 import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
 
-const API_URL =
-  "https://gm-group-backend.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
+import { API_ENDPOINTS } from "@/config/api/api";
 
 function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
@@ -58,7 +57,9 @@ function statusBadgeClass(status: string) {
 
 export function UmrahHajjDashboard() {
   const { data, isLoading, isError, refetch } =
-    useFetch<DashboardSummary>(API_URL);
+    useFetch<DashboardSummary>(
+      API_ENDPOINTS.gmInternational.umrahHajjDashboard,
+    );
 
   if (isLoading) {
     return <UmrahHajjDashboardLoader />;
