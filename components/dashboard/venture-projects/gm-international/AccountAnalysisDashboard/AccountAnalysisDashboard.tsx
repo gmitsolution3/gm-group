@@ -28,108 +28,8 @@ import { AccountAnalysisDashboardError } from "./AccountAnalysisDashboardError";
 import { AccountAnalysisDashboardLoader } from "./AccountAnalysisDashboardLoader";
 
 import { Badge } from "@/components/ui/badge";
-
-type AccountDashboardResponse = {
-  success: boolean;
-  message: string;
-
-  data: {
-    overview: {
-      totalAmount: number;
-      totalAdvance: number;
-      totalDue: number;
-    };
-
-    serviceWise: {
-      student: ServiceStats;
-      medical: ServiceStats;
-      tourist: ServiceStats;
-      business: ServiceStats;
-      visa: ServiceStats;
-    };
-
-    monthlyTrend: MonthlyTrend[];
-
-    accountHolderStats: AccountHolderStats[];
-
-    branchStats: BranchStats[];
-
-    dueAnalysis: {
-      totalDue: number;
-      dueRatio: number;
-    };
-
-    missingDocsAnalysis: {
-      totalMissingAccounts: number;
-      documents: string[];
-    };
-
-    documentCount: {
-      totalCounts: {
-        totalRecords: number;
-        student: number;
-        medical: number;
-        tourist: number;
-        business: number;
-        visa: number;
-      };
-
-      branchCounts: BranchCount[];
-
-      accountHolderCounts: AccountHolderCount[];
-    };
-  };
-};
-
-type ServiceStats = {
-  total: number;
-  advance: number;
-  due: number;
-};
-
-type MonthlyTrend = {
-  month: string;
-  total: number;
-  advance: number;
-  due: number;
-};
-
-type AccountHolderStats = {
-  email: string;
-  total: number;
-  advance: number;
-  due: number;
-};
-
-type BranchStats = {
-  branch: string;
-  total: number;
-  advance: number;
-  due: number;
-};
-
-type BranchCount = {
-  branch: string;
-  count: number;
-};
-
-type AccountHolderCount = {
-  email: string;
-  branch: string;
-  count: number;
-};
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat("en-BD").format(value);
-}
+import { AccountDashboardResponse } from "@/types";
+import { formatCurrency, formatNumber } from "@/utils";
 
 function formatMonth(value: string) {
   const [year, month] = value.split("-").map(Number);
@@ -227,15 +127,15 @@ export function AccountAnalysisDashboard({
     useFetch<AccountDashboardResponse>(API_URL);
 
   if (isLoading) {
-     return <AccountAnalysisDashboardLoader />;
+    return <AccountAnalysisDashboardLoader />;
   }
 
   if (isError || !data?.success || !data.data) {
     return (
       <AccountAnalysisDashboardError
-      message={data?.message}
-      onRetry={() => refetch()}
-    />
+        message={data?.message}
+        onRetry={() => refetch()}
+      />
     );
   }
 

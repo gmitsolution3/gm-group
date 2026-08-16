@@ -22,94 +22,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { DashboardSummary } from "@/types";
+import { formatCurrency, formatDate } from "@/utils";
 import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
 import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
 
-type DashboardSummary = {
-  documentCount: {
-    totalBookings: number;
-
-    applications: {
-      pending: number;
-      approved: number;
-      rejected: number;
-    };
-
-    payment: {
-      pending: number;
-      partial: number;
-      paid: number;
-    };
-  };
-
-  genderStats: {
-    gender: string;
-    count: number;
-  }[];
-
-  recentBookings: {
-    _id: string;
-
-    applicantInfo: {
-      fullName: string;
-      gender: string;
-      phone: string;
-      email: string;
-    };
-
-    travelInfo: {
-      packageType: string;
-    };
-
-    payment: {
-      paymentStatus: string;
-    };
-
-    pkgInfo: {
-      pkgName: string;
-    };
-
-    createdAt: string;
-    applicationStatus: string;
-  }[];
-
-  topPackages: {
-    _id: string;
-    count: number;
-    totalRevenue: number;
-  }[];
-
-  monthlyTrend: {
-    _id: {
-      year: number;
-      month: number;
-    };
-    count: number;
-  }[];
-
-  summary: {
-    totalRevenue: number;
-  };
-};
-
 const API_URL =
   "https://gm-group-backensd.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-BD", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
 
 function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
