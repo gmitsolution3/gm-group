@@ -28,7 +28,7 @@ import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
 import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
 
 const API_URL =
-  "https://gm-group-backensd.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
+  "https://gm-group-backend.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary";
 
 function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
