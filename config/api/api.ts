@@ -6,5 +6,7 @@ export const API_ENDPOINTS = {
       "https://gm-group-backend.vercel.app/api/v1/gm-int/get-account-dashboard-summery-stats",
     umrahHajjDashboard:
       "https://gm-group-backend.vercel.app/api/v1/gm-int/get-ummrah-hajj-dashboard-summary",
+    accountsIndividualSummary:
+      "https://gm-group-backend.vercel.app/api/v1/gm-int/get-accounts-individual-summary",
   },
 };

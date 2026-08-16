@@ -1,9 +1,10 @@
 import {
   ChartNoAxesCombined,
   LayoutDashboard,
+  LayoutGrid,
   Mosque,
+  WalletCards,
   type LucideIcon,
-   LayoutGrid,
 } from "lucide-react";
 
 export type DashboardItem = {
@@ -27,26 +28,33 @@ export const dashboardVentures: DashboardVenture[] = [
     logo: "/images/ventures/gm-international.png",
 
     dashboards: [
-  {
-    name: "Umrah & Hajj",
-    description: "GM International Umrah & Hajj services.",
-    href: "/dashboard/venture-dashboards/umrah-hajj",
-    icon: Mosque,
-  },
-  {
-    name: "Account Analysis",
-    description: "Analyze account financial performance.",
-    href: "/dashboard/venture-dashboards/account-analysis",
-    icon: ChartNoAxesCombined,
-  },
-  {
-    name: "General Services",
-    description:
-      "Overview of student, medical, tourist, and business services.",
-    href: "/dashboard/venture-dashboards/general-services",
-    icon: LayoutGrid,
-  },
-],
+      {
+        name: "Umrah & Hajj",
+        description: "GM International Umrah & Hajj services.",
+        href: "/dashboard/venture-dashboards/umrah-hajj",
+        icon: Mosque,
+      },
+      {
+        name: "Account Analysis",
+        description: "Analyze account financial performance.",
+        href: "/dashboard/venture-dashboards/account-analysis",
+        icon: ChartNoAxesCombined,
+      },
+      {
+        name: "General Services",
+        description:
+          "Overview of student, medical, tourist, and business services.",
+        href: "/dashboard/venture-dashboards/general-services",
+        icon: LayoutGrid,
+      },
+      {
+        name: "Individual Accounts",
+        description:
+          "View individual account balances, payments, and outstanding dues.",
+        href: "/dashboard/venture-dashboards/account-individual-summary",
+        icon: WalletCards,
+      },
+    ],
   },
 
   {
