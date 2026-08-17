@@ -1,6 +1,5 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import {
   Ban,
   CheckCircle2,
@@ -9,14 +8,24 @@ import {
   Mail,
   MoreHorizontal,
   Search,
-  Shield,
-  ShieldCheck,
-  Trash2,
-  UserRound,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import {
+  rowPaginationFeature,
+  tableFeatures,
+  useTable,
+  type ColumnDef,
+  type PaginationState,
+} from "@tanstack/react-table";
 
 import { authClient } from "@/lib/auth-client";
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,18 +36,33 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+import { IUser } from "@/types";
+import { getInitials } from "@/utils";
+import EmptyUsers from "./EmptyUsers";
+import MobileUserCard from "./MobileUserCard";
+import RoleBadge from "./RoleBadge";
+import UsersDashboardError from "./UsersDashboardError";
 import UserDashboardLoader from "./UsersDashboardLoader";
-import {IUser} from "@/types";
 
 const PAGE_SIZE = 10;
 
+const features = tableFeatures({
+  rowPaginationFeature,
+});
+
 export default function UsersDashboard() {
   const [users, setUsers] = useState<IUser[]>([]);
+
   const [search, setSearch] = useState("");
   const [searchValue, setSearchValue] = useState("");
-  const [page, setPage] = useState(1);
+
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: PAGE_SIZE,
+  });
 
   const [total, setTotal] = useState(0);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -46,84 +70,202 @@ export default function UsersDashboard() {
     setIsLoading(true);
     setIsError(false);
 
-    const offset = (page - 1) * PAGE_SIZE;
+    const offset = pagination.pageIndex * pagination.pageSize;
 
     const { data, error } = await authClient.admin.listUsers({
       query: {
-        limit: PAGE_SIZE,
+        limit: pagination.pageSize,
         offset,
+
         searchValue: searchValue || undefined,
+
         searchField: "name",
         searchOperator: "contains",
+
         sortBy: "createdAt",
         sortDirection: "desc",
       },
     });
 
     if (error || !data) {
-      setIsError(true);
       setUsers([]);
       setTotal(0);
+      setIsError(true);
       setIsLoading(false);
+
       return;
     }
 
     setUsers(data.users as IUser[]);
     setTotal(data.total);
     setIsLoading(false);
-  }, [page, searchValue]);
+  }, [pagination.pageIndex, pagination.pageSize, searchValue]);
 
   useEffect(() => {
     void fetchUsers();
   }, [fetchUsers]);
 
+  const columns = useMemo<ColumnDef<typeof features, IUser>[]>(
+    () => [
+      {
+        id: "user",
+        header: "User",
+
+        cell: ({ row }) => {
+          const user = row.original;
+
+          return (
+            <div className="flex min-w-0 items-center gap-3">
+              <Avatar className="h-10 w-10 rounded-xl">
+                <AvatarImage
+                  src={user.image || undefined}
+                  alt={user.name || "User"}
+                />
+
+                <AvatarFallback className="rounded-xl bg-violet-100 text-sm font-semibold text-violet-700">
+                  {getInitials(user.name)}
+                </AvatarFallback>
+              </Avatar>
+
+              <div className="min-w-0">
+                <p className="truncate font-medium">
+                  {user.name || "Unnamed user"}
+                </p>
+
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  Joined {formatDate(user.createdAt)}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      },
+
+      {
+        id: "contact",
+        header: "Contact",
+
+        cell: ({ row }) => (
+          <div className="flex min-w-0 items-center gap-2">
+            <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+
+            <span className="truncate text-sm">
+              {row.original.email}
+            </span>
+          </div>
+        ),
+      },
+
+      {
+        id: "role",
+        header: "Role",
+
+        cell: ({ row }) => (
+          <RoleBadge role={row.original.role as string} />
+        ),
+      },
+
+      {
+        id: "status",
+        header: "Status",
+
+        cell: ({ row }) => {
+          const isBanned = Boolean(row.original.banned);
+
+          return isBanned ? (
+            <Badge
+              variant="outline"
+              className="border-red-200 bg-red-50 text-red-700"
+            >
+              <Ban className="mr-1.5 h-3 w-3" />
+              Banned
+            </Badge>
+          ) : (
+            <Badge
+              variant="outline"
+              className="border-emerald-200 bg-emerald-50 text-emerald-700"
+            >
+              <CheckCircle2 className="mr-1.5 h-3 w-3" />
+              Active
+            </Badge>
+          );
+        },
+      },
+
+      {
+        id: "actions",
+        header: "",
+
+        enableHiding: false,
+
+        cell: () => (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            disabled
+            title="User actions will be added next"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const table = useTable({
+    key: "users-dashboard",
+
+    features,
+
+    columns,
+    data: users,
+
+    manualPagination: true,
+
+    rowCount: total,
+
+    state: {
+      pagination,
+    },
+
+    onPaginationChange: setPagination,
+  });
+
   function handleSearch() {
-    setPage(1);
+    setPagination((current) => ({
+      ...current,
+      pageIndex: 0,
+    }));
+
     setSearchValue(search.trim());
   }
 
   function handleClearSearch() {
     setSearch("");
     setSearchValue("");
-    setPage(1);
-  }
 
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    setPagination((current) => ({
+      ...current,
+      pageIndex: 0,
+    }));
+  }
 
   if (isLoading) {
     return <UserDashboardLoader />;
   }
 
   if (isError) {
-    return (
-      <div className="p-6 lg:p-8">
-        <div className="flex min-h-[400px] items-center justify-center rounded-3xl border border-red-100 bg-red-50/50">
-          <div className="text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-100 text-red-600">
-              <Shield className="h-6 w-6" />
-            </div>
-
-            <h2 className="mt-4 text-lg font-semibold">
-              Couldn't load users
-            </h2>
-
-            <p className="mt-2 text-sm text-muted-foreground">
-              There was a problem retrieving the user list.
-            </p>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="mt-5"
-              onClick={() => void fetchUsers()}
-            >
-              Try again
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <UsersDashboardError fetchUsers={fetchUsers} />;
   }
+
+  const currentPage = pagination.pageIndex + 1;
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(total / pagination.pageSize),
+  );
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
@@ -191,46 +333,50 @@ export default function UsersDashboard() {
 
         <CardContent>
           {users.length === 0 ? (
-            <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
-                <UserRound className="h-6 w-6 text-muted-foreground" />
-              </div>
-
-              <h3 className="mt-4 font-semibold">No users found</h3>
-
-              <p className="mt-1 text-sm text-muted-foreground">
-                Try changing your search.
-              </p>
-            </div>
+            <EmptyUsers />
           ) : (
             <>
               {/* Desktop table */}
               <div className="hidden overflow-hidden rounded-2xl border md:block">
-                <div className="grid grid-cols-[minmax(220px,1.5fr)_minmax(220px,1.5fr)_120px_130px_56px] items-center gap-4 border-b bg-muted/40 px-4 py-3 text-xs font-semibold text-muted-foreground">
-                  <span>User</span>
-                  <span>Contact</span>
-                  <span>Role</span>
-                  <span>Status</span>
-                  <span />
-                </div>
+                <table className="w-full">
+                  <thead className="bg-muted/40">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <tr key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => (
+                          <th
+                            key={header.id}
+                            className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground"
+                          >
+                            {header.isPlaceholder ? null : (
+                              <table.FlexRender header={header} />
+                            )}
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
 
-                <div className="divide-y">
-                  {users.map((user) => (
-                    <UserRow
-                      key={user.id}
-                      user={user}
-                    />
-                  ))}
-                </div>
+                  <tbody className="divide-y">
+                    {table.getRowModel().rows.map((row) => (
+                      <tr
+                        key={row.id}
+                        className="transition-colors hover:bg-muted/20"
+                      >
+                        {row.getAllCells().map((cell) => (
+                          <td key={cell.id} className="px-4 py-4">
+                            <table.FlexRender cell={cell} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
               {/* Mobile list */}
               <div className="space-y-3 md:hidden">
                 {users.map((user) => (
-                  <MobileUserCard
-                    key={user.id}
-                    user={user}
-                  />
+                  <MobileUserCard key={user.id} user={user} />
                 ))}
               </div>
 
@@ -238,7 +384,7 @@ export default function UsersDashboard() {
               {totalPages > 1 && (
                 <div className="mt-5 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    Page {page} of {totalPages}
+                    Page {currentPage} of {totalPages}
                   </p>
 
                   <div className="flex items-center gap-2">
@@ -246,8 +392,8 @@ export default function UsersDashboard() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      disabled={page === 1}
-                      onClick={() => setPage((current) => current - 1)}
+                      disabled={!table.getCanPreviousPage()}
+                      onClick={() => table.previousPage()}
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
@@ -256,8 +402,8 @@ export default function UsersDashboard() {
                       type="button"
                       variant="outline"
                       size="icon"
-                      disabled={page === totalPages}
-                      onClick={() => setPage((current) => current + 1)}
+                      disabled={!table.getCanNextPage()}
+                      onClick={() => table.nextPage()}
                     >
                       <ChevronRight className="h-4 w-4" />
                     </Button>
@@ -268,192 +414,6 @@ export default function UsersDashboard() {
           )}
         </CardContent>
       </Card>
-    </div>
-  );
-}
-
-function UserRow({ user }: { user: IUser }) {
-  const isBanned = Boolean(user.banned);
-
-  return (
-    <div className="grid grid-cols-[minmax(220px,1.5fr)_minmax(220px,1.5fr)_120px_130px_56px] items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/20">
-      {/* User */}
-      <div className="flex min-w-0 items-center gap-3">
-        <UserAvatar
-          name={user.name}
-          image={user.image}
-        />
-
-        <div className="min-w-0">
-          <p className="truncate font-medium">
-            {user.name || "Unnamed user"}
-          </p>
-
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            Joined {formatDate(user.createdAt)}
-          </p>
-        </div>
-      </div>
-
-      {/* Contact */}
-      <div className="min-w-0">
-        <div className="flex min-w-0 items-center gap-2">
-          <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-
-          <span className="truncate text-sm">{user.email}</span>
-        </div>
-      </div>
-
-      {/* Role */}
-      <div>
-        <RoleBadge role={user.role as string} />
-      </div>
-
-      {/* Status */}
-      <div>
-        {isBanned ? (
-          <Badge
-            variant="outline"
-            className="border-red-200 bg-red-50 text-red-700"
-          >
-            <Ban className="mr-1.5 h-3 w-3" />
-            Banned
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            className="border-emerald-200 bg-emerald-50 text-emerald-700"
-          >
-            <CheckCircle2 className="mr-1.5 h-3 w-3" />
-            Active
-          </Badge>
-        )}
-      </div>
-
-      {/* Actions */}
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        disabled
-        title="User actions will be added next"
-      >
-        <MoreHorizontal className="h-4 w-4" />
-      </Button>
-    </div>
-  );
-}
-
-function MobileUserCard({ user }: { user: IUser }) {
-  const isBanned = Boolean(user.banned);
-
-  return (
-    <div className="rounded-2xl border p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <UserAvatar
-            name={user.name}
-            image={user.image}
-          />
-
-          <div className="min-w-0">
-            <p className="truncate font-medium">
-              {user.name || "Unnamed user"}
-            </p>
-
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">
-              {user.email}
-            </p>
-          </div>
-        </div>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <RoleBadge role={user.role as string} />
-
-        {isBanned ? (
-          <Badge
-            variant="outline"
-            className="border-red-200 bg-red-50 text-red-700"
-          >
-            <Ban className="mr-1.5 h-3 w-3" />
-            Banned
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            className="border-emerald-200 bg-emerald-50 text-emerald-700"
-          >
-            <CheckCircle2 className="mr-1.5 h-3 w-3" />
-            Active
-          </Badge>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function RoleBadge({ role }: { role?: string }) {
-  const isAdmin = role === "admin";
-
-  return (
-    <Badge
-      variant="outline"
-      className={
-        isAdmin
-          ? "border-violet-200 bg-violet-50 text-violet-700"
-          : "border-slate-200 bg-slate-50 text-slate-700"
-      }
-    >
-      {isAdmin ? (
-        <ShieldCheck className="mr-1.5 h-3 w-3" />
-      ) : (
-        <UserRound className="mr-1.5 h-3 w-3" />
-      )}
-
-      {isAdmin ? "Admin" : "User"}
-    </Badge>
-  );
-}
-
-function UserAvatar({
-  name,
-  image,
-}: {
-  name?: string;
-  image?: string | null;
-}) {
-  const initials =
-    name
-      ?.trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase() || "U";
-
-  if (image) {
-    return (
-      <img
-        src={image}
-        alt={name || "User"}
-        className="h-10 w-10 shrink-0 rounded-xl object-cover"
-      />
-    );
-  }
-
-  return (
-    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-sm font-semibold text-violet-700">
-      {initials}
     </div>
   );
 }
