@@ -1,5 +1,5 @@
 import { AdminDashboard } from "@/components/dashboard/admin/AdminDashboard";
-import { UserDashboard } from "@/components/dashboard/user/UserDashboard";
+import { UserDashboard } from "@/components/dashboard/users/UsersDashboard";
 import { requireAuth } from "@/lib/auth-guards";
 
 export default async function DashboardPage() {

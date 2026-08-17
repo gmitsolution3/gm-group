@@ -4,6 +4,7 @@ import { verificationEmail } from "@/lib/emails/verification-email";
 import clientPromise from "@/lib/mongodb";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { admin } from "better-auth/plugins";
 
 const client = await clientPromise;
 const db = client.db(process.env.MONGODB_DB);
@@ -24,15 +25,10 @@ export const auth = betterAuth({
         type: "string",
         required: false,
       },
-
-      role: {
-        type: ["user", "admin"],
-        required: false,
-        defaultValue: "user",
-        input: false,
-      },
     },
   },
+
+  plugins: [admin()],
 
   session: {
     expiresIn: 60 * 60 * 24,
