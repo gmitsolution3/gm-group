@@ -12,6 +12,16 @@ import { useState } from "react";
 
 import { authClient } from "@/lib/auth-client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 import { IUser } from "@/types";
 
@@ -33,6 +44,7 @@ export default function UserActions({
   onSuccess,
 }: UserActionsProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const isAdmin = user.role === "admin";
   const isBanned = Boolean(user.banned);
@@ -40,16 +52,29 @@ export default function UserActions({
   async function handleRoleChange() {
     setIsLoading(true);
 
+    const newRole = isAdmin ? "user" : "admin";
+
     const { error } = await authClient.admin.setRole({
       userId: user.id,
-      role: isAdmin ? "user" : "admin",
+      role: newRole,
     });
 
     setIsLoading(false);
 
     if (error) {
+      toast.error("Failed to update role", {
+        description:
+          error.message || "The user's role could not be updated.",
+      });
+
       return;
     }
+
+    toast.success("Role updated", {
+      description: `${user.name || user.email} is now ${
+        newRole === "admin" ? "an admin" : "a user"
+      }.`,
+    });
 
     onSuccess();
   }
@@ -65,8 +90,17 @@ export default function UserActions({
       setIsLoading(false);
 
       if (error) {
+        toast.error("Failed to unban user", {
+          description:
+            error.message || "The user could not be unbanned.",
+        });
+
         return;
       }
+
+      toast.success("User unbanned", {
+        description: `${user.name || user.email} can access the account again.`,
+      });
     } else {
       const { error } = await authClient.admin.banUser({
         userId: user.id,
@@ -76,8 +110,17 @@ export default function UserActions({
       setIsLoading(false);
 
       if (error) {
+        toast.error("Failed to ban user", {
+          description:
+            error.message || "The user could not be banned.",
+        });
+
         return;
       }
+
+      toast.success("User banned", {
+        description: `${user.name || user.email} has been banned.`,
+      });
     }
 
     onSuccess();
@@ -93,8 +136,19 @@ export default function UserActions({
     setIsLoading(false);
 
     if (error) {
+      toast.error("Failed to delete user", {
+        description:
+          error.message || "The user could not be deleted.",
+      });
+
       return;
     }
+
+    setIsDeleteOpen(false);
+
+    toast.success("User deleted", {
+      description: `${user.name || user.email} has been permanently deleted.`,
+    });
 
     onSuccess();
   }
@@ -151,13 +205,46 @@ export default function UserActions({
 
         <DropdownMenuItem
           disabled={isLoading}
-          onClick={handleDelete}
+          onSelect={(event) => {
+            event.preventDefault();
+            setIsDeleteOpen(true);
+          }}
           className="text-red-600 focus:text-red-600"
         >
           <Trash2 className="mr-2 h-4 w-4" />
           Delete user
         </DropdownMenuItem>
       </DropdownMenuContent>
+
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this user?</AlertDialogTitle>
+
+            <AlertDialogDescription>
+              This will permanently delete{" "}
+              <span className="font-medium text-foreground">
+                {user.name || user.email}
+              </span>
+              . This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoading}>
+              Cancel
+            </AlertDialogCancel>
+
+            <AlertDialogAction
+              disabled={isLoading}
+              onClick={handleDelete}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {isLoading ? "Deleting..." : "Delete user"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DropdownMenu>
   );
 }
