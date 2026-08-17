@@ -51,6 +51,8 @@ const features = tableFeatures({
 });
 
 export default function UsersDashboard() {
+  const { data: session } = authClient.useSession();
+
   const [users, setUsers] = useState<IUser[]>([]);
 
   const [search, setSearch] = useState("");
@@ -199,11 +201,15 @@ export default function UsersDashboard() {
         enableHiding: false,
 
         cell: ({ row }) => (
-          <UserActions user={row.original} onSuccess={fetchUsers} />
+          <UserActions
+            user={row.original}
+            currentUserId={session?.user.id}
+            onSuccess={fetchUsers}
+          />
         ),
       },
     ],
-    [],
+    [session?.user.id, fetchUsers],
   );
 
   const table = useTable({
@@ -371,6 +377,7 @@ export default function UsersDashboard() {
                   <MobileUserCard
                     key={user.id}
                     user={user}
+                    currentUserId={session?.user.id}
                     onSuccess={fetchUsers}
                   />
                 ))}

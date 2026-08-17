@@ -14,11 +14,13 @@ import UserActions from "./UserActions";
 
 interface MobileUserCardProps {
   user: IUser;
+  currentUserId?: string;
   onSuccess: () => void;
 }
 
 export default function MobileUserCard({
   user,
+  currentUserId,
   onSuccess,
 }: MobileUserCardProps) {
   const isBanned = Boolean(user.banned);
@@ -49,7 +51,11 @@ export default function MobileUserCard({
           </div>
         </div>
 
-        <UserActions user={user} onSuccess={onSuccess} />
+        <UserActions
+          user={user}
+          currentUserId={currentUserId}
+          onSuccess={onSuccess}
+        />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">

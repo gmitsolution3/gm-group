@@ -36,11 +36,13 @@ import { IUser } from "@/types";
 
 interface UserActionsProps {
   user: IUser;
+  currentUserId?: string;
   onSuccess: () => void;
 }
 
 export default function UserActions({
   user,
+  currentUserId,
   onSuccess,
 }: UserActionsProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +50,7 @@ export default function UserActions({
 
   const isAdmin = user.role === "admin";
   const isBanned = Boolean(user.banned);
+  const isCurrentUser = user.id === currentUserId;
 
   async function handleRoleChange() {
     setIsLoading(true);
@@ -168,7 +171,7 @@ export default function UserActions({
 
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuItem
-          disabled={isLoading}
+          disabled={isLoading || isCurrentUser}
           onClick={handleRoleChange}
         >
           {isAdmin ? (
@@ -185,7 +188,7 @@ export default function UserActions({
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          disabled={isLoading}
+          disabled={isLoading || isCurrentUser}
           onClick={handleBanToggle}
         >
           {isBanned ? (
@@ -204,7 +207,7 @@ export default function UserActions({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          disabled={isLoading}
+          disabled={isLoading || isCurrentUser}
           onSelect={(event) => {
             event.preventDefault();
             setIsDeleteOpen(true);
@@ -214,6 +217,12 @@ export default function UserActions({
           <Trash2 className="mr-2 h-4 w-4" />
           Delete user
         </DropdownMenuItem>
+
+        {isCurrentUser && (
+          <p className="px-2 py-1.5 text-xs text-muted-foreground">
+            You can't manage your own account
+          </p>
+        )}
       </DropdownMenuContent>
 
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
