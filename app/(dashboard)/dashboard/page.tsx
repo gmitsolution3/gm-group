@@ -1,5 +1,4 @@
 import { AdminDashboard } from "@/components/dashboard/admin/AdminDashboard";
-import { UserDashboard } from "@/components/dashboard/users/UsersDashboard";
 import { requireAuth } from "@/lib/auth-guards";
 
 export default async function DashboardPage() {
@@ -11,5 +10,5 @@ export default async function DashboardPage() {
     return <AdminDashboard user={session.user} />;
   }
 
-  return <UserDashboard user={session.user} />;
+  return "User dashboard is not implemented yet.";
 }

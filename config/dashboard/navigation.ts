@@ -3,11 +3,11 @@ import {
   Building2,
   FileText,
   FolderKanban,
+  Grip,
   LayoutDashboard,
   Settings,
   User,
   Users,
-  Grip,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,7 +25,7 @@ export const dashboardIcons = {
 
 export type DashboardIcon = keyof typeof dashboardIcons;
 
-export type DashboardRole = "user" | "admin";
+export type DashboardRole = "user" | "admin" | string;
 
 export type DashboardNavItem = {
   title: string;
