@@ -32,10 +32,10 @@ import { AccountDashboardResponse } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils";
 
 import { API_ENDPOINTS } from "@/config/api/api";
+import CountCard from "./CountCard";
+import MiniMetric from "./MiniMetric";
 import StatCard from "./StatCard";
 import TrendBar from "./TrendBar";
-import MiniMetric from "./MiniMetric";
-import CountCard from "./CountCard";
 
 function formatMonth(value: string) {
   const [year, month] = value.split("-").map(Number);

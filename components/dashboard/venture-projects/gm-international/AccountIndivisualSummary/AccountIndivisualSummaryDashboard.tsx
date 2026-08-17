@@ -52,7 +52,11 @@ function getDue(items: Array<{ due: number }>) {
   return items.reduce((total, item) => total + (item.due || 0), 0);
 }
 
-export default function AccountIndivisualSummaryDashboard() {
+export default function AccountIndivisualSummaryDashboard({
+  email,
+}: {
+  email: string;
+}) {
   const url = useMemo(() => {
     const params = new URLSearchParams({
       student: "true",
@@ -62,8 +66,8 @@ export default function AccountIndivisualSummaryDashboard() {
       visa: "true",
     });
 
-    return `${API_ENDPOINTS.gmInternational.accountsIndividualSummary}/nurmoin05@gmail.com?${params.toString()}`;
-  }, []);
+    return `${API_ENDPOINTS.gmInternational.accountsIndividualSummary}/${encodeURIComponent(email)}?${params.toString()}`;
+  }, [email]);
 
   const { data, isLoading, isError, refetch } = useFetch<{
     success: boolean;
