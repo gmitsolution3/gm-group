@@ -10,7 +10,7 @@ export function formatNumber(value: number) {
   return new Intl.NumberFormat("en-BD").format(value);
 }
 
-export function formatDate(value: string) {
+export function formatDate(value: Date) {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {

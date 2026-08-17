@@ -6,7 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Mail,
-  MoreHorizontal,
   Search,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -37,10 +36,11 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { IUser } from "@/types";
-import { getInitials } from "@/utils";
+import { formatDate, getInitials } from "@/utils";
 import EmptyUsers from "./EmptyUsers";
 import MobileUserCard from "./MobileUserCard";
 import RoleBadge from "./RoleBadge";
+import UserActions from "./UserActions";
 import UsersDashboardError from "./UsersDashboardError";
 import UserDashboardLoader from "./UsersDashboardLoader";
 
@@ -198,16 +198,8 @@ export default function UsersDashboard() {
 
         enableHiding: false,
 
-        cell: () => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            disabled
-            title="User actions will be added next"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
+        cell: ({ row }) => (
+          <UserActions user={row.original} onSuccess={fetchUsers} />
         ),
       },
     ],
@@ -376,7 +368,11 @@ export default function UsersDashboard() {
               {/* Mobile list */}
               <div className="space-y-3 md:hidden">
                 {users.map((user) => (
-                  <MobileUserCard key={user.id} user={user} />
+                  <MobileUserCard
+                    key={user.id}
+                    user={user}
+                    onSuccess={fetchUsers}
+                  />
                 ))}
               </div>
 
@@ -416,12 +412,4 @@ export default function UsersDashboard() {
       </Card>
     </div>
   );
-}
-
-function formatDate(value: Date) {
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
 }

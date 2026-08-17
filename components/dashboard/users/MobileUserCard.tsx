@@ -1,8 +1,4 @@
-import {
-  Ban,
-  CheckCircle2,
-  MoreHorizontal,
-} from "lucide-react";
+import { Ban, CheckCircle2 } from "lucide-react";
 
 import {
   Avatar,
@@ -11,26 +7,21 @@ import {
 } from "@/components/ui/avatar";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { IUser } from "@/types";
-import RoleBadge from "./RoleBadge";
 import { getInitials } from "@/utils";
+import RoleBadge from "./RoleBadge";
+import UserActions from "./UserActions";
+
+interface MobileUserCardProps {
+  user: IUser;
+  onSuccess: () => void;
+}
 
 export default function MobileUserCard({
   user,
-}: {
-  user: IUser;
-}) {
+  onSuccess,
+}: MobileUserCardProps) {
   const isBanned = Boolean(user.banned);
-
-  const initials =
-    user.name
-      ?.trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase() || "U";
 
   return (
     <div className="rounded-2xl border p-4">
@@ -58,14 +49,7 @@ export default function MobileUserCard({
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          disabled
-        >
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        <UserActions user={user} onSuccess={onSuccess} />
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
