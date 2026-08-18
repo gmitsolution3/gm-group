@@ -44,8 +44,8 @@ export default function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-          scrolled
+          "fixed inset-x-0 top-0 z-50 transition-all duration-500 py-2",
+          pathname !== "/" || scrolled
             ? "bg-white/85 backdrop-blur-xl border-b border-black/[0.06]"
             : "bg-transparent border-b border-transparent",
         )}
@@ -56,7 +56,7 @@ export default function Header() {
             className="relative z-10"
             aria-label="GM Group home"
           >
-            <Logo variant={scrolled ? "dark" : "light"} />
+            <Logo variant={pathname !== "/" || scrolled ? "dark" : "light"} />
           </Link>
 
           {/* Desktop nav */}
@@ -71,7 +71,7 @@ export default function Header() {
                   href={item.href}
                   className={cn(
                     "group relative px-4 py-2 text-sm font-medium transition-colors",
-                    scrolled
+                    pathname !== "/" || scrolled
                       ? active
                         ? "text-ink"
                         : "text-mutedText hover:text-ink"
@@ -87,7 +87,7 @@ export default function Header() {
                       active
                         ? "scale-x-100"
                         : "scale-x-0 group-hover:scale-x-100",
-                      scrolled ? "bg-indigo" : "bg-white",
+                      pathname !== "/" || scrolled ? "bg-indigo" : "bg-white",
                     )}
                   />
                 </Link>
@@ -100,7 +100,7 @@ export default function Header() {
               href="/contact"
               className={cn(
                 "group inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all",
-                scrolled
+                pathname !== "/" || scrolled
                   ? "bg-ink text-white hover:bg-indigo"
                   : "bg-white/10 text-white ring-1 ring-white/20 hover:bg-white hover:text-ink",
               )}
@@ -114,7 +114,7 @@ export default function Header() {
           <button
             className={cn(
               "relative z-10 inline-flex h-10 w-10 items-center justify-center lg:hidden",
-              scrolled || mobileOpen ? "text-ink" : "text-white",
+              pathname !== "/" || scrolled || mobileOpen ? "text-ink" : "text-white",
             )}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
