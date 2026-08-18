@@ -9,4 +9,8 @@ export const API_ENDPOINTS = {
     accountsIndividualSummary:
       "https://gm-group-backend.vercel.app/api/v1/gm-int/get-accounts-individual-summary",
   },
+
+  aiLearningAcademy: {
+    dashboard: "https://ai-learning-academy-server.vercel.app/api/v1/analytics/dashboard",
+  }
 };

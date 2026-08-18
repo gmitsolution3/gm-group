@@ -1,5 +1,6 @@
 import {
   ChartNoAxesCombined,
+  GraduationCap,
   LayoutDashboard,
   LayoutGrid,
   Mosque,
@@ -31,27 +32,27 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "Umrah & Hajj",
         description: "GM International Umrah & Hajj services.",
-        href: "/dashboard/venture-dashboards/umrah-hajj",
+        href: "/dashboard/venture-dashboards/gm-international/umrah-hajj",
         icon: Mosque,
       },
       {
         name: "Account Analysis",
         description: "Analyze account financial performance.",
-        href: "/dashboard/venture-dashboards/account-analysis",
+        href: "/dashboard/venture-dashboards/gm-international/account-analysis",
         icon: ChartNoAxesCombined,
       },
       {
         name: "General Services",
         description:
           "Overview of student, medical, tourist, and business services.",
-        href: "/dashboard/venture-dashboards/general-services",
+        href: "/dashboard/venture-dashboards/gm-international/general-services",
         icon: LayoutGrid,
       },
       {
         name: "Individual Accounts",
         description:
           "View individual account balances, payments, and outstanding dues.",
-        href: "/dashboard/venture-dashboards/account-individual-summary",
+        href: "/dashboard/venture-dashboards/gm-international/account-individual-summary",
         icon: WalletCards,
       },
     ],
@@ -83,6 +84,22 @@ export const dashboardVentures: DashboardVenture[] = [
         description: "Manage GM Food Point operations.",
         href: "/dashboard/venture-dashboards/gm-food",
         icon: LayoutDashboard,
+      },
+    ],
+  },
+
+  {
+    name: "AI Learning Academy",
+    description: "AI-powered learning and consultancy services.",
+    logo: "/images/ventures/ai-learning-academy.png",
+
+    dashboards: [
+      {
+        name: "AI Learning Dashboard",
+        description:
+          "Overview of courses, batches, students, content, and consultancy.",
+        href: "/dashboard/venture-dashboards/ai-learning-academy",
+        icon: GraduationCap,
       },
     ],
   },

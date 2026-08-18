@@ -17,7 +17,7 @@ export type AccountDashboardResponse = {
       visa: ServiceStats;
     };
 
-    monthlyTrend: MonthlyTrend[];
+    monthlyTrend: GMMonthlyTrend[];
 
     accountHolderStats: AccountHolderStats[];
 
@@ -56,7 +56,7 @@ export type ServiceStats = {
   due: number;
 };
 
-export type MonthlyTrend = {
+export type GMMonthlyTrend = {
   month: string;
   total: number;
   advance: number;
