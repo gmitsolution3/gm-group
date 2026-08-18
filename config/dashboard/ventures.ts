@@ -91,7 +91,7 @@ export const dashboardVentures: DashboardVenture[] = [
   {
     name: "AI Learning Academy",
     description: "AI-powered learning and consultancy services.",
-    logo: "/images/ventures/ai-learning-academy.png",
+    logo: "/images/ventures/ai-learning-academy.webp",
 
     dashboards: [
       {
