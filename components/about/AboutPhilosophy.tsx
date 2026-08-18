@@ -15,7 +15,7 @@ export default function AboutPhilosophy() {
           </div>
         </div>
         <Reveal delay={0.25} className="mt-20 border-y border-black/[0.08] py-10 sm:mt-28 sm:py-14">
-          <p className="font-display text-[clamp(2.4rem,7vw,6.5rem)] font-bold leading-none tracking-tightest text-ink/10">Durability over speed.</p>
+          <p className="font-display text-[clamp(2.4rem,7vw,6.5rem)] font-bold leading-none tracking-tightest text-ink/40">Durability over speed.</p>
         </Reveal>
       </div>
     </section>
