@@ -23,19 +23,19 @@ export default function LeadershipCta() {
               GM Group
             </p>
           </Reveal>
-          <h2 className="mt-6 font-display text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.02] tracking-tightest text-ink text-balance">
+          <h2 className="mt-6 w-full font-display text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.02] tracking-tightest text-ink text-balance">
             <RevealWords
-              text="Build something that lasts."
-              highlightIndices={[3]}
+              text="Build something that lasts forever."
+              highlightIndices={[4]}
               highlightClass="text-indigo"
             />
           </h2>
           <Reveal delay={0.2}>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-mutedText text-pretty">
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground text-pretty">
               Explore opportunities to grow with GM Group.
             </p>
           </Reveal>
-          <Reveal delay={0.3} className="mt-10">
+          <Reveal delay={0.3} className="mt-10 flex flex-wrap gap-4">
             <Link
               href="/careers"
               className="group inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-indigo"
