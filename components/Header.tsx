@@ -1,9 +1,11 @@
 "use client";
 
+import HeaderAccount from "@/components/auth/HeaderAccount";
 import { Logo } from "@/components/visual/logo";
 import { siteConfig } from "@/content/company";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, LogIn, Menu, UserRound, X } from "lucide-react";
 import {
   AnimatePresence,
   motion,
@@ -14,6 +16,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Header() {
+  const { data: session } = authClient.useSession();
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -56,7 +60,11 @@ export default function Header() {
             className="relative z-10"
             aria-label="GM Group home"
           >
-            <Logo variant={pathname !== "/" || scrolled ? "dark" : "light"} />
+            <Logo
+              variant={
+                pathname !== "/" || scrolled ? "dark" : "light"
+              }
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -87,7 +95,9 @@ export default function Header() {
                       active
                         ? "scale-x-100"
                         : "scale-x-0 group-hover:scale-x-100",
-                      pathname !== "/" || scrolled ? "bg-indigo" : "bg-white",
+                      pathname !== "/" || scrolled
+                        ? "bg-indigo"
+                        : "bg-white",
                     )}
                   />
                 </Link>
@@ -95,7 +105,13 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-3 lg:flex">
+            <HeaderAccount
+              variant={
+                pathname !== "/" || scrolled ? "dark" : "light"
+              }
+            />
+
             <Link
               href="/contact"
               className={cn(
@@ -114,7 +130,9 @@ export default function Header() {
           <button
             className={cn(
               "relative z-10 inline-flex h-10 w-10 items-center justify-center lg:hidden",
-              pathname !== "/" || scrolled || mobileOpen ? "text-ink" : "text-white",
+              pathname !== "/" || scrolled || mobileOpen
+                ? "text-ink"
+                : "text-white",
             )}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -151,6 +169,8 @@ function MobileNav({
   onClose: () => void;
   reduce: boolean;
 }) {
+  const { data: session } = authClient.useSession();
+
   return (
     <motion.div
       className="fixed inset-0 z-40 lg:hidden"
@@ -217,8 +237,28 @@ function MobileNav({
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.4 }}
-          className="mt-12"
+          className="mt-12 flex flex-wrap items-center gap-3"
         >
+          {session?.user ? (
+            <Link
+              href="/account"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              <UserRound className="h-4 w-4" />
+              My Account
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
+          )}
+
           <Link
             href="/contact"
             onClick={onClose}
