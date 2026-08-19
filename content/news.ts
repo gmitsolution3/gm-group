@@ -180,3 +180,12 @@ export const articleAccentMap = {
     hex: "#F43F5E",
   },
 } as const;
+
+export function getRelatedArticles(
+  slug: string,
+  count = 3,
+): Article[] {
+  return articles
+    .filter((article) => article.slug !== slug)
+    .slice(0, count);
+}
