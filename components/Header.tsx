@@ -16,18 +16,28 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Header() {
-  const { data: session } = authClient.useSession();
-
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
   const pathname = usePathname();
   const reduce = useReducedMotion();
 
+  const headerIsSolid = pathname !== "/" || scrolled;
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 24);
+    };
+
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -36,6 +46,7 @@ export default function Header() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
@@ -46,40 +57,44 @@ export default function Header() {
       <motion.header
         initial={reduce ? false : { y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{
+          duration: 0.5,
+          ease: [0.22, 1, 0.36, 1],
+        }}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-500 py-2",
-          pathname !== "/" || scrolled
-            ? "bg-white/85 backdrop-blur-xl border-b border-black/[0.06]"
-            : "bg-transparent border-b border-transparent",
+          "fixed inset-x-0 top-0 z-50 py-2 transition-all duration-500",
+          headerIsSolid
+            ? "border-b border-black/[0.06] bg-white/85 backdrop-blur-xl"
+            : "border-b border-transparent bg-transparent",
         )}
       >
         <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 sm:px-8 lg:px-12">
+          {/* Logo */}
           <Link
             href="/"
             className="relative z-10"
             aria-label="GM Group home"
           >
-            <Logo
-              variant={
-                pathname !== "/" || scrolled ? "dark" : "light"
-              }
-            />
+            <Logo variant={headerIsSolid ? "dark" : "light"} />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-1 lg:flex">
+          {/* Desktop navigation */}
+          <nav
+            className="hidden items-center gap-1 lg:flex"
+            aria-label="Main navigation"
+          >
             {siteConfig.nav.map((item) => {
               const active =
                 pathname === item.href ||
-                pathname.startsWith(item.href + "/");
+                pathname.startsWith(`${item.href}/`);
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
                     "group relative px-4 py-2 text-sm font-medium transition-colors",
-                    pathname !== "/" || scrolled
+                    headerIsSolid
                       ? active
                         ? "text-ink"
                         : "text-mutedText hover:text-ink"
@@ -87,17 +102,18 @@ export default function Header() {
                         ? "text-white"
                         : "text-white/70 hover:text-white",
                   )}
+                  aria-current={active ? "page" : undefined}
                 >
                   {item.label}
+
                   <span
+                    aria-hidden="true"
                     className={cn(
                       "absolute bottom-0 left-4 right-4 h-px origin-left transition-transform duration-300",
                       active
                         ? "scale-x-100"
                         : "scale-x-0 group-hover:scale-x-100",
-                      pathname !== "/" || scrolled
-                        ? "bg-indigo"
-                        : "bg-white",
+                      headerIsSolid ? "bg-indigo" : "bg-white",
                     )}
                   />
                 </Link>
@@ -105,18 +121,17 @@ export default function Header() {
             })}
           </nav>
 
+          {/* Desktop actions */}
           <div className="hidden items-center gap-3 lg:flex">
             <HeaderAccount
-              variant={
-                pathname !== "/" || scrolled ? "dark" : "light"
-              }
+              variant={headerIsSolid ? "dark" : "light"}
             />
 
             <Link
               href="/contact"
               className={cn(
                 "group inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition-all",
-                pathname !== "/" || scrolled
+                headerIsSolid
                   ? "bg-ink text-white hover:bg-indigo"
                   : "bg-white/10 text-white ring-1 ring-white/20 hover:bg-white hover:text-ink",
               )}
@@ -128,15 +143,15 @@ export default function Header() {
 
           {/* Mobile toggle */}
           <button
+            type="button"
             className={cn(
-              "relative z-10 inline-flex h-10 w-10 items-center justify-center lg:hidden",
-              pathname !== "/" || scrolled || mobileOpen
-                ? "text-ink"
-                : "text-white",
+              "relative z-10 inline-flex h-10 w-10 items-center justify-center rounded-full lg:hidden",
+              headerIsSolid || mobileOpen ? "text-ink" : "text-white",
             )}
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => setMobileOpen((value) => !value)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileOpen ? (
               <X className="h-6 w-6" />
@@ -173,32 +188,48 @@ function MobileNav({
 
   return (
     <motion.div
+      id="mobile-navigation"
       className="fixed inset-0 z-40 lg:hidden"
-      initial={reduce ? { opacity: 0 } : { opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="absolute inset-0 bg-ink" />
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Background */}
+      <div aria-hidden="true" className="absolute inset-0 bg-ink" />
+
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 overflow-hidden"
+      >
         <div className="absolute -right-20 top-0 h-80 w-80 rounded-full bg-indigo/30 blur-3xl" />
+
         <div className="absolute -left-20 bottom-20 h-72 w-72 rounded-full bg-teal/20 blur-3xl" />
       </div>
 
+      {/* Navigation */}
       <motion.nav
-        className="relative flex h-full flex-col justify-center px-8"
+        className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-24"
         initial={reduce ? {} : { x: 40 }}
         animate={{ x: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{
+          duration: 0.4,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        aria-label="Mobile navigation"
       >
+        {/* Logo */}
         <div className="mb-12 flex items-center">
           <Logo variant="light" />
         </div>
+
+        {/* Navigation links */}
         <ul className="space-y-1">
-          {siteConfig.nav.map((item, i) => {
+          {siteConfig.nav.map((item, index) => {
             const active =
               pathname === item.href ||
-              pathname.startsWith(item.href + "/");
+              pathname.startsWith(`${item.href}/`);
+
             return (
               <motion.li
                 key={item.href}
@@ -207,7 +238,7 @@ function MobileNav({
                 }
                 animate={{ opacity: 1, x: 0 }}
                 transition={{
-                  delay: 0.1 + i * 0.06,
+                  delay: 0.1 + index * 0.06,
                   duration: 0.4,
                   ease: [0.22, 1, 0.36, 1],
                 }}
@@ -216,6 +247,7 @@ function MobileNav({
                   href={item.href}
                   className="group flex items-baseline justify-between border-b border-white/10 py-4"
                   onClick={onClose}
+                  aria-current={active ? "page" : undefined}
                 >
                   <span
                     className={cn(
@@ -227,26 +259,32 @@ function MobileNav({
                   >
                     {item.label}
                   </span>
+
                   <ArrowRight className="h-5 w-5 text-white/30 transition-all group-hover:translate-x-1 group-hover:text-indigo" />
                 </Link>
               </motion.li>
             );
           })}
         </ul>
+
+        {/* Mobile actions */}
         <motion.div
           initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.4 }}
+          transition={{
+            delay: 0.5,
+            duration: 0.4,
+          }}
           className="mt-12 flex flex-wrap items-center gap-3"
         >
           {session?.user ? (
             <Link
-              href="/account"
+              href="/dashboard"
               onClick={onClose}
               className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
             >
               <UserRound className="h-4 w-4" />
-              My Account
+              Dashboard
             </Link>
           ) : (
             <Link
@@ -262,7 +300,7 @@ function MobileNav({
           <Link
             href="/contact"
             onClick={onClose}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink"
+            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink transition-colors hover:bg-yellow"
           >
             Let&apos;s Connect
             <ArrowRight className="h-4 w-4" />
