@@ -1,10 +1,16 @@
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import React from "react";
+
+type OverviewCardProps = {
+  title: string;
+  value: number;
+  description: string;
+  icon: React.ReactNode;
+  className?: string;
+  iconClassName?: string;
+};
 
 export default function OverviewCard({
   title,
@@ -13,36 +19,34 @@ export default function OverviewCard({
   icon,
   className,
   iconClassName,
-  valueClassName,
-}: {
-  title: string;
-  value: string;
-  description: string;
-  icon: React.ReactNode;
-  className: string;
-  iconClassName: string;
-  valueClassName: string;
-}) {
+}: OverviewCardProps) {
   return (
     <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              {title}
+            </p>
 
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClassName}`}
-        >
-          {icon}
+            <p className="mt-4 text-3xl font-bold tracking-tight">
+              {value.toLocaleString()}
+            </p>
+
+            <p className="mt-1 text-xs text-muted-foreground">
+              {description}
+            </p>
+          </div>
+
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+              iconClassName ??
+              "bg-muted text-foreground"
+            }`}
+          >
+            {icon}
+          </div>
         </div>
-      </CardHeader>
-
-      <CardContent>
-        <p className={`text-3xl font-bold ${valueClassName}`}>
-          {value}
-        </p>
-
-        <p className="mt-1 text-xs text-muted-foreground">
-          {description}
-        </p>
       </CardContent>
     </Card>
   );
