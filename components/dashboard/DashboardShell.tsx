@@ -49,7 +49,7 @@ export function DashboardShell({
         navigation={navigation}
       />
 
-      <SidebarInset className="bg-muted/30">
+      <SidebarInset className="min-w-0 bg-muted/30">
         <DashboardHeader user={user} />
 
         <main className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-muted/30">

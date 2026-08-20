@@ -52,14 +52,14 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border/70 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-border/70 bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-6">
       {/* Left */}
-      <div className="flex items-center gap-3">
-        <SidebarTrigger className="-ml-1 h-9 w-9 rounded-xl" />
+      <div className="flex h-full items-center gap-3">
+        <SidebarTrigger className="h-9 w-9 rounded-xl" />
 
         <Separator orientation="vertical" className="h-5" />
 
-        <div>
+        <div className="flex flex-col justify-center">
           <p className="font-display text-sm font-semibold tracking-tight text-foreground">
             Dashboard
           </p>
@@ -73,6 +73,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
       {/* Right */}
       <div className="flex items-center gap-1.5">
         <Button
+          type="button"
           variant="ghost"
           size="icon"
           className="h-9 w-9 rounded-xl text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
@@ -85,8 +86,9 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
+              type="button"
               variant="ghost"
-              className="ml-1 h-9 rounded-full p-0 transition-transform hover:bg-transparent"
+              className="ml-1 h-9 rounded-full p-0 hover:bg-transparent"
             >
               <Avatar className="h-9 w-9 border border-border/80">
                 <AvatarImage

@@ -56,40 +56,41 @@ export function DashboardSidebar({
       collapsible="icon"
       className="border-r border-border/70"
     >
-      {/* Brand */}
-      <SidebarHeader className="border-b border-border/70 px-3 py-4">
+      {/* ─────────────────────────────────────────────
+          Brand
+      ───────────────────────────────────────────── */}
+      <SidebarHeader className="h-16 border-b border-border/70 p-0">
         <Link
           href="/dashboard"
-          className="group flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted/60"
+          className="group flex h-16 w-full items-center gap-3 px-4 transition-colors hover:bg-muted/60 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
         >
-          {/* Logo */}
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center">
             <Image
               src="/images/logo.png"
               alt="GM Group"
               width={150}
               height={150}
-              className="h-10 w-10 object-contain"
+              className="h-9 w-9 object-contain"
               priority
             />
           </div>
 
-          {/* Brand text */}
           <div className="min-w-0 group-data-[collapsible=icon]:hidden">
             <p className="font-display text-sm font-bold tracking-tight text-foreground">
               GM Group
             </p>
 
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-0.5 text-[11px] text-muted-foreground">
               {role === "admin" ? "Administration" : "Workspace"}
             </p>
           </div>
         </Link>
       </SidebarHeader>
 
-      {/* Navigation */}
-      <SidebarContent className="px-3 py-5">
-        {/* Section label */}
+      {/* ─────────────────────────────────────────────
+          Navigation
+      ───────────────────────────────────────────── */}
+      <SidebarContent className="px-2 py-5">
         <div className="mb-3 px-2 group-data-[collapsible=icon]:hidden">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/70">
             Workspace
@@ -126,6 +127,7 @@ export function DashboardSidebar({
                 >
                   <Link href={item.href}>
                     <Icon className="h-4 w-4 shrink-0" />
+
                     <span className="group-data-[collapsible=icon]:hidden">
                       {item.title}
                     </span>
@@ -137,9 +139,11 @@ export function DashboardSidebar({
         </SidebarMenu>
       </SidebarContent>
 
-      {/* Current user */}
-      <SidebarFooter className="border-t border-border/70 p-3">
-        <div className="flex items-center gap-3 rounded-xl px-2 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+      {/* ─────────────────────────────────────────────
+          User
+      ───────────────────────────────────────────── */}
+      <SidebarFooter className="border-t border-border/70 p-2">
+        <div className="flex h-12 items-center gap-3 rounded-xl px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
           <Avatar className="h-9 w-9 shrink-0 border border-border/70">
             <AvatarImage
               src={user.image ?? undefined}
