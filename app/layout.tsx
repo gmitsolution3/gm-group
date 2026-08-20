@@ -13,9 +13,22 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "GM Group",
+  metadataBase: new URL("https://www.gmgroupbd.com"),
+
+  title: {
+    default: "GM Group",
+    template: "%s | GM Group",
+  },
+
   description:
     "GM Group is a parent company focused on building, managing, and growing businesses for the long term.",
+
+  applicationName: "GM Group",
+
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@ export const siteConfig = {
   tagline: "Building businesses. Growing possibilities.",
   description:
     "GM Group is a parent company focused on building, managing, and growing businesses for the long term.",
-  url: "https://www.gmgroup.example",
+  url: "https://www.gmgroupbd.com",
   coreConcept: "One Group. Multiple Businesses. A Shared Direction.",
   nav: [
     { label: "About", href: "/about" },
