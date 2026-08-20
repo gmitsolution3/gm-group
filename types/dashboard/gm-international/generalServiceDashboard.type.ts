@@ -6,6 +6,10 @@ export type TrendItem = {
   count: number;
 };
 
+/* ====================================================================== */
+/* STUDENT                                                               */
+/* ====================================================================== */
+
 export type StudentDashboard = {
   documentCount: {
     totalApplications: number;
@@ -41,6 +45,10 @@ export type StudentDashboard = {
   monthlyTrend: TrendItem[];
 };
 
+/* ====================================================================== */
+/* MEDICAL                                                               */
+/* ====================================================================== */
+
 export type MedicalDashboard = {
   documentCount: {
     totalApplications: number;
@@ -75,6 +83,10 @@ export type MedicalDashboard = {
 
   monthlyTrend: TrendItem[];
 };
+
+/* ====================================================================== */
+/* TOURIST                                                               */
+/* ====================================================================== */
 
 export type TouristDashboard = {
   documentCount: {
@@ -125,6 +137,10 @@ export type TouristDashboard = {
 
   monthlyTrend: TrendItem[];
 };
+
+/* ====================================================================== */
+/* BUSINESS                                                              */
+/* ====================================================================== */
 
 export type BusinessDashboard = {
   documentCount: {
@@ -181,58 +197,85 @@ export type BusinessDashboard = {
   };
 };
 
+/* ====================================================================== */
+/* API RESPONSE WRAPPERS                                                  */
+/* ====================================================================== */
+
 /*
- * Student / Medical / Tourist:
+ * Student / Medical / Tourist API response:
  *
  * service
  *   └── data
  *       ├── success
  *       └── data
  *           └── actual dashboard
+ *
+ * Therefore:
+ *
+ * service.data.data === StudentDashboard
+ * service.data.data === MedicalDashboard
+ * service.data.data === TouristDashboard
  */
+
 export type NestedServiceResponse<T> = {
   success: boolean;
-  data: T | null;
+
+  data: {
+    success: boolean;
+    data: T | null;
+  } | null;
 } | null;
 
 /*
- * Business:
+ * Business API response:
  *
  * business
  *   └── data
  *       └── actual dashboard
+ *
+ * Therefore:
+ *
+ * business.data === BusinessDashboard
  */
+
 export type BusinessServiceResponse = {
   success: boolean;
   data: BusinessDashboard | null;
 } | null;
+
+/* ====================================================================== */
+/* GENERAL DASHBOARD RESPONSE                                             */
+/* ====================================================================== */
 
 export type GeneralDashboardResponse = {
   success: boolean;
   message: string;
 
   data: {
-    student?: NestedServiceResponse<
-      {
+    student?: {
+      success: boolean;
+      data: {
         success: boolean;
         data: StudentDashboard | null;
-      }
-    >;
+      } | null;
+    } | null;
 
-    medical?: NestedServiceResponse<
-      {
-        success: boolean;
-        data: MedicalDashboard | null;
-      }
-    >;
+    medical?: {
+      success: boolean;
+      data: MedicalDashboard | null;
+    } | null;
 
-    tourist?: NestedServiceResponse<
-      {
+    tourist?: {
+      success: boolean;
+      data: {
         success: boolean;
         data: TouristDashboard | null;
-      }
-    >;
+      } | null;
+    } | null;
 
-    business?: BusinessServiceResponse;
+    business?: {
+      success: boolean;
+      data: BusinessDashboard | null;
+    } | null;
   } | null;
 };

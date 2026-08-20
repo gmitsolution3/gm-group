@@ -41,15 +41,13 @@ import { API_ENDPOINTS } from "@/config/api/api";
 import GeneralServicesDashboardError from "./GeneralServicesDashboardError";
 import GeneralServicesDashboardLoader from "./GeneralServicesDashboardLoader";
 
-import ServiceTabs, {
-  type ServiceType,
-} from "./ServiceTabs";
+import ServiceTabs, { type ServiceType } from "./ServiceTabs";
 
-import StatusRow from "./StatusRow";
-import MiniStat from "./MiniStat";
-import EmptyState from "./EmptyState";
-import RecentCard from "./RecentCard";
 import ActivityRow from "./ActivityRow";
+import EmptyState from "./EmptyState";
+import MiniStat from "./MiniStat";
+import RecentCard from "./RecentCard";
+import StatusRow from "./StatusRow";
 
 /* ====================================================================== */
 /* HELPERS                                                                */
@@ -59,12 +57,7 @@ function formatMonth(item: TrendItem) {
   return new Intl.DateTimeFormat("en", {
     month: "long",
     year: "numeric",
-  }).format(
-    new Date(
-      item._id.year,
-      item._id.month - 1,
-    ),
-  );
+  }).format(new Date(item._id.year, item._id.month - 1));
 }
 
 /* ====================================================================== */
@@ -92,22 +85,13 @@ export default function GeneralServicesDashboard() {
    * tourist  -> ?tourist=true
    * business -> ?business=true
    */
-  const API_URL =
-    `${API_ENDPOINTS.gmInternational.generalServicesDashboard}?${activeService}=true`;
+  const API_URL = `${API_ENDPOINTS.gmInternational.generalServicesDashboard}?${activeService}=true`;
 
-  const {
-    data,
-    isLoading,
-    isError,
-    refetch,
-  } = useFetch<GeneralDashboardResponse>(API_URL);
+  const { data, isLoading, isError, refetch } =
+    useFetch<GeneralDashboardResponse>(API_URL);
 
-  const handleServiceChange = (
-    service: ServiceType,
-  ) => {
-    const params = new URLSearchParams(
-      searchParams.toString(),
-    );
+  const handleServiceChange = (service: ServiceType) => {
+    const params = new URLSearchParams(searchParams.toString());
 
     params.set("service", service);
 
@@ -120,11 +104,7 @@ export default function GeneralServicesDashboard() {
     return <GeneralServicesDashboardLoader />;
   }
 
-  if (
-    isError ||
-    !data?.success ||
-    !data.data
-  ) {
+  if (isError || !data?.success || !data.data) {
     return (
       <GeneralServicesDashboardError
         message={data?.message}
@@ -153,22 +133,22 @@ export default function GeneralServicesDashboard() {
 
   const studentData =
     activeService === "student"
-      ? data.data.student?.data?.data ?? null
+      ? (data.data.student?.data?.data ?? null)
       : null;
 
   const medicalData =
     activeService === "medical"
-      ? data.data.medical?.data?.data ?? null
+      ? (data.data.medical?.data ?? null)
       : null;
 
   const touristData =
     activeService === "tourist"
-      ? data.data.tourist?.data?.data ?? null
+      ? (data.data.tourist?.data?.data ?? null)
       : null;
 
   const businessData =
     activeService === "business"
-      ? data.data.business?.data ?? null
+      ? (data.data.business?.data ?? null)
       : null;
 
   return (
@@ -188,8 +168,8 @@ export default function GeneralServicesDashboard() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Overview of GM International&apos;s
-            general service operations.
+            Overview of GM International&apos;s general service
+            operations.
           </p>
         </section>
 
@@ -206,33 +186,21 @@ export default function GeneralServicesDashboard() {
         {/* SELECTED SERVICE                                                */}
         {/* -------------------------------------------------------------- */}
 
-        {activeService === "student" &&
-          studentData && (
-            <StudentDashboardView
-              data={studentData}
-            />
-          )}
+        {activeService === "student" && studentData && (
+          <StudentDashboardView data={studentData} />
+        )}
 
-        {activeService === "medical" &&
-          medicalData && (
-            <MedicalDashboardView
-              data={medicalData}
-            />
-          )}
+        {activeService === "medical" && medicalData && (
+          <MedicalDashboardView data={medicalData} />
+        )}
 
-        {activeService === "tourist" &&
-          touristData && (
-            <TouristDashboardView
-              data={touristData}
-            />
-          )}
+        {activeService === "tourist" && touristData && (
+          <TouristDashboardView data={touristData} />
+        )}
 
-        {activeService === "business" &&
-          businessData && (
-            <BusinessDashboardView
-              data={businessData}
-            />
-          )}
+        {activeService === "business" && businessData && (
+          <BusinessDashboardView data={businessData} />
+        )}
 
         {!studentData &&
           !medicalData &&
@@ -252,22 +220,15 @@ export default function GeneralServicesDashboard() {
 /* STUDENT                                                               */
 /* ====================================================================== */
 
-function StudentDashboardView({
-  data,
-}: {
-  data: StudentDashboard;
-}) {
+function StudentDashboardView({ data }: { data: StudentDashboard }) {
   const totalApplications =
     data.documentCount?.totalApplications ?? 0;
 
-  const approved =
-    data.documentCount?.totalApproved ?? 0;
+  const approved = data.documentCount?.totalApproved ?? 0;
 
-  const pending =
-    data.documentCount?.totalPending ?? 0;
+  const pending = data.documentCount?.totalPending ?? 0;
 
-  const rejected =
-    data.documentCount?.totalRejected ?? 0;
+  const rejected = data.documentCount?.totalRejected ?? 0;
 
   return (
     <div className="space-y-8">
@@ -322,9 +283,7 @@ function StudentDashboardView({
               </div>
 
               <div>
-                <CardTitle>
-                  Student applications
-                </CardTitle>
+                <CardTitle>Student applications</CardTitle>
 
                 <p className="mt-1 text-sm text-muted-foreground">
                   Application and payment activity.
@@ -358,23 +317,17 @@ function StudentDashboardView({
             <div className="grid grid-cols-3 gap-3 pt-2">
               <MiniStat
                 label="Pending payment"
-                value={
-                  data.paymentStats?.pending ?? 0
-                }
+                value={data.paymentStats?.pending ?? 0}
               />
 
               <MiniStat
                 label="Paid"
-                value={
-                  data.paymentStats?.paid ?? 0
-                }
+                value={data.paymentStats?.paid ?? 0}
               />
 
               <MiniStat
                 label="Failed"
-                value={
-                  data.paymentStats?.failed ?? 0
-                }
+                value={data.paymentStats?.failed ?? 0}
               />
             </div>
           </CardContent>
@@ -382,19 +335,15 @@ function StudentDashboardView({
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              Top universities
-            </CardTitle>
+            <CardTitle>Top universities</CardTitle>
 
             <p className="text-sm text-muted-foreground">
-              Universities receiving the most
-              applications.
+              Universities receiving the most applications.
             </p>
           </CardHeader>
 
           <CardContent className="space-y-3">
-            {(data.topUniversities ?? []).length >
-            0 ? (
+            {(data.topUniversities ?? []).length > 0 ? (
               data.topUniversities.map((item) => (
                 <div
                   key={item._id}
@@ -429,18 +378,14 @@ function StudentDashboardView({
         icon={<GraduationCap />}
         color="blue"
       >
-        {(data.recentApplications ?? []).length >
-        0 ? (
+        {(data.recentApplications ?? []).length > 0 ? (
           data.recentApplications.map((item) => (
             <ActivityRow
               key={item._id}
               name={`${item.firstName} ${item.lastName}`}
               description={item.university}
               date={formatDate(item.submittedAt)}
-              badges={[
-                item.applicationStatus,
-                item.paymentStatus,
-              ]}
+              badges={[item.applicationStatus, item.paymentStatus]}
             />
           ))
         ) : (
@@ -462,11 +407,7 @@ function StudentDashboardView({
 /* MEDICAL                                                               */
 /* ====================================================================== */
 
-function MedicalDashboardView({
-  data,
-}: {
-  data: MedicalDashboard;
-}) {
+function MedicalDashboardView({ data }: { data: MedicalDashboard }) {
   const totalApplications =
     data.documentCount?.totalApplications ?? 0;
 
@@ -486,9 +427,7 @@ function MedicalDashboardView({
 
         <OverviewCard
           title="Hospitals"
-          value={
-            data.documentCount?.totalHospitals ?? 0
-          }
+          value={data.documentCount?.totalHospitals ?? 0}
           description="Available hospitals"
           icon={<MapPin />}
           className="border-blue-100 bg-blue-50/40"
@@ -497,9 +436,7 @@ function MedicalDashboardView({
 
         <OverviewCard
           title="Approved"
-          value={
-            data.documentCount?.totalApproved ?? 0
-          }
+          value={data.documentCount?.totalApproved ?? 0}
           description="Approved applications"
           icon={<CheckCircle2 />}
           className="border-emerald-100 bg-emerald-50/40"
@@ -508,9 +445,7 @@ function MedicalDashboardView({
 
         <OverviewCard
           title="Pending"
-          value={
-            data.documentCount?.totalPending ?? 0
-          }
+          value={data.documentCount?.totalPending ?? 0}
           description="Awaiting processing"
           icon={<Clock3 />}
           className="border-amber-100 bg-amber-50/40"
@@ -529,13 +464,10 @@ function MedicalDashboardView({
               </div>
 
               <div>
-                <CardTitle>
-                  Medical services
-                </CardTitle>
+                <CardTitle>Medical services</CardTitle>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Treatment applications and
-                  payment activity.
+                  Treatment applications and payment activity.
                 </p>
               </div>
             </div>
@@ -550,56 +482,39 @@ function MedicalDashboardView({
 
               <MiniStat
                 label="Hospitals"
-                value={
-                  data.documentCount?.totalHospitals ??
-                  0
-                }
+                value={data.documentCount?.totalHospitals ?? 0}
               />
 
               <MiniStat
                 label="Approved"
-                value={
-                  data.documentCount?.totalApproved ??
-                  0
-                }
+                value={data.documentCount?.totalApproved ?? 0}
               />
 
               <MiniStat
                 label="Pending"
-                value={
-                  data.documentCount?.totalPending ??
-                  0
-                }
+                value={data.documentCount?.totalPending ?? 0}
               />
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               <MiniStat
                 label="Pending payment"
-                value={
-                  data.paymentStats?.pending ?? 0
-                }
+                value={data.paymentStats?.pending ?? 0}
               />
 
               <MiniStat
                 label="Paid"
-                value={
-                  data.paymentStats?.paid ?? 0
-                }
+                value={data.paymentStats?.paid ?? 0}
               />
 
               <MiniStat
                 label="Delivered"
-                value={
-                  data.paymentStats?.delivered ?? 0
-                }
+                value={data.paymentStats?.delivered ?? 0}
               />
 
               <MiniStat
                 label="Failed"
-                value={
-                  data.paymentStats?.failed ?? 0
-                }
+                value={data.paymentStats?.failed ?? 0}
               />
             </div>
           </CardContent>
@@ -607,13 +522,10 @@ function MedicalDashboardView({
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              Top hospitals
-            </CardTitle>
+            <CardTitle>Top hospitals</CardTitle>
 
             <p className="text-sm text-muted-foreground">
-              Hospitals receiving the most
-              applications.
+              Hospitals receiving the most applications.
             </p>
           </CardHeader>
 
@@ -653,18 +565,14 @@ function MedicalDashboardView({
         icon={<HeartPulse />}
         color="rose"
       >
-        {(data.recentApplications ?? []).length >
-        0 ? (
+        {(data.recentApplications ?? []).length > 0 ? (
           data.recentApplications.map((item) => (
             <ActivityRow
               key={item._id}
               name={item.patientName}
               description={item.hospital_name}
               date={formatDate(item.createdAt)}
-              badges={[
-                item.appointmentStatus,
-                item.paymentStatus,
-              ]}
+              badges={[item.appointmentStatus, item.paymentStatus]}
             />
           ))
         ) : (
@@ -686,11 +594,7 @@ function MedicalDashboardView({
 /* TOURIST                                                                */
 /* ====================================================================== */
 
-function TouristDashboardView({
-  data,
-}: {
-  data: TouristDashboard;
-}) {
+function TouristDashboardView({ data }: { data: TouristDashboard }) {
   return (
     <div className="space-y-8">
       {/* Overview */}
@@ -698,9 +602,7 @@ function TouristDashboardView({
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <OverviewCard
           title="Bookings"
-          value={
-            data.documentCount?.totalBookings ?? 0
-          }
+          value={data.documentCount?.totalBookings ?? 0}
           description="Total tourism bookings"
           icon={<Plane />}
           className="border-cyan-100 bg-cyan-50/40"
@@ -709,10 +611,7 @@ function TouristDashboardView({
 
         <OverviewCard
           title="Packages"
-          value={
-            data.documentCount?.totalTourPackages ??
-            0
-          }
+          value={data.documentCount?.totalTourPackages ?? 0}
           description="Available tour packages"
           icon={<Package />}
           className="border-blue-100 bg-blue-50/40"
@@ -721,10 +620,7 @@ function TouristDashboardView({
 
         <OverviewCard
           title="International"
-          value={
-            data.documentCount
-              ?.totalInternationalBookings ?? 0
-          }
+          value={data.documentCount?.totalInternationalBookings ?? 0}
           description="International bookings"
           icon={<Plane />}
           className="border-violet-100 bg-violet-50/40"
@@ -733,10 +629,7 @@ function TouristDashboardView({
 
         <OverviewCard
           title="Domestic"
-          value={
-            data.documentCount
-              ?.totalDomesticBookings ?? 0
-          }
+          value={data.documentCount?.totalDomesticBookings ?? 0}
           description="Domestic bookings"
           icon={<MapPin />}
           className="border-emerald-100 bg-emerald-50/40"
@@ -755,13 +648,10 @@ function TouristDashboardView({
               </div>
 
               <div>
-                <CardTitle>
-                  Tourism overview
-                </CardTitle>
+                <CardTitle>Tourism overview</CardTitle>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Domestic and international
-                  tourism activity.
+                  Domestic and international tourism activity.
                 </p>
               </div>
             </div>
@@ -771,42 +661,29 @@ function TouristDashboardView({
             <div className="grid grid-cols-2 gap-3">
               <MiniStat
                 label="Bookings"
-                value={
-                  data.documentCount?.totalBookings ??
-                  0
-                }
+                value={data.documentCount?.totalBookings ?? 0}
               />
 
               <MiniStat
                 label="Tour packages"
-                value={
-                  data.documentCount
-                    ?.totalTourPackages ?? 0
-                }
+                value={data.documentCount?.totalTourPackages ?? 0}
               />
 
               <MiniStat
                 label="Custom packages"
-                value={
-                  data.documentCount
-                    ?.totalCustomPackage ?? 0
-                }
+                value={data.documentCount?.totalCustomPackage ?? 0}
               />
 
               <MiniStat
                 label="International"
                 value={
-                  data.documentCount
-                    ?.totalInternationalBookings ?? 0
+                  data.documentCount?.totalInternationalBookings ?? 0
                 }
               />
 
               <MiniStat
                 label="Domestic"
-                value={
-                  data.documentCount
-                    ?.totalDomesticBookings ?? 0
-                }
+                value={data.documentCount?.totalDomesticBookings ?? 0}
               />
             </div>
 
@@ -831,8 +708,8 @@ function TouristDashboardView({
 
                 <p className="mt-1 text-lg font-bold text-emerald-800">
                   {formatCurrency(
-                    data.internationalVsDomestic
-                      ?.domesticRevenue ?? 0,
+                    data.internationalVsDomestic?.domesticRevenue ??
+                      0,
                   )}
                 </p>
               </div>
@@ -842,9 +719,7 @@ function TouristDashboardView({
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              Top tour packages
-            </CardTitle>
+            <CardTitle>Top tour packages</CardTitle>
 
             <p className="text-sm text-muted-foreground">
               Most frequently booked packages.
@@ -898,10 +773,7 @@ function TouristDashboardView({
                 "Tour package"
               }
               date={formatDate(item.createdAt)}
-              badges={[
-                item.location?.country ??
-                  "Unknown",
-              ]}
+              badges={[item.location?.country ?? "Unknown"]}
             />
           ))
         ) : (
@@ -929,11 +801,9 @@ function BusinessDashboardView({
   data: BusinessDashboard;
 }) {
   const totalApplications =
-    data.documentCount
-      ?.totalBusinessApplications ?? 0;
+    data.documentCount?.totalBusinessApplications ?? 0;
 
-  const totalDeals =
-    data.documentCount?.totalBusinessDeals ?? 0;
+  const totalDeals = data.documentCount?.totalBusinessDeals ?? 0;
 
   return (
     <div className="space-y-8">
@@ -942,9 +812,7 @@ function BusinessDashboardView({
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <OverviewCard
           title="Companies"
-          value={
-            data.documentCount?.totalCompanies ?? 0
-          }
+          value={data.documentCount?.totalCompanies ?? 0}
           description="Registered companies"
           icon={<BriefcaseBusiness />}
           className="border-violet-100 bg-violet-50/40"
@@ -971,10 +839,7 @@ function BusinessDashboardView({
 
         <OverviewCard
           title="Packages"
-          value={
-            data.documentCount
-              ?.totalBusinessPackages ?? 0
-          }
+          value={data.documentCount?.totalBusinessPackages ?? 0}
           description="Business packages"
           icon={<Package />}
           className="border-amber-100 bg-amber-50/40"
@@ -983,9 +848,7 @@ function BusinessDashboardView({
 
         <OverviewCard
           title="Activity"
-          value={
-            data.summary?.totalBusinessActivity ?? 0
-          }
+          value={data.summary?.totalBusinessActivity ?? 0}
           description="Total business activity"
           icon={<TrendingUp />}
           className="border-cyan-100 bg-cyan-50/40"
@@ -1004,9 +867,7 @@ function BusinessDashboardView({
               </div>
 
               <div>
-                <CardTitle>
-                  Business applications
-                </CardTitle>
+                <CardTitle>Business applications</CardTitle>
 
                 <p className="mt-1 text-sm text-muted-foreground">
                   Current application status.
@@ -1018,30 +879,21 @@ function BusinessDashboardView({
           <CardContent className="space-y-5">
             <StatusRow
               label="Pending"
-              value={
-                data.documentCount?.applications
-                  ?.pending ?? 0
-              }
+              value={data.documentCount?.applications?.pending ?? 0}
               total={totalApplications}
               color="bg-amber-500"
             />
 
             <StatusRow
               label="Approved"
-              value={
-                data.documentCount?.applications
-                  ?.approved ?? 0
-              }
+              value={data.documentCount?.applications?.approved ?? 0}
               total={totalApplications}
               color="bg-emerald-500"
             />
 
             <StatusRow
               label="Rejected"
-              value={
-                data.documentCount?.applications
-                  ?.rejected ?? 0
-              }
+              value={data.documentCount?.applications?.rejected ?? 0}
               total={totalApplications}
               color="bg-red-500"
             />
@@ -1050,9 +902,7 @@ function BusinessDashboardView({
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              Business deals
-            </CardTitle>
+            <CardTitle>Business deals</CardTitle>
 
             <p className="text-sm text-muted-foreground">
               Current deal status.
@@ -1062,20 +912,14 @@ function BusinessDashboardView({
           <CardContent className="space-y-5">
             <StatusRow
               label="Pending"
-              value={
-                data.documentCount?.deals
-                  ?.pending ?? 0
-              }
+              value={data.documentCount?.deals?.pending ?? 0}
               total={totalDeals}
               color="bg-amber-500"
             />
 
             <StatusRow
               label="Approved"
-              value={
-                data.documentCount?.deals
-                  ?.approved ?? 0
-              }
+              value={data.documentCount?.deals?.approved ?? 0}
               total={totalDeals}
               color="bg-emerald-500"
             />
@@ -1087,13 +931,10 @@ function BusinessDashboardView({
 
       <Card>
         <CardHeader>
-          <CardTitle>
-            Top business countries
-          </CardTitle>
+          <CardTitle>Top business countries</CardTitle>
 
           <p className="text-sm text-muted-foreground">
-            Countries generating the most business
-            applications.
+            Countries generating the most business applications.
           </p>
         </CardHeader>
 
@@ -1133,18 +974,14 @@ function BusinessDashboardView({
           icon={<BriefcaseBusiness />}
           color="violet"
         >
-          {(data.recentApplications ?? []).length >
-          0 ? (
+          {(data.recentApplications ?? []).length > 0 ? (
             data.recentApplications.map((item) => (
               <ActivityRow
                 key={item._id}
                 name={`${item.firstName} ${item.lastName}`}
                 description={item.companyName}
                 date={formatDate(item.createdAt)}
-                badges={[
-                  item.applicationStatus,
-                  item.paymentStatus,
-                ]}
+                badges={[item.applicationStatus, item.paymentStatus]}
               />
             ))
           ) : (
@@ -1164,9 +1001,7 @@ function BusinessDashboardView({
                 name={item.f_name}
                 description={item.serviceTitle}
                 date={formatDate(item.createdAt)}
-                badges={[
-                  item.applicationStatus,
-                ]}
+                badges={[item.applicationStatus]}
               />
             ))
           ) : (
@@ -1179,17 +1014,12 @@ function BusinessDashboardView({
 
       <div className="grid gap-6 lg:grid-cols-2">
         <MonthlyActivity
-          items={
-            data.monthlyTrendApplications ??
-            []
-          }
+          items={data.monthlyTrendApplications ?? []}
           service="Applications"
         />
 
         <MonthlyActivity
-          items={
-            data.monthlyTrendDeals ?? []
-          }
+          items={data.monthlyTrendDeals ?? []}
           service="Deals"
         />
       </div>
@@ -1236,8 +1066,7 @@ function OverviewCard({
 
           <div
             className={`flex h-10 w-10 items-center justify-center rounded-xl ${
-              iconClassName ??
-              "bg-muted text-foreground"
+              iconClassName ?? "bg-muted text-foreground"
             }`}
           >
             {icon}
@@ -1255,21 +1084,12 @@ function MonthlyActivity({
   items: TrendItem[];
   service: string;
 }) {
-  const maxActivity = Math.max(
-    ...items.map((item) => item.count),
-    1,
-  );
+  const maxActivity = Math.max(...items.map((item) => item.count), 1);
 
   const sortedItems = [...items].sort(
     (a, b) =>
-      new Date(
-        a._id.year,
-        a._id.month - 1,
-      ).getTime() -
-      new Date(
-        b._id.year,
-        b._id.month - 1,
-      ).getTime(),
+      new Date(a._id.year, a._id.month - 1).getTime() -
+      new Date(b._id.year, b._id.month - 1).getTime(),
   );
 
   return (
@@ -1281,9 +1101,7 @@ function MonthlyActivity({
           </div>
 
           <div>
-            <CardTitle>
-              Monthly activity
-            </CardTitle>
+            <CardTitle>Monthly activity</CardTitle>
 
             <p className="mt-1 text-sm text-muted-foreground">
               Recent {service.toLowerCase()} volume.
@@ -1298,9 +1116,7 @@ function MonthlyActivity({
         ) : (
           <div className="space-y-5">
             {sortedItems.map((item, index) => {
-              const width =
-                (item.count / maxActivity) *
-                100;
+              const width = (item.count / maxActivity) * 100;
 
               return (
                 <div
@@ -1329,10 +1145,7 @@ function MonthlyActivity({
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all"
                       style={{
-                        width: `${Math.min(
-                          width,
-                          100,
-                        )}%`,
+                        width: `${Math.min(width, 100)}%`,
                       }}
                     />
                   </div>
