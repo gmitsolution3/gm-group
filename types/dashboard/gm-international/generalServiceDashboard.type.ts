@@ -102,16 +102,19 @@ export type TouristDashboard = {
     phoneNumber: string;
     email: string;
     createdAt: string;
+
     packageInfo: {
       title: string;
       thumbnail: string;
       packageName: string;
     };
+
     location: {
       country: string;
       destinationPlace: string;
       subDestination: string;
     };
+
     totalCost: string;
   }[];
 
@@ -179,25 +182,26 @@ export type BusinessDashboard = {
 };
 
 /*
- * Student / medical / tourist have an extra response wrapper:
+ * Student / Medical / Tourist:
  *
  * service
  *   └── data
  *       ├── success
  *       └── data
  *           └── actual dashboard
- *
- * Business is different:
- *
- * business
- *   └── data
- *       └── actual dashboard
  */
 export type NestedServiceResponse<T> = {
   success: boolean;
   data: T | null;
 } | null;
 
+/*
+ * Business:
+ *
+ * business
+ *   └── data
+ *       └── actual dashboard
+ */
 export type BusinessServiceResponse = {
   success: boolean;
   data: BusinessDashboard | null;
@@ -208,9 +212,27 @@ export type GeneralDashboardResponse = {
   message: string;
 
   data: {
-    student?: NestedServiceResponse<StudentDashboard>;
-    medical?: NestedServiceResponse<MedicalDashboard>;
-    tourist?: NestedServiceResponse<TouristDashboard>;
+    student?: NestedServiceResponse<
+      {
+        success: boolean;
+        data: StudentDashboard | null;
+      }
+    >;
+
+    medical?: NestedServiceResponse<
+      {
+        success: boolean;
+        data: MedicalDashboard | null;
+      }
+    >;
+
+    tourist?: NestedServiceResponse<
+      {
+        success: boolean;
+        data: TouristDashboard | null;
+      }
+    >;
+
     business?: BusinessServiceResponse;
   } | null;
 };
