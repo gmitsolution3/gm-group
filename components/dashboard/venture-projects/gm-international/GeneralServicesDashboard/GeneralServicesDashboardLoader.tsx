@@ -1,22 +1,19 @@
 "use client";
 
 import {
-  Activity,
   BriefcaseBusiness,
-  FileText,
   GraduationCap,
   HeartPulse,
   Plane,
-  TrendingUp,
 } from "lucide-react";
 
 function Skeleton({
   className = "",
-}: {
-  className?: string;
-}) {
+  ...props
+}: React.ComponentProps<"div">) {
   return (
     <div
+      {...props}
       className={`animate-pulse rounded-xl bg-muted ${className}`}
     />
   );
@@ -62,11 +59,7 @@ function OverviewSkeleton() {
   );
 }
 
-function ContentSkeleton({
-  rows = 4,
-}: {
-  rows?: number;
-}) {
+function ContentSkeleton({ rows = 4 }: { rows?: number }) {
   return (
     <div className="rounded-2xl border border-border/70 bg-card shadow-sm">
       <div className="border-b border-border/70 p-5">
