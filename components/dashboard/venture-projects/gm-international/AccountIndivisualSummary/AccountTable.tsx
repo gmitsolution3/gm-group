@@ -1,65 +1,259 @@
 "use client";
 
-import { ReactNode } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
-interface AccountTableColumn<T> {
+import {
+  rowPaginationFeature,
+  tableFeatures,
+  useTable,
+  type ColumnDef,
+  type PaginationState,
+  type RowData,
+} from "@tanstack/react-table";
+
+import { Button } from "@/components/ui/button";
+
+const PAGE_SIZE = 10;
+
+const features = tableFeatures({
+  rowPaginationFeature,
+});
+
+export type AccountTableColumn<T> = {
   key: string;
   label: string;
-  render: (item: T) => ReactNode;
-}
+  render: (item: T) => React.ReactNode;
+};
 
-interface AccountTableProps<T extends { _id: string }> {
-  columns: AccountTableColumn<T>[];
+type AccountTableProps<T> = {
   data: T[];
-}
+  columns: AccountTableColumn<T>[];
+  pageSize?: number;
+  emptyMessage?: string;
+};
 
-export default function AccountTable<T extends { _id: string }>({
-  columns,
+export default function AccountTable<T extends RowData>({
   data,
+  columns,
+  pageSize = PAGE_SIZE,
+  emptyMessage = "No account records found.",
 }: AccountTableProps<T>) {
-  if (!data.length) {
-    return (
-      <div className="rounded-2xl border p-8 text-center">
-        <p className="text-sm font-medium">No accounts found</p>
+  const [pagination, setPagination] =
+    useState<PaginationState>({
+      pageIndex: 0,
+      pageSize,
+    });
 
-        <p className="mt-1 text-xs text-muted-foreground">
-          There are currently no accounts in this service.
+  /*
+   * TanStack's useTable in this project is configured around RowData.
+   *
+   * The actual account type is preserved by AccountTableColumn<T>.
+   * We only bridge it when creating the TanStack columns.
+   */
+  const tableColumns = useMemo<
+    ColumnDef<typeof features, T>[]
+  >(
+    () =>
+      columns.map((column) => ({
+        id: column.key,
+        header: column.label,
+
+        cell: ({ row }) => {
+          return column.render(row.original);
+        },
+      })),
+    [columns],
+  );
+
+  const table = useTable({
+    key: "account-table",
+    features,
+
+    columns: tableColumns,
+    data,
+
+    state: {
+      pagination,
+    },
+
+    onPaginationChange: setPagination,
+  });
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(data.length / pagination.pageSize),
+  );
+
+  const currentPage =
+    pagination.pageIndex + 1;
+
+  if (data.length === 0) {
+    return (
+      <div className="rounded-2xl border bg-card p-10 text-center">
+        <p className="text-sm text-muted-foreground">
+          {emptyMessage}
         </p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border">
-      <table className="w-full min-w-[900px] text-sm">
-        <thead className="border-b bg-muted/30">
-          <tr>
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground"
-              >
-                {column.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
+    <div className="space-y-4">
+      {/* ============================================================ */}
+      {/* DESKTOP TABLE                                                 */}
+      {/* ============================================================ */}
 
-        <tbody className="divide-y">
-          {data.map((item) => (
-            <tr
-              key={item._id}
-              className="transition-colors hover:bg-muted/20"
+      <div className="hidden overflow-hidden rounded-2xl border md:block">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-muted/40">
+              {table
+                .getHeaderGroups()
+                .map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(
+                      (header) => (
+                        <th
+                          key={header.id}
+                          className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : (
+                                <table.FlexRender
+                                  header={header}
+                                />
+                              )}
+                        </th>
+                      ),
+                    )}
+                  </tr>
+                ))}
+            </thead>
+
+            <tbody className="divide-y">
+              {table
+                .getRowModel()
+                .rows.map((row) => (
+                  <tr
+                    key={row.id}
+                    className="transition-colors hover:bg-muted/20"
+                  >
+                    {row
+                      .getAllCells()
+                      .map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-4 py-4 align-middle"
+                        >
+                          <table.FlexRender
+                            cell={cell}
+                          />
+                        </td>
+                      ))}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* MOBILE                                                        */}
+      {/* ============================================================ */}
+
+      <div className="space-y-3 md:hidden">
+        {table
+          .getRowModel()
+          .rows.map((row) => (
+            <div
+              key={row.id}
+              className="rounded-2xl border bg-card p-4"
             >
-              {columns.map((column) => (
-                <td key={column.key} className="px-4 py-4">
-                  {column.render(item)}
-                </td>
-              ))}
-            </tr>
+              <div className="space-y-4">
+                {row
+                  .getAllCells()
+                  .map((cell) => {
+                    const header =
+                      table
+                        .getHeaderGroups()[0]
+                        ?.headers.find(
+                          (item) =>
+                            item.column.id ===
+                            cell.column.id,
+                        );
+
+                    return (
+                      <div
+                        key={cell.id}
+                        className="grid grid-cols-[100px_minmax(0,1fr)] gap-4"
+                      >
+                        <p className="text-xs font-medium text-muted-foreground">
+                          {header ? (
+                            <table.FlexRender
+                              header={header}
+                            />
+                          ) : null}
+                        </p>
+
+                        <div className="min-w-0 text-sm">
+                          <table.FlexRender
+                            cell={cell}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
           ))}
-        </tbody>
-      </table>
+      </div>
+
+      {/* ============================================================ */}
+      {/* PAGINATION                                                    */}
+      {/* ============================================================ */}
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Page {currentPage} of {totalPages}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={
+                !table.getCanPreviousPage()
+              }
+              onClick={() =>
+                table.previousPage()
+              }
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              disabled={
+                !table.getCanNextPage()
+              }
+              onClick={() =>
+                table.nextPage()
+              }
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,5 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
 import {
   BriefcaseBusiness,
   GraduationCap,
@@ -9,6 +7,8 @@ import {
   Plane,
   ShieldCheck,
 } from "lucide-react";
+import { useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useFetch } from "@/hooks/api/useFetch";
 
@@ -26,11 +26,8 @@ import { API_ENDPOINTS } from "@/config/api/api";
 import { AccountIndivisualSummaryError } from "./AccountIndivisualSummaryError";
 import { AccountIndivisualSummaryLoader } from "./AccountIndivisualSummaryLoader";
 import AccountTable from "./AccountTable";
-import { formatCurrency, formatDate } from "@/utils";
 
-/* ====================================================================== */
-/* TYPES                                                                  */
-/* ====================================================================== */
+import { formatCurrency, formatDate } from "@/utils";
 
 type ServiceType =
   | "student"
@@ -39,7 +36,7 @@ type ServiceType =
   | "business"
   | "visa";
 
-type ServiceTab = {
+  type ServiceTab = {
   value: ServiceType;
   label: string;
   icon: React.ElementType;
@@ -73,53 +70,6 @@ const services: ServiceTab[] = [
   },
 ];
 
-/* ====================================================================== */
-/* HELPERS                                                                */
-/* ====================================================================== */
-
-function getServiceResult<T>(
-  service:
-    | {
-        success: boolean;
-        data?: {
-          data?: {
-            result?: T[];
-          };
-        };
-      }
-    | undefined,
-): T[] {
-  if (!service?.success) {
-    return [];
-  }
-
-  return service.data?.data?.result ?? [];
-}
-
-function getTotal(
-  items: Array<{ totalAmount: number }>,
-) {
-  return items.reduce(
-    (total, item) =>
-      total + (item.totalAmount || 0),
-    0,
-  );
-}
-
-function getDue(
-  items: Array<{ due: number }>,
-) {
-  return items.reduce(
-    (total, item) =>
-      total + (item.due || 0),
-    0,
-  );
-}
-
-/* ====================================================================== */
-/* SERVICE TABS                                                           */
-/* ====================================================================== */
-
 function AccountServiceTabs({
   activeService,
   onChange,
@@ -139,9 +89,7 @@ function AccountServiceTabs({
             <button
               key={service.value}
               type="button"
-              onClick={() =>
-                onChange(service.value)
-              }
+              onClick={() => onChange(service.value)}
               className={[
                 "relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
@@ -165,17 +113,23 @@ function AccountServiceTabs({
   );
 }
 
-/* ====================================================================== */
-/* MAIN DASHBOARD                                                         */
-/* ====================================================================== */
-
 export default function AccountIndivisualSummaryDashboard({
   email,
 }: {
   email: string;
 }) {
-  const [activeService, setActiveService] =
-    useState<ServiceType>("student");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const serviceParam = searchParams.get("service");
+
+  const activeService: ServiceType =
+    serviceParam === "medical" ||
+    serviceParam === "tourist" ||
+    serviceParam === "business" ||
+    serviceParam === "visa"
+      ? serviceParam
+      : "student";
 
   /*
    * Only request the currently selected service.
@@ -186,14 +140,10 @@ export default function AccountIndivisualSummaryDashboard({
    * business -> ?business=true
    * visa     -> ?visa=true
    */
-  const url = useMemo(() => {
-    const params = new URLSearchParams();
-
-    params.set(activeService, "true");
-
+  const API_URL = useMemo(() => {
     return `${API_ENDPOINTS.gmInternational.accountsIndividualSummary}/${encodeURIComponent(
       email,
-    )}?${params.toString()}`;
+    )}?${activeService}=true`;
   }, [email, activeService]);
 
   const {
@@ -205,7 +155,21 @@ export default function AccountIndivisualSummaryDashboard({
     success: boolean;
     message: string;
     data: AccountsIndividualSummary;
-  }>(url);
+  }>(API_URL);
+
+  const handleServiceChange = (
+    service: ServiceType,
+  ) => {
+    const params = new URLSearchParams(
+      searchParams.toString(),
+    );
+
+    params.set("service", service);
+
+    router.push(`?${params.toString()}`, {
+      scroll: false,
+    });
+  };
 
   if (isLoading) {
     return <AccountIndivisualSummaryLoader />;
@@ -218,33 +182,80 @@ export default function AccountIndivisualSummaryDashboard({
   ) {
     return (
       <AccountIndivisualSummaryError
-        onRetry={refetch}
+        onRetry={() => refetch()}
       />
     );
   }
 
-  const servicesData = data.data;
-
+  /*
+   * The account API returns only the requested service.
+   *
+   * Account response:
+   *
+   * data
+   * └── service
+   *     └── data
+   *         ├── success
+   *         ├── message
+   *         └── data
+   *             └── result[]
+   *
+   * Therefore we extract only the active service here.
+   */
   const serviceResponse =
-    servicesData[activeService];
-
-  const accounts = getServiceResult<
-    | StudentAccount
-    | MedicalAccount
-    | TouristAccount
-    | BusinessAccount
-    | VisaAccount
-  >(serviceResponse);
+    data.data[activeService];
 
   const serviceAvailable =
     serviceResponse?.success === true;
 
+  /*
+   * Do not create a union array here.
+   *
+   * The service-specific components receive their
+   * own strongly typed data below.
+   */
+
+  const studentAccounts =
+    activeService === "student" &&
+    serviceAvailable
+      ? (serviceResponse?.data?.data?.result ??
+          []) as StudentAccount[]
+      : null;
+
+  const medicalAccounts =
+    activeService === "medical" &&
+    serviceAvailable
+      ? (serviceResponse?.data?.data?.result ??
+          []) as MedicalAccount[]
+      : null;
+
+  const touristAccounts =
+    activeService === "tourist" &&
+    serviceAvailable
+      ? (serviceResponse?.data?.data?.result ??
+          []) as TouristAccount[]
+      : null;
+
+  const businessAccounts =
+    activeService === "business" &&
+    serviceAvailable
+      ? (serviceResponse?.data?.data?.result ??
+          []) as BusinessAccount[]
+      : null;
+
+  const visaAccounts =
+    activeService === "visa" &&
+    serviceAvailable
+      ? (serviceResponse?.data?.data?.result ??
+          []) as VisaAccount[]
+      : null;
+
   return (
     <div className="space-y-8 p-6 lg:p-8">
       <div className="mx-auto w-full max-w-[1440px] space-y-8">
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
         {/* HEADER                                                       */}
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
 
         <section>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo">
@@ -262,66 +273,59 @@ export default function AccountIndivisualSummaryDashboard({
           </p>
         </section>
 
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
         {/* SERVICE TABS                                                 */}
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
 
         <AccountServiceTabs
           activeService={activeService}
-          onChange={setActiveService}
+          onChange={handleServiceChange}
         />
 
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
         {/* SELECTED SERVICE                                             */}
-        {/* ============================================================ */}
+        {/* ------------------------------------------------------------ */}
 
-        {!serviceAvailable ? (
+        {activeService === "student" &&
+          studentAccounts && (
+            <StudentAccounts
+              data={studentAccounts}
+            />
+          )}
+
+        {activeService === "medical" &&
+          medicalAccounts && (
+            <MedicalAccounts
+              data={medicalAccounts}
+            />
+          )}
+
+        {activeService === "tourist" &&
+          touristAccounts && (
+            <TouristAccounts
+              data={touristAccounts}
+            />
+          )}
+
+        {activeService === "business" &&
+          businessAccounts && (
+            <BusinessAccounts
+              data={businessAccounts}
+            />
+          )}
+
+        {activeService === "visa" &&
+          visaAccounts && (
+            <VisaAccounts
+              data={visaAccounts}
+            />
+          )}
+
+        {!serviceAvailable && (
           <ServiceUnavailable
             service={activeService}
-            onRetry={refetch}
+            onRetry={() => refetch()}
           />
-        ) : (
-          <>
-            {activeService === "student" && (
-              <StudentAccounts
-                data={
-                  accounts as StudentAccount[]
-                }
-              />
-            )}
-
-            {activeService === "medical" && (
-              <MedicalAccounts
-                data={
-                  accounts as MedicalAccount[]
-                }
-              />
-            )}
-
-            {activeService === "tourist" && (
-              <TouristAccounts
-                data={
-                  accounts as TouristAccount[]
-                }
-              />
-            )}
-
-            {activeService === "business" && (
-              <BusinessAccounts
-                data={
-                  accounts as BusinessAccount[]
-                }
-              />
-            )}
-
-            {activeService === "visa" && (
-              <VisaAccounts
-                data={
-                  accounts as VisaAccount[]
-                }
-              />
-            )}
-          </>
         )}
       </div>
     </div>
@@ -355,8 +359,8 @@ function ServiceUnavailable({
       </h2>
 
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-        The {label.toLowerCase()} account
-        service did not return usable data.
+        The {label.toLowerCase()} account service
+        did not return usable data.
       </p>
 
       <button
@@ -371,7 +375,7 @@ function ServiceUnavailable({
 }
 
 /* ====================================================================== */
-/* STUDENT                                                               */
+/* STUDENT ACCOUNTS                                                       */
 /* ====================================================================== */
 
 function StudentAccounts({
@@ -394,50 +398,54 @@ function StudentAccounts({
             key: "name",
             label: "Name",
             render: (item) => (
-              <div>
-                <p className="font-medium">
+              <div className="min-w-0">
+                <p className="truncate font-medium">
                   {item.name}
                 </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {item.userEmail}
                 </p>
               </div>
             ),
           },
+
           {
             key: "degree",
             label: "Degree",
             render: (item) => item.degree,
           },
+
           {
             key: "university",
             label: "University",
             render: (item) => (
-              <span className="block max-w-[260px] truncate">
+              <span className="block max-w-[280px] truncate">
                 {item.university}
               </span>
             ),
           },
+
           {
             key: "intake",
             label: "Intake",
             render: (item) => item.intake,
           },
+
           {
             key: "total",
             label: "Total",
             render: (item) =>
-              formatCurrency(
-                item.totalAmount,
-              ),
+              formatCurrency(item.totalAmount),
           },
+
           {
             key: "advance",
             label: "Advance",
             render: (item) =>
               formatCurrency(item.advance),
           },
+
           {
             key: "due",
             label: "Due",
@@ -452,7 +460,7 @@ function StudentAccounts({
 }
 
 /* ====================================================================== */
-/* MEDICAL                                                               */
+/* MEDICAL ACCOUNTS                                                       */
 /* ====================================================================== */
 
 function MedicalAccounts({
@@ -472,38 +480,45 @@ function MedicalAccounts({
         data={data}
         columns={[
           {
-            key: "name",
+            key: "patient",
             label: "Patient",
             render: (item) => (
-              <div>
-                <p className="font-medium">
+              <div className="min-w-0">
+                <p className="truncate font-medium">
                   {item.name}
                 </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {item.patientPhone}
                 </p>
               </div>
             ),
           },
+
           {
             key: "hospital",
             label: "Hospital",
-            render: (item) =>
-              item.hospitalName,
+            render: (item) => (
+              <span className="block max-w-[240px] truncate">
+                {item.hospitalName}
+              </span>
+            ),
           },
+
           {
             key: "country",
             label: "Country",
             render: (item) =>
               item.countryName,
           },
+
           {
             key: "age",
             label: "Age",
             render: (item) =>
               item.patientAge,
           },
+
           {
             key: "disease",
             label: "Disease",
@@ -513,26 +528,28 @@ function MedicalAccounts({
               </span>
             ),
           },
+
           {
             key: "flyingDate",
             label: "Flying date",
             render: (item) =>
               formatDate(item.flyingDate),
           },
+
           {
             key: "total",
             label: "Total",
             render: (item) =>
-              formatCurrency(
-                item.totalAmount,
-              ),
+              formatCurrency(item.totalAmount),
           },
+
           {
             key: "advance",
             label: "Advance",
             render: (item) =>
               formatCurrency(item.advance),
           },
+
           {
             key: "due",
             label: "Due",
@@ -547,7 +564,7 @@ function MedicalAccounts({
 }
 
 /* ====================================================================== */
-/* TOURIST                                                               */
+/* TOURIST ACCOUNTS                                                       */
 /* ====================================================================== */
 
 function TouristAccounts({
@@ -570,17 +587,18 @@ function TouristAccounts({
             key: "client",
             label: "Client",
             render: (item) => (
-              <div>
-                <p className="font-medium">
+              <div className="min-w-0">
+                <p className="truncate font-medium">
                   {item.clientName}
                 </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {item.clientPhone}
                 </p>
               </div>
             ),
           },
+
           {
             key: "gender",
             label: "Gender",
@@ -590,50 +608,59 @@ function TouristAccounts({
               </span>
             ),
           },
+
           {
             key: "guests",
             label: "Guests",
             render: (item) =>
               item.numberOfGuests,
           },
+
           {
             key: "passport",
             label: "Passport",
             render: (item) =>
               item.passportNumber || "—",
           },
+
           {
             key: "destination",
             label: "Destination",
-            render: (item) =>
-              item.destinationCountry,
+            render: (item) => (
+              <span className="block max-w-[180px] truncate">
+                {item.destinationCountry}
+              </span>
+            ),
           },
+
           {
             key: "duration",
             label: "Duration",
             render: (item) =>
               item.duration,
           },
+
           {
             key: "flyingDate",
             label: "Flying date",
             render: (item) =>
               formatDate(item.flyingDate),
           },
+
           {
             key: "total",
             label: "Total",
             render: (item) =>
-              formatCurrency(
-                item.totalAmount,
-              ),
+              formatCurrency(item.totalAmount),
           },
+
           {
             key: "advance",
             label: "Advance",
             render: (item) =>
               formatCurrency(item.advance),
           },
+
           {
             key: "due",
             label: "Due",
@@ -648,7 +675,7 @@ function TouristAccounts({
 }
 
 /* ====================================================================== */
-/* BUSINESS                                                               */
+/* BUSINESS ACCOUNTS                                                      */
 /* ====================================================================== */
 
 function BusinessAccounts({
@@ -671,29 +698,32 @@ function BusinessAccounts({
             key: "client",
             label: "Client",
             render: (item) => (
-              <div>
-                <p className="font-medium">
+              <div className="min-w-0">
+                <p className="truncate font-medium">
                   {item.clientName}
                 </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {item.clientPhone}
                 </p>
               </div>
             ),
           },
+
           {
             key: "country",
             label: "Country",
             render: (item) =>
               item.country,
           },
+
           {
             key: "office",
             label: "Office",
             render: (item) =>
               item.officeLocation,
           },
+
           {
             key: "gender",
             label: "Gender",
@@ -703,26 +733,28 @@ function BusinessAccounts({
               </span>
             ),
           },
+
           {
             key: "passport",
             label: "Passport",
             render: (item) =>
               item.passportNumber || "—",
           },
+
           {
             key: "total",
             label: "Total",
             render: (item) =>
-              formatCurrency(
-                item.totalAmount,
-              ),
+              formatCurrency(item.totalAmount),
           },
+
           {
             key: "advance",
             label: "Advance",
             render: (item) =>
               formatCurrency(item.advance),
           },
+
           {
             key: "due",
             label: "Due",
@@ -737,7 +769,7 @@ function BusinessAccounts({
 }
 
 /* ====================================================================== */
-/* VISA                                                                  */
+/* VISA ACCOUNTS                                                          */
 /* ====================================================================== */
 
 function VisaAccounts({
@@ -760,49 +792,53 @@ function VisaAccounts({
             key: "client",
             label: "Client",
             render: (item) => (
-              <div>
-                <p className="font-medium">
+              <div className="min-w-0">
+                <p className="truncate font-medium">
                   {item.clientName}
                 </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {item.clientPhone}
                 </p>
               </div>
             ),
           },
+
           {
             key: "passport",
             label: "Passport",
             render: (item) =>
               item.passportNumber || "—",
           },
+
           {
             key: "dateOfBirth",
             label: "Date of birth",
             render: (item) =>
               formatDate(item.dateOfBirth),
           },
+
           {
             key: "country",
             label: "Country",
             render: (item) =>
               item.country,
           },
+
           {
             key: "total",
             label: "Total",
             render: (item) =>
-              formatCurrency(
-                item.totalAmount,
-              ),
+              formatCurrency(item.totalAmount),
           },
+
           {
             key: "advance",
             label: "Advance",
             render: (item) =>
               formatCurrency(item.advance),
           },
+
           {
             key: "due",
             label: "Due",
@@ -817,7 +853,7 @@ function VisaAccounts({
 }
 
 /* ====================================================================== */
-/* SHARED COMPONENTS                                                      */
+/* SERVICE HEADER                                                         */
 /* ====================================================================== */
 
 function ServiceHeader({
@@ -836,7 +872,7 @@ function ServiceHeader({
           {title}
         </h2>
 
-        <span className="rounded-full border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
+        <span className="shrink-0 rounded-full border bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
           {count}{" "}
           {count === 1
             ? "account"
@@ -851,6 +887,10 @@ function ServiceHeader({
   );
 }
 
+/* ====================================================================== */
+/* DUE AMOUNT                                                             */
+/* ====================================================================== */
+
 function DueAmount({
   value,
 }: {
@@ -858,12 +898,11 @@ function DueAmount({
 }) {
   return (
     <span
-      className={[
-        "font-semibold",
+      className={
         value > 0
-          ? "text-amber-600"
-          : "text-emerald-600",
-      ].join(" ")}
+          ? "font-semibold text-amber-600"
+          : "font-semibold text-emerald-600"
+      }
     >
       {formatCurrency(value)}
     </span>
