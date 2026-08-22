@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
@@ -12,12 +9,11 @@ import {
   useTable,
   type ColumnDef,
   type PaginationState,
-  type RowData,
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
 const features = tableFeatures({
   rowPaginationFeature,
@@ -36,34 +32,35 @@ type AccountTableProps<T> = {
   emptyMessage?: string;
 };
 
-export default function AccountTable<T extends RowData>({
+export default function AccountTable<T>({
   data,
   columns,
-  pageSize = PAGE_SIZE,
+  pageSize = DEFAULT_PAGE_SIZE,
   emptyMessage = "No account records found.",
 }: AccountTableProps<T>) {
-  const [pagination, setPagination] =
-    useState<PaginationState>({
-      pageIndex: 0,
-      pageSize,
-    });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
   /*
-   * TanStack's useTable in this project is configured around RowData.
+   * TanStack's useTable in this project expects RowData.
    *
-   * The actual account type is preserved by AccountTableColumn<T>.
-   * We only bridge it when creating the TanStack columns.
+   * We keep T as the public API of AccountTable and bridge
+   * it to the project's TanStack setup at the table boundary.
    */
-  const tableColumns = useMemo<
-    ColumnDef<typeof features, T>[]
-  >(
+  const tableData = data as unknown as any[];
+
+  const tableColumns = useMemo<ColumnDef<typeof features, any>[]>(
     () =>
       columns.map((column) => ({
         id: column.key,
         header: column.label,
 
         cell: ({ row }) => {
-          return column.render(row.original);
+          const item = row.original as T;
+
+          return column.render(item);
         },
       })),
     [columns],
@@ -71,10 +68,11 @@ export default function AccountTable<T extends RowData>({
 
   const table = useTable({
     key: "account-table",
+
     features,
 
     columns: tableColumns,
-    data,
+    data: tableData,
 
     state: {
       pagination,
@@ -88,8 +86,7 @@ export default function AccountTable<T extends RowData>({
     Math.ceil(data.length / pagination.pageSize),
   );
 
-  const currentPage =
-    pagination.pageIndex + 1;
+  const currentPage = pagination.pageIndex + 1;
 
   if (data.length === 0) {
     return (
@@ -103,120 +100,86 @@ export default function AccountTable<T extends RowData>({
 
   return (
     <div className="space-y-4">
-      {/* ============================================================ */}
-      {/* DESKTOP TABLE                                                 */}
-      {/* ============================================================ */}
-
+      {/* Desktop table */}
       <div className="hidden overflow-hidden rounded-2xl border md:block">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-muted/40">
-              {table
-                .getHeaderGroups()
-                .map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map(
-                      (header) => (
-                        <th
-                          key={header.id}
-                          className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground"
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : (
-                                <table.FlexRender
-                                  header={header}
-                                />
-                              )}
-                        </th>
-                      ),
-                    )}
-                  </tr>
-                ))}
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th
+                      key={header.id}
+                      className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold text-muted-foreground"
+                    >
+                      {header.isPlaceholder ? null : (
+                        <table.FlexRender header={header} />
+                      )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
 
             <tbody className="divide-y">
-              {table
-                .getRowModel()
-                .rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="transition-colors hover:bg-muted/20"
-                  >
-                    {row
-                      .getAllCells()
-                      .map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="px-4 py-4 align-middle"
-                        >
-                          <table.FlexRender
-                            cell={cell}
-                          />
-                        </td>
-                      ))}
-                  </tr>
-                ))}
+              {table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="transition-colors hover:bg-muted/20"
+                >
+                  {row.getAllCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="px-4 py-4 align-middle"
+                    >
+                      <table.FlexRender cell={cell} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ============================================================ */}
-      {/* MOBILE                                                        */}
-      {/* ============================================================ */}
-
+      {/* Mobile */}
       <div className="space-y-3 md:hidden">
-        {table
-          .getRowModel()
-          .rows.map((row) => (
-            <div
-              key={row.id}
-              className="rounded-2xl border bg-card p-4"
-            >
-              <div className="space-y-4">
-                {row
-                  .getAllCells()
-                  .map((cell) => {
-                    const header =
-                      table
-                        .getHeaderGroups()[0]
-                        ?.headers.find(
-                          (item) =>
-                            item.column.id ===
-                            cell.column.id,
-                        );
+        {table.getRowModel().rows.map((row) => (
+          <div
+            key={row.id}
+            className="rounded-2xl border bg-card p-4"
+          >
+            <div className="space-y-4">
+              {row.getAllCells().map((cell) => {
+                const header = table
+                  .getHeaderGroups()[0]
+                  ?.headers.find(
+                    (item) => item.column.id === cell.column.id,
+                  );
 
-                    return (
-                      <div
-                        key={cell.id}
-                        className="grid grid-cols-[100px_minmax(0,1fr)] gap-4"
-                      >
-                        <p className="text-xs font-medium text-muted-foreground">
-                          {header ? (
-                            <table.FlexRender
-                              header={header}
-                            />
-                          ) : null}
-                        </p>
+                return (
+                  <div
+                    key={cell.id}
+                    className="grid grid-cols-[100px_minmax(0,1fr)] gap-4"
+                  >
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {header ? (
+                        <table.FlexRender header={header} />
+                      ) : null}
+                    </p>
 
-                        <div className="min-w-0 text-sm">
-                          <table.FlexRender
-                            cell={cell}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
+                    <div className="min-w-0 text-sm">
+                      <table.FlexRender cell={cell} />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          ))}
+          </div>
+        ))}
       </div>
 
-      {/* ============================================================ */}
-      {/* PAGINATION                                                    */}
-      {/* ============================================================ */}
-
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
@@ -228,12 +191,8 @@ export default function AccountTable<T extends RowData>({
               type="button"
               variant="outline"
               size="icon"
-              disabled={
-                !table.getCanPreviousPage()
-              }
-              onClick={() =>
-                table.previousPage()
-              }
+              disabled={!table.getCanPreviousPage()}
+              onClick={() => table.previousPage()}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -242,12 +201,8 @@ export default function AccountTable<T extends RowData>({
               type="button"
               variant="outline"
               size="icon"
-              disabled={
-                !table.getCanNextPage()
-              }
-              onClick={() =>
-                table.nextPage()
-              }
+              disabled={!table.getCanNextPage()}
+              onClick={() => table.nextPage()}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
