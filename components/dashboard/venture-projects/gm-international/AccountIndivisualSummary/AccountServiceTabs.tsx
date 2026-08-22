@@ -59,37 +59,37 @@ export default function AccountServiceTabs({
   onChange: (service: ServiceType) => void;
 }) {
   return (
-    <div className="border-b border-border">
-      <div className="flex w-full overflow-x-auto">
-        {services.map((service) => {
-          const Icon = service.icon;
-          const isActive =
-            activeService === service.value;
+    <section>
+      <div className="rounded-2xl border border-border/70 bg-card p-2">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {services.map((service) => {
+            const Icon = service.icon;
+            const isActive =
+              activeService === service.value;
 
-          return (
-            <button
-              key={service.value}
-              type="button"
-              onClick={() => onChange(service.value)}
-              className={[
-                "relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              ].join(" ")}
-            >
-              <Icon className="h-4 w-4" />
+            return (
+              <button
+                key={service.value}
+                type="button"
+                onClick={() =>
+                  onChange(service.value)
+                }
+                className={[
+                  "flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                  isActive
+                    ? "bg-indigo text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ].join(" ")}
+              >
+                <Icon className="h-4 w-4" />
 
-              <span>{service.label}</span>
-
-              {isActive && (
-                <span className="absolute inset-x-0 bottom-[-1px] h-0.5 bg-foreground" />
-              )}
-            </button>
-          );
-        })}
+                <span>{service.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
