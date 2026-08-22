@@ -43,12 +43,6 @@ export default function AccountTable<T>({
     pageSize,
   });
 
-  /*
-   * TanStack's useTable in this project expects RowData.
-   *
-   * We keep T as the public API of AccountTable and bridge
-   * it to the project's TanStack setup at the table boundary.
-   */
   const tableData = data as unknown as any[];
 
   const tableColumns = useMemo<ColumnDef<typeof features, any>[]>(
@@ -101,10 +95,10 @@ export default function AccountTable<T>({
   return (
     <div className="space-y-4">
       {/* Desktop table */}
-      <div className="hidden overflow-hidden rounded-2xl border md:block">
+      <div className="hidden overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm md:block">
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/40">
+          <table className="w-full bg-card">
+            <thead className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
