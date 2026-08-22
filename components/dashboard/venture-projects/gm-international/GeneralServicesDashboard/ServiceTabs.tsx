@@ -66,7 +66,7 @@ export default function ServiceTabs({
                   "flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                   isActive
-                    ? "bg-foreground text-background shadow-sm"
+                    ? "bg-indigo text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 ].join(" ")}
               >
