@@ -1,17 +1,16 @@
 "use client";
 
 import {
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   Eye,
   MoreHorizontal,
   Pencil,
+  Plus,
   RefreshCw,
   Star,
   Trash2,
-  Plus
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
@@ -42,12 +41,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import VenturesTableLoader from "./VenturesTableLoader";
-import VenturesDashboardError from "./VenturesDashboardError";
 import EmptyVentures from "./EmptyVentures";
+import VenturesDashboardError from "./VenturesDashboardError";
+import VenturesTableLoader from "./VenturesTableLoader";
 
 import { Venture } from "@/types";
 import { formatDate } from "@/utils";
+import VentureDetailsModal from "./VentureDetailsModal";
 
 const PAGE_SIZE = 10;
 
@@ -60,6 +60,8 @@ export default function VenturesDashboard() {
     pageIndex: 0,
     pageSize: PAGE_SIZE,
   });
+  const [selectedVenture, setSelectedVenture] =
+    useState<Venture | null>(null);
 
   const { data, isLoading, isError, refetch } = useFetch<Venture[]>(
     "/ventures/get-all",
@@ -156,9 +158,7 @@ export default function VenturesDashboard() {
 
           if (!website) {
             return (
-              <span className="text-sm text-muted-foreground">
-                —
-              </span>
+              <span className="text-sm text-muted-foreground">—</span>
             );
           }
 
@@ -211,7 +211,11 @@ export default function VenturesDashboard() {
               </DropdownMenuTrigger>
 
               <DropdownMenuContent align="end" className="w-44 p-1">
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedVenture(venture);
+                  }}
+                >
                   <Eye className="mr-2 h-4 w-4" />
                   View detail
                 </DropdownMenuItem>
@@ -487,6 +491,12 @@ export default function VenturesDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <VentureDetailsModal
+        venture={selectedVenture}
+        open={Boolean(selectedVenture)}
+        onClose={() => setSelectedVenture(null)}
+      />
     </div>
   );
 }
