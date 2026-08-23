@@ -11,7 +11,7 @@ import {
   RefreshCw,
   Star,
   Trash2,
-  XCircle,
+  Plus
 } from "lucide-react";
 
 import { useMemo, useState } from "react";
@@ -41,6 +41,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import VenturesTableLoader from "./VenturesTableLoader";
+import VenturesDashboardError from "./VenturesDashboardError";
+import EmptyVentures from "./EmptyVentures";
 
 import { Venture } from "@/types";
 import { formatDate } from "@/utils";
@@ -152,7 +156,9 @@ export default function VenturesDashboard() {
 
           if (!website) {
             return (
-              <span className="text-sm text-muted-foreground">—</span>
+              <span className="text-sm text-muted-foreground">
+                —
+              </span>
             );
           }
 
@@ -254,50 +260,7 @@ export default function VenturesDashboard() {
 
   const currentPage = pagination.pageIndex + 1;
 
-  if (isLoading) {
-    return (
-      <div className="space-y-8 p-6 lg:p-8">
-        <div className="mx-auto w-full max-w-[1440px]">
-          <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
-
-          <div className="mt-3 h-5 w-96 max-w-full animate-pulse rounded bg-muted" />
-
-          <div className="mt-8 h-96 animate-pulse rounded-2xl bg-muted" />
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="space-y-8 p-6 lg:p-8">
-        <div className="mx-auto w-full max-w-[1440px]">
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <XCircle className="h-10 w-10 text-destructive" />
-
-              <h2 className="mt-4 text-lg font-semibold">
-                Failed to load ventures
-              </h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                We couldn't retrieve the venture data.
-              </p>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="mt-5"
-                onClick={() => refetch()}
-              >
-                Try again
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  const handleCreateVenture = () => {};
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
@@ -322,7 +285,7 @@ export default function VenturesDashboard() {
 
             <div className="flex shrink-0 items-center gap-2">
               <Button
-                type="button rounded"
+                type="button"
                 className="p-3 py-5"
                 variant="outline"
                 onClick={() => refetch()}
@@ -338,8 +301,9 @@ export default function VenturesDashboard() {
               <Button
                 type="button"
                 className="bg-indigo p-5"
-                onClick={() => {}}
+                onClick={handleCreateVenture}
               >
+                <Plus className="mr-2 h-4 w-4" />
                 Create new venture
               </Button>
             </div>
@@ -359,14 +323,15 @@ export default function VenturesDashboard() {
           </CardHeader>
 
           <CardContent>
-            {ventures.length === 0 ? (
-              <div className="rounded-2xl border border-dashed p-10 text-center">
-                <CheckCircle2 className="mx-auto h-8 w-8 text-muted-foreground" />
-
-                <p className="mt-3 text-sm text-muted-foreground">
-                  No ventures found.
-                </p>
-              </div>
+            {isLoading ? (
+              <VenturesTableLoader />
+            ) : isError ? (
+              <VenturesDashboardError
+                onRetry={() => refetch()}
+                isLoading={isLoading}
+              />
+            ) : ventures.length === 0 ? (
+              <EmptyVentures onCreate={handleCreateVenture} />
             ) : (
               <>
                 {/* Desktop */}
