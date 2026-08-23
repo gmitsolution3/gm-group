@@ -49,6 +49,7 @@ import { Venture } from "@/types";
 import { formatDate } from "@/utils";
 
 import CreateVentureModal from "./CreateVentureModal";
+import UpdateVentureModal from "./UpdateVentureModal";
 import VentureDetailsModal from "./VentureDetailsModal";
 
 const PAGE_SIZE = 10;
@@ -66,6 +67,9 @@ export default function VenturesDashboard() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedVenture, setSelectedVenture] =
     useState<Venture | null>(null);
+  const [updateVenture, setUpdateVenture] = useState<Venture | null>(
+    null,
+  );
 
   const { data, isLoading, isError, refetch } = useFetch<Venture[]>(
     "/ventures/get-all",
@@ -224,7 +228,11 @@ export default function VenturesDashboard() {
                   View detail
                 </DropdownMenuItem>
 
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setUpdateVenture(venture);
+                  }}
+                >
                   <Pencil className="mr-2 h-4 w-4" />
                   Edit venture
                 </DropdownMenuItem>
@@ -507,6 +515,16 @@ export default function VenturesDashboard() {
         venture={selectedVenture}
         open={Boolean(selectedVenture)}
         onClose={() => setSelectedVenture(null)}
+      />
+
+      <UpdateVentureModal
+        venture={updateVenture}
+        open={Boolean(updateVenture)}
+        onClose={() => setUpdateVenture(null)}
+        onUpdated={() => {
+          setUpdateVenture(null);
+          refetch();
+        }}
       />
     </div>
   );
