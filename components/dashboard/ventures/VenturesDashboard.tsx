@@ -5,7 +5,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Eye,
+  MoreHorizontal,
+  Pencil,
+  RefreshCw,
   Star,
+  Trash2,
   XCircle,
 } from "lucide-react";
 
@@ -29,6 +34,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { Venture } from "@/types";
 import { formatDate } from "@/utils";
@@ -168,6 +180,53 @@ export default function VenturesDashboard() {
           </span>
         ),
       },
+
+      {
+        id: "actions",
+        header: "",
+
+        enableHiding: false,
+
+        cell: ({ row }) => {
+          const venture = row.original;
+
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  aria-label={`Actions for ${venture.name}`}
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end" className="w-44 p-1">
+                <DropdownMenuItem onClick={() => {}}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  View detail
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={() => {}}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit venture
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => {}}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete venture
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
     ],
     [],
   );
@@ -245,17 +304,46 @@ export default function VenturesDashboard() {
       <div className="mx-auto w-full max-w-[1440px] space-y-8">
         {/* Header */}
         <section>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo">
-            Administration
-          </p>
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo">
+                Administration
+              </p>
 
-          <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Ventures
-          </h1>
+              <h1 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-4xl">
+                Ventures
+              </h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Manage and review the ventures operating under GM Group.
-          </p>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+                Manage and review the ventures operating under GM
+                Group.
+              </p>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-2">
+              <Button
+                type="button rounded"
+                className="p-3 py-5"
+                variant="outline"
+                onClick={() => refetch()}
+                disabled={isLoading}
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${
+                    isLoading ? "animate-spin" : ""
+                  }`}
+                />
+              </Button>
+
+              <Button
+                type="button"
+                className="bg-indigo p-5"
+                onClick={() => {}}
+              >
+                Create new venture
+              </Button>
+            </div>
+          </div>
         </section>
 
         {/* Venture list */}
