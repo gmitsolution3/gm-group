@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePlus, Plus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { usePost } from "@/hooks/api/usePost";
@@ -130,8 +131,6 @@ export default function CreateVentureModal({
   onClose,
   onCreated,
 }: CreateVentureModalProps) {
-  const [serverError, setServerError] = useState<string | null>(null);
-
   const form = useForm<CreateVentureFormValues>({
     resolver: zodResolver(createVentureSchema),
 
@@ -186,9 +185,8 @@ export default function CreateVentureModal({
 
   const {
     isLoading: isSubmitting,
-    isError: postError,
     mutate: createVenture,
-  } = usePost("/ventures/insert", {
+  } = usePost<{ message?: string }>("/ventures/insert", {
     revalidateKey: "/ventures/get-all",
   });
 
@@ -206,8 +204,6 @@ export default function CreateVentureModal({
    */
   useEffect(() => {
     if (open) {
-      setServerError(null);
-
       reset({
         slug: "",
         name: "",
@@ -233,24 +229,7 @@ export default function CreateVentureModal({
     }
   }, [open, reset]);
 
-  /*
-   * Surface the usePost error in the form.
-   */
-  useEffect(() => {
-    if (!postError) {
-      return;
-    }
-
-    setServerError(
-      postError instanceof Error
-        ? postError.message
-        : "Unable to create venture.",
-    );
-  }, [postError]);
-
   async function onSubmit(values: CreateVentureFormValues) {
-    setServerError(null);
-
     const payload = {
       slug: values.slug,
       name: values.name,
@@ -273,14 +252,18 @@ export default function CreateVentureModal({
     };
 
     try {
-      await createVenture(payload);
+      const response = await createVenture(payload);
+
+      toast.success(
+        response?.message ?? "Venture created successfully.",
+      );
 
       reset();
 
       onCreated?.();
       onClose();
     } catch (error) {
-      setServerError(
+      toast.error(
         error instanceof Error
           ? error.message
           : "Unable to create venture.",
@@ -884,16 +867,6 @@ export default function CreateVentureModal({
                   ))}
                 </div>
               </section>
-
-              {/* Server error */}
-              {serverError && (
-                <div
-                  role="alert"
-                  className="rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm leading-relaxed text-destructive"
-                >
-                  {serverError}
-                </div>
-              )}
             </div>
           </div>
 
