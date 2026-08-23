@@ -47,6 +47,8 @@ import VenturesTableLoader from "./VenturesTableLoader";
 
 import { Venture } from "@/types";
 import { formatDate } from "@/utils";
+
+import CreateVentureModal from "./CreateVentureModal";
 import VentureDetailsModal from "./VentureDetailsModal";
 
 const PAGE_SIZE = 10;
@@ -60,6 +62,8 @@ export default function VenturesDashboard() {
     pageIndex: 0,
     pageSize: PAGE_SIZE,
   });
+
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedVenture, setSelectedVenture] =
     useState<Venture | null>(null);
 
@@ -305,7 +309,7 @@ export default function VenturesDashboard() {
               <Button
                 type="button"
                 className="bg-indigo p-5"
-                onClick={handleCreateVenture}
+                onClick={() => setCreateModalOpen(true)}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 Create new venture
@@ -335,7 +339,9 @@ export default function VenturesDashboard() {
                 isLoading={isLoading}
               />
             ) : ventures.length === 0 ? (
-              <EmptyVentures onCreate={handleCreateVenture} />
+              <EmptyVentures
+                onCreate={() => setCreateModalOpen(true)}
+              />
             ) : (
               <>
                 {/* Desktop */}
@@ -491,6 +497,11 @@ export default function VenturesDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <CreateVentureModal
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+      />
 
       <VentureDetailsModal
         venture={selectedVenture}
