@@ -141,7 +141,7 @@ export default function AccountTable<T>({
         {table.getRowModel().rows.map((row) => (
           <div
             key={row.id}
-            className="rounded-2xl border bg-card p-4"
+            className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm"
           >
             <div className="space-y-4">
               {row.getAllCells().map((cell) => {
