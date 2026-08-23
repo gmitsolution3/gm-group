@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl =
+export const baseUrl =
   process.env.NODE_ENV === "development"
     ? process.env.NEXT_PUBLIC_DEV_API_BASE_URL
     : process.env.NEXT_PUBLIC_API_BASE_URL;
