@@ -84,6 +84,84 @@ export default function TouristAccounts({
             render: (item) => <DueAmount value={item.due} />,
           },
         ]}
+        getDetails={(item) => ({
+          title: item.clientName,
+          subtitle: item.clientPhone,
+
+          details: [
+            {
+              label: "Client",
+              value: item.clientName,
+            },
+            {
+              label: "Gender",
+              value: item.gender,
+            },
+            {
+              label: "Number of guests",
+              value: item.numberOfGuests,
+            },
+            {
+              label: "Phone",
+              value: item.clientPhone,
+            },
+            {
+              label: "Passport",
+              value: item.passportNumber || "—",
+            },
+            {
+              label: "Destination",
+              value: item.destinationCountry,
+            },
+            {
+              label: "Duration",
+              value: item.duration,
+            },
+            {
+              label: "Flying date",
+              value: formatDate(item.flyingDate),
+            },
+            {
+              label: "Coverage areas",
+              value:
+                item.coverageAreas.length > 0
+                  ? item.coverageAreas.join(", ")
+                  : "—",
+            },
+            {
+              label: "Total amount",
+              value: formatCurrency(item.totalAmount),
+            },
+            {
+              label: "Advance",
+              value: formatCurrency(item.advance),
+            },
+            {
+              label: "Due",
+              value: formatCurrency(item.due),
+            },
+            {
+              label: "Created at",
+              value: formatDate(item.createdAt),
+            },
+            {
+              label: "Account holder",
+              value: item.accountHolder?.email ?? "—",
+            },
+            {
+              label: "Account holder phone",
+              value: item.accountHolder?.phone ?? "—",
+            },
+            {
+              label: "Account holder role",
+              value: item.accountHolder?.userRole ?? "—",
+            },
+            {
+              label: "Branch",
+              value: item.accountHolder?.branchName ?? "—",
+            },
+          ],
+        })}
       />
     </section>
   );
