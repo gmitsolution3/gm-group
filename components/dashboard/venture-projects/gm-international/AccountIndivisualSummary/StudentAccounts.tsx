@@ -1,7 +1,7 @@
 "use client";
 
 import { StudentAccount } from "@/types";
-import { formatCurrency } from "@/utils";
+import { formatCurrency, formatDate } from "@/utils";
 
 import AccountTable from "./AccountTable";
 import DueAmount from "./DueAmount";
@@ -71,6 +71,82 @@ export default function StudentAccounts({
             render: (item) => <DueAmount value={item.due} />,
           },
         ]}
+        getDetails={(item) => ({
+          title: item.name,
+          subtitle: item.userEmail,
+
+          details: [
+            {
+              label: "Account ID",
+              value: item._id,
+            },
+            {
+              label: "Name",
+              value: item.name,
+            },
+            {
+              label: "Email",
+              value: item.userEmail,
+            },
+            {
+              label: "Degree",
+              value: item.degree,
+            },
+            {
+              label: "University",
+              value: item.university,
+            },
+            {
+              label: "Intake",
+              value: item.intake,
+            },
+            {
+              label: "Total amount",
+              value: formatCurrency(item.totalAmount),
+            },
+            {
+              label: "Advance",
+              value: formatCurrency(item.advance),
+            },
+            {
+              label: "Due",
+              value: formatCurrency(item.due),
+            },
+            {
+              label: "Created at",
+              value: formatDate(item.createdAt),
+            },
+            {
+              label: "Updated at",
+              value: item.updatedAt
+                ? formatDate(item.updatedAt)
+                : "—",
+            },
+            {
+              label: "Missing documents",
+              value:
+                item.missingDocuments.length > 0
+                  ? item.missingDocuments.join(", ")
+                  : "None",
+            },
+            {
+              label: "Account holder email",
+              value: item.accountHolder?.email ?? "—",
+            },
+            {
+              label: "Account holder phone",
+              value: item.accountHolder?.phone ?? "—",
+            },
+            {
+              label: "Account holder role",
+              value: item.accountHolder?.userRole ?? "—",
+            },
+            {
+              label: "Branch",
+              value: item.accountHolder?.branchName ?? "—",
+            },
+          ],
+        })}
       />
     </section>
   );

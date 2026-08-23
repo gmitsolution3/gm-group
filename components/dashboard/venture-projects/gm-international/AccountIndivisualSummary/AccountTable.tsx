@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import {
@@ -12,6 +12,10 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
+
+import AccountDetailsModal, {
+  type AccountDetail,
+} from "./AccountDetailsModal";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -30,6 +34,12 @@ type AccountTableProps<T> = {
   columns: AccountTableColumn<T>[];
   pageSize?: number;
   emptyMessage?: string;
+
+  getDetails?: (item: T) => {
+    title: string;
+    subtitle?: string;
+    details: AccountDetail[];
+  };
 };
 
 export default function AccountTable<T>({
@@ -37,7 +47,12 @@ export default function AccountTable<T>({
   columns,
   pageSize = DEFAULT_PAGE_SIZE,
   emptyMessage = "No account records found.",
+  getDetails,
 }: AccountTableProps<T>) {
+  const [selectedAccount, setSelectedAccount] = useState<T | null>(
+    null,
+  );
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize,
@@ -45,20 +60,49 @@ export default function AccountTable<T>({
 
   const tableData = data as unknown as any[];
 
-  const tableColumns = useMemo<ColumnDef<typeof features, any>[]>(
-    () =>
-      columns.map((column) => ({
-        id: column.key,
-        header: column.label,
+  const tableColumns = useMemo<
+    ColumnDef<typeof features, any>[]
+  >(() => {
+    const accountColumns = columns.map((column) => ({
+      id: column.key,
+      header: column.label,
 
-        cell: ({ row }) => {
-          const item = row.original as T;
+      cell: ({ row }: { row: any }) => {
+        const item = row.original as T;
 
-          return column.render(item);
-        },
-      })),
-    [columns],
-  );
+        return column.render(item);
+      },
+    }));
+
+    if (!getDetails) {
+      return accountColumns;
+    }
+
+    return [
+      ...accountColumns,
+
+      {
+        id: "actions",
+        header: "",
+        enableHiding: false,
+
+        cell: ({ row }: { row: any }) => (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => {
+              setSelectedAccount(row.original as T);
+            }}
+          >
+            <Eye className="h-3.5 w-3.5" />
+            <span>View</span>
+          </Button>
+        ),
+      },
+    ];
+  }, [columns, getDetails]);
 
   const table = useTable({
     key: "account-table",
@@ -202,6 +246,16 @@ export default function AccountTable<T>({
             </Button>
           </div>
         </div>
+      )}
+
+      {selectedAccount && getDetails && (
+        <AccountDetailsModal
+          open={Boolean(selectedAccount)}
+          title={getDetails(selectedAccount).title}
+          subtitle={getDetails(selectedAccount).subtitle}
+          details={getDetails(selectedAccount).details}
+          onClose={() => setSelectedAccount(null)}
+        />
       )}
     </div>
   );
