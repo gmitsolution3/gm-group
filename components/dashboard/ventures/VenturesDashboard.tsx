@@ -5,6 +5,7 @@ import {
   ChevronRight,
   ExternalLink,
   Eye,
+  Loader2,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -24,6 +25,7 @@ import {
 } from "@tanstack/react-table";
 
 import { useFetch } from "@/hooks/api/useFetch";
+import { useDelete } from "@/hooks/api/useDelete";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import {
   DropdownMenu,
@@ -65,15 +78,25 @@ export default function VenturesDashboard() {
   });
 
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
   const [selectedVenture, setSelectedVenture] =
     useState<Venture | null>(null);
+
   const [updateVenture, setUpdateVenture] = useState<Venture | null>(
     null,
   );
 
+  const [deleteVenture, setDeleteVenture] =
+    useState<Venture | null>(null);
+
   const { data, isLoading, isError, refetch } = useFetch<Venture[]>(
     "/ventures/get-all",
   );
+
+  const {
+    mutate: deleteVentureRequest,
+    isLoading: isDeleting,
+  } = useDelete("/ventures/del");
 
   const ventures = data ?? [];
 
@@ -239,7 +262,9 @@ export default function VenturesDashboard() {
 
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={() => {}}
+                  onClick={() => {
+                    setDeleteVenture(venture);
+                  }}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete venture
@@ -277,6 +302,22 @@ export default function VenturesDashboard() {
   const currentPage = pagination.pageIndex + 1;
 
   const handleCreateVenture = () => {};
+
+  async function handleDeleteVenture() {
+    if (!deleteVenture || isDeleting) {
+      return;
+    }
+
+    try {
+      await deleteVentureRequest(deleteVenture._id);
+
+      setDeleteVenture(null);
+
+      await refetch();
+    } catch {
+      // Error is handled below through the mutation state.
+    }
+  }
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
@@ -526,6 +567,58 @@ export default function VenturesDashboard() {
           refetch();
         }}
       />
+
+      <AlertDialog
+        open={Boolean(deleteVenture)}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) {
+            setDeleteVenture(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="!max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Delete venture?
+            </AlertDialogTitle>
+
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <span className="font-medium text-foreground">
+                {deleteVenture?.name}
+              </span>
+              ? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>
+              Cancel
+            </AlertDialogCancel>
+
+            <AlertDialogAction
+              disabled={isDeleting}
+              onClick={(event) => {
+                event.preventDefault();
+                void handleDeleteVenture();
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete venture
+                </>
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
