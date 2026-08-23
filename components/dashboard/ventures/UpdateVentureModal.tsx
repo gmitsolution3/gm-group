@@ -737,32 +737,33 @@ export default function UpdateVentureModal({
                     </Button>
                   </div>
 
-                  {venture?.gallery?.length > 0 && (
-                    <div className="mt-4">
-                      <p className="mb-3 text-xs font-medium text-muted-foreground">
-                        Current gallery
-                      </p>
+                  {venture?.gallery?.length &&
+                    venture?.gallery?.length > 0 && (
+                      <div className="mt-4">
+                        <p className="mb-3 text-xs font-medium text-muted-foreground">
+                          Current gallery
+                        </p>
 
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        {venture?.gallery.map(
-                          (galleryImage, index) => (
-                            <div
-                              key={`${galleryImage}-${index}`}
-                              className="aspect-video overflow-hidden rounded-xl border bg-muted"
-                            >
-                              <img
-                                src={galleryImage}
-                                alt={`${venture.name} gallery ${
-                                  index + 1
-                                }`}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                          ),
-                        )}
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          {venture?.gallery?.map(
+                            (galleryImage, index) => (
+                              <div
+                                key={`${galleryImage}-${index}`}
+                                className="aspect-video overflow-hidden rounded-xl border bg-muted"
+                              >
+                                <img
+                                  src={galleryImage}
+                                  alt={`${venture.name} gallery ${
+                                    index + 1
+                                  }`}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                            ),
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {gallery.length > 0 && (
                     <div className="mt-5">
