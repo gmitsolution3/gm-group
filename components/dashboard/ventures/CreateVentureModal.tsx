@@ -340,7 +340,7 @@ export default function CreateVentureModal({
         }
       }}
     >
-      <DialogContent className="max-h-[90vh] !max-w-4xl overflow-hidden p-0">
+      <DialogContent className="flex max-h-[90vh] !max-w-4xl flex-col overflow-hidden p-0">
         <DialogHeader className="border-b px-5 py-4 text-left sm:px-6">
           <DialogTitle className="text-lg font-semibold tracking-tight">
             Create new venture
