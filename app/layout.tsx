@@ -1,6 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import LenisProvider from "@/providers/LenisProvider";
 import "lenis/dist/lenis.css";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
@@ -40,10 +39,8 @@ export default function RootLayout({
     <html lang="en" className={jakarta.variable}>
       <body className="min-h-screen antialiased">
         <TooltipProvider>
-          <LenisProvider>
-            {children}
-            <Toaster />
-          </LenisProvider>
+          {children}
+          <Toaster />
         </TooltipProvider>
       </body>
     </html>
