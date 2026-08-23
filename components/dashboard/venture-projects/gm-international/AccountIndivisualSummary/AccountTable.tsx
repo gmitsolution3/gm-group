@@ -1,15 +1,12 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
-
 import { useEffect, useMemo, useState } from "react";
 
 import {
-  rowPaginationFeature,
   tableFeatures,
   useTable,
   type ColumnDef,
-  type PaginationState,
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -20,9 +17,7 @@ import AccountDetailsModal, {
 
 const DEFAULT_PAGE_SIZE = 10;
 
-const features = tableFeatures({
-  rowPaginationFeature,
-});
+const features = tableFeatures({});
 
 /* ====================================================================== */
 /* TYPES                                                                  */
@@ -45,9 +40,6 @@ type AccountTableProps<T> = {
 
   columns: AccountTableColumn<T>[];
 
-  /**
-   * When provided, a View button is added to every row.
-   */
   getDetails?: (item: T) => AccountDetails<T>;
 
   pageSize?: number;
@@ -66,65 +58,120 @@ export default function AccountTable<T>({
   pageSize = DEFAULT_PAGE_SIZE,
   emptyMessage = "No account records found.",
 }: AccountTableProps<T>) {
-  const [selectedAccount, setSelectedAccount] = useState<T | null>(
-    null,
+  /* ------------------------------------------------------------------ */
+  /* SELECTED ACCOUNT                                                   */
+  /* ------------------------------------------------------------------ */
+
+  const [selectedAccount, setSelectedAccount] =
+    useState<T | null>(null);
+
+  /* ------------------------------------------------------------------ */
+  /* PAGINATION                                                         */
+  /* ------------------------------------------------------------------ */
+
+  /*
+   * IMPORTANT:
+   *
+   * Pagination is intentionally managed by this component instead
+   * of TanStack.
+   *
+   * The API returns the complete account array, so this is
+   * client-side pagination.
+   */
+  const [pageIndex, setPageIndex] = useState(0);
+
+  /*
+   * Reset to page 1 when:
+   *
+   * - switching service
+   * - receiving a different dataset
+   * - changing page size
+   */
+  useEffect(() => {
+    setPageIndex(0);
+  }, [data, pageSize]);
+
+  /* ------------------------------------------------------------------ */
+  /* PAGE CALCULATIONS                                                   */
+  /* ------------------------------------------------------------------ */
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(data.length / pageSize),
   );
 
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize,
-  });
-
-  /* ------------------------------------------------------------------ */
-  /* Reset pagination when page size changes                            */
-  /* ------------------------------------------------------------------ */
-
-  useEffect(() => {
-    setPagination((current) => ({
-      ...current,
-      pageIndex: 0,
-      pageSize,
-    }));
-  }, [pageSize]);
-
-  /* ------------------------------------------------------------------ */
-  /* TanStack data                                                      */
-  /* ------------------------------------------------------------------ */
-
-  /**
-   * The project's TanStack `useTable` setup currently resolves its
-   * row type through RowData. Keep the generic account type at our
-   * component boundary and cast only when handing data to TanStack.
+  /*
+   * Protect against an invalid page if the number of records
+   * becomes smaller.
    */
-  const tableData = data as unknown as any[];
+  const currentPageIndex = Math.min(
+    pageIndex,
+    totalPages - 1,
+  );
+
+  const currentPage = currentPageIndex + 1;
 
   /* ------------------------------------------------------------------ */
-  /* Columns                                                             */
+  /* CURRENT PAGE DATA                                                   */
+  /* ------------------------------------------------------------------ */
+
+  const paginatedData = useMemo(() => {
+    const startIndex = currentPageIndex * pageSize;
+
+    const endIndex = startIndex + pageSize;
+
+    return data.slice(startIndex, endIndex);
+  }, [
+    data,
+    currentPageIndex,
+    pageSize,
+  ]);
+
+  /* ------------------------------------------------------------------ */
+  /* TANSTACK DATA                                                       */
+  /* ------------------------------------------------------------------ */
+
+  /*
+   * TanStack receives ONLY the records belonging to the current page.
+   *
+   * There is deliberately no TanStack pagination state here.
+   */
+  const tableData = paginatedData as unknown as any[];
+
+  /* ------------------------------------------------------------------ */
+  /* COLUMNS                                                             */
   /* ------------------------------------------------------------------ */
 
   const tableColumns = useMemo<
     ColumnDef<typeof features, any>[]
   >(() => {
-    const accountColumns: ColumnDef<typeof features, any>[] =
-      columns.map((column) => ({
-        id: column.key,
+    const accountColumns: ColumnDef<
+      typeof features,
+      any
+    >[] = columns.map((column) => ({
+      id: column.key,
 
-        header: column.label,
+      header: column.label,
 
-        cell: ({ row }: { row: any }) => {
-          const item = row.original as T;
+      cell: ({ row }: { row: any }) => {
+        const item = row.original as T;
 
-          return column.render(item);
-        },
-      }));
+        return column.render(item);
+      },
+    }));
 
     if (!getDetails) {
       return accountColumns;
     }
 
-    const actionColumn: ColumnDef<typeof features, any> = {
+    const actionColumn: ColumnDef<
+      typeof features,
+      any
+    > = {
       id: "actions",
+
       header: "",
+
       cell: ({ row }: { row: any }) => {
         const item = row.original as T;
 
@@ -148,11 +195,14 @@ export default function AccountTable<T>({
       },
     };
 
-    return [...accountColumns, actionColumn];
+    return [
+      ...accountColumns,
+      actionColumn,
+    ];
   }, [columns, getDetails]);
 
   /* ------------------------------------------------------------------ */
-  /* Table                                                               */
+  /* TANSTACK TABLE                                                      */
   /* ------------------------------------------------------------------ */
 
   const table = useTable({
@@ -163,27 +213,10 @@ export default function AccountTable<T>({
     columns: tableColumns,
 
     data: tableData,
-
-    state: {
-      pagination,
-    },
-
-    onPaginationChange: setPagination,
   });
 
   /* ------------------------------------------------------------------ */
-  /* Pagination                                                          */
-  /* ------------------------------------------------------------------ */
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(data.length / pagination.pageSize),
-  );
-
-  const currentPage = pagination.pageIndex + 1;
-
-  /* ------------------------------------------------------------------ */
-  /* Empty state                                                         */
+  /* EMPTY STATE                                                         */
   /* ------------------------------------------------------------------ */
 
   if (data.length === 0) {
@@ -197,7 +230,23 @@ export default function AccountTable<T>({
   }
 
   /* ------------------------------------------------------------------ */
-  /* Render                                                              */
+  /* PAGINATION HANDLERS                                                 */
+  /* ------------------------------------------------------------------ */
+
+  const handlePreviousPage = () => {
+    setPageIndex((current) =>
+      Math.max(0, current - 1),
+    );
+  };
+
+  const handleNextPage = () => {
+    setPageIndex((current) =>
+      Math.min(totalPages - 1, current + 1),
+    );
+  };
+
+  /* ------------------------------------------------------------------ */
+  /* RENDER                                                              */
   /* ------------------------------------------------------------------ */
 
   return (
@@ -210,51 +259,57 @@ export default function AccountTable<T>({
         <div className="hidden overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm md:block">
           <div className="overflow-x-auto">
             <table className="w-full bg-card">
-              <thead className="bg-muted/50">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className={[
-                          "whitespace-nowrap px-4 py-3",
-                          "text-left text-xs font-semibold",
-                          "text-muted-foreground",
-                          header.column.id === "actions"
-                            ? "text-right"
-                            : "",
-                        ].join(" ")}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <table.FlexRender header={header} />
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
+              <thead className="bg-muted/40">
+                {table.getHeaderGroups().map(
+                  (headerGroup) => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map(
+                        (header) => (
+                          <th
+                            key={header.id}
+                            className={[
+                              "whitespace-nowrap border-b border-border/70 px-4 py-3.5",
+                              "text-left text-xs font-semibold uppercase tracking-wide",
+                              "text-muted-foreground",
+                            ].join(" ")}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : (
+                                  <table.FlexRender
+                                    header={header}
+                                  />
+                                )}
+                          </th>
+                        ),
+                      )}
+                    </tr>
+                  ),
+                )}
               </thead>
 
-              <tbody className="divide-y">
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="transition-colors hover:bg-muted/20"
-                  >
-                    {row.getAllCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={[
-                          "px-4 py-4 align-middle",
-                          cell.column.id === "actions"
-                            ? "text-right"
-                            : "",
-                        ].join(" ")}
-                      >
-                        <table.FlexRender cell={cell} />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
+              <tbody className="divide-y divide-border/60">
+                {table.getRowModel().rows.map(
+                  (row) => (
+                    <tr
+                      key={row.id}
+                      className="group bg-card transition-colors hover:bg-muted/20"
+                    >
+                      {row
+                        .getAllCells()
+                        .map((cell) => (
+                          <td
+                            key={cell.id}
+                            className="px-4 py-4 align-middle text-sm"
+                          >
+                            <table.FlexRender
+                              cell={cell}
+                            />
+                          </td>
+                        ))}
+                    </tr>
+                  ),
+                )}
               </tbody>
             </table>
           </div>
@@ -265,49 +320,50 @@ export default function AccountTable<T>({
         {/* ============================================================ */}
 
         <div className="space-y-3 md:hidden">
-          {table.getRowModel().rows.map((row) => (
-            <div
-              key={row.id}
-              className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm"
-            >
-              <div className="space-y-4">
-                {row.getAllCells().map((cell) => {
-                  const header = table
-                    .getHeaderGroups()[0]
-                    ?.headers.find(
-                      (item) => item.column.id === cell.column.id,
-                    );
+          {table.getRowModel().rows.map(
+            (row) => (
+              <div
+                key={row.id}
+                className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm"
+              >
+                <div className="space-y-4 p-4">
+                  {row
+                    .getAllCells()
+                    .map((cell) => {
+                      const header =
+                        table
+                          .getHeaderGroups()[0]
+                          ?.headers.find(
+                            (item) =>
+                              item.column.id ===
+                              cell.column.id,
+                          );
 
-                  const isActions = cell.column.id === "actions";
+                      return (
+                        <div
+                          key={cell.id}
+                          className="grid grid-cols-[100px_minmax(0,1fr)] gap-4"
+                        >
+                          <p className="text-xs font-medium text-muted-foreground">
+                            {header ? (
+                              <table.FlexRender
+                                header={header}
+                              />
+                            ) : null}
+                          </p>
 
-                  if (isActions) {
-                    return (
-                      <div key={cell.id} className="border-t pt-3">
-                        <table.FlexRender cell={cell} />
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div
-                      key={cell.id}
-                      className="grid grid-cols-[100px_minmax(0,1fr)] gap-4"
-                    >
-                      <p className="text-xs font-medium text-muted-foreground">
-                        {header ? (
-                          <table.FlexRender header={header} />
-                        ) : null}
-                      </p>
-
-                      <div className="min-w-0 text-sm">
-                        <table.FlexRender cell={cell} />
-                      </div>
-                    </div>
-                  );
-                })}
+                          <div className="min-w-0 text-sm">
+                            <table.FlexRender
+                              cell={cell}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
               </div>
-            </div>
-          ))}
+            ),
+          )}
         </div>
 
         {/* ============================================================ */}
@@ -315,29 +371,48 @@ export default function AccountTable<T>({
         {/* ============================================================ */}
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
-            </p>
+          <div className="flex items-center justify-between border-t border-border/60 pt-4">
+            <div>
+              <p className="text-sm font-medium">
+                Page {currentPage}{" "}
+                <span className="font-normal text-muted-foreground">
+                  of {totalPages}
+                </span>
+              </p>
+
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {data.length}{" "}
+                {data.length === 1
+                  ? "account"
+                  : "accounts"}
+              </p>
+            </div>
 
             <div className="flex items-center gap-2">
+              {/* Previous */}
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                disabled={!table.getCanPreviousPage()}
-                onClick={() => table.previousPage()}
+                className="h-9 w-9"
+                disabled={currentPageIndex === 0}
+                onClick={handlePreviousPage}
                 aria-label="Previous page"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
 
+              {/* Next */}
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
-                disabled={!table.getCanNextPage()}
-                onClick={() => table.nextPage()}
+                className="h-9 w-9"
+                disabled={
+                  currentPageIndex >=
+                  totalPages - 1
+                }
+                onClick={handleNextPage}
                 aria-label="Next page"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -354,10 +429,18 @@ export default function AccountTable<T>({
       {selectedAccount && getDetails && (
         <AccountDetailsModal
           open={true}
-          title={getDetails(selectedAccount).title}
-          subtitle={getDetails(selectedAccount).subtitle}
-          details={getDetails(selectedAccount).details}
-          onClose={() => setSelectedAccount(null)}
+          title={
+            getDetails(selectedAccount).title
+          }
+          subtitle={
+            getDetails(selectedAccount).subtitle
+          }
+          details={
+            getDetails(selectedAccount).details
+          }
+          onClose={() =>
+            setSelectedAccount(null)
+          }
         />
       )}
     </>
