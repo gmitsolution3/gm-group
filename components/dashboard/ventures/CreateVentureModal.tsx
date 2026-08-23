@@ -183,10 +183,9 @@ export default function CreateVentureModal({
   const image = watch("image");
   const gallery = watch("gallery");
 
-  const {
-    isLoading: isSubmitting,
-    mutate: createVenture,
-  } = usePost<{ message?: string }>("/ventures/insert", {
+  const { isLoading: isSubmitting, mutate: createVenture } = usePost<{
+    message?: string;
+  }>("/ventures/insert", {
     revalidateKey: "/ventures/get-all",
   });
 
@@ -486,25 +485,15 @@ export default function CreateVentureModal({
                       </SelectTrigger>
 
                       <SelectContent>
-                        <SelectItem value="indigo">
-                          Indigo
-                        </SelectItem>
+                        <SelectItem value="indigo">Indigo</SelectItem>
 
-                        <SelectItem value="teal">
-                          Teal
-                        </SelectItem>
+                        <SelectItem value="teal">Teal</SelectItem>
 
-                        <SelectItem value="violet">
-                          Violet
-                        </SelectItem>
+                        <SelectItem value="violet">Violet</SelectItem>
 
-                        <SelectItem value="amber">
-                          Amber
-                        </SelectItem>
+                        <SelectItem value="amber">Amber</SelectItem>
 
-                        <SelectItem value="rose">
-                          Rose
-                        </SelectItem>
+                        <SelectItem value="rose">Rose</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -594,9 +583,7 @@ export default function CreateVentureModal({
 
                   {/* What it does */}
                   <div className="space-y-2">
-                    <Label htmlFor="what-it-does">
-                      What it does
-                    </Label>
+                    <Label htmlFor="what-it-does">What it does</Label>
 
                     <Textarea
                       id="what-it-does"
@@ -853,8 +840,7 @@ export default function CreateVentureModal({
                           className="h-10 w-10 text-destructive hover:text-destructive"
                           onClick={() => removeKeyInfo(index)}
                           disabled={
-                            isSubmitting ||
-                            keyInfoFields.length === 1
+                            isSubmitting || keyInfoFields.length === 1
                           }
                           aria-label={`Remove key information field ${
                             index + 1
