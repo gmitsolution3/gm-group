@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.gmgroupbd.com"),
 
   title: {
-    default: "GM Group",
+    default: "GM Group Company",
     template: "%s | GM Group",
   },
 

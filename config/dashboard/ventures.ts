@@ -49,7 +49,7 @@ export const dashboardVentures: DashboardVenture[] = [
         icon: LayoutGrid,
       },
       {
-        name: "Individual Accounts",
+        name: "Account Individual Summary",
         description:
           "View individual account balances, payments, and outstanding dues.",
         href: "/dashboard/venture-dashboards/gm-international/account-individual-summary",

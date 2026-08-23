@@ -123,10 +123,6 @@ export default function Header() {
 
           {/* Desktop actions */}
           <div className="hidden items-center gap-3 lg:flex">
-            <HeaderAccount
-              variant={headerIsSolid ? "dark" : "light"}
-            />
-
             <Link
               href="/contact"
               className={cn(
@@ -139,6 +135,10 @@ export default function Header() {
               Let&apos;s Connect
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
+
+            <HeaderAccount
+              variant={headerIsSolid ? "dark" : "light"}
+            />
           </div>
 
           {/* Mobile toggle */}
