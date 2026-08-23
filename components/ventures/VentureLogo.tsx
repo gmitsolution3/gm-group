@@ -3,15 +3,15 @@ import { cn } from "@/lib/utils";
 import { ventureAccentMap, type Venture } from "@/content/ventures";
 
 type VentureLogoProps = {
-  venture: Pick<Venture, "name" | "accent">;
+  venture: Pick<Venture, "name" | "accent" | "image">;
   size?: "sm" | "md" | "lg";
   className?: string;
 };
 
 const sizeClasses = {
-  sm: "h-10 w-10 text-xs",
-  md: "h-14 w-14 text-sm",
-  lg: "h-20 w-20 text-lg",
+  sm: "h-16 w-16 text-xs",
+  md: "h-20 w-20 text-sm",
+  lg: "h-24 w-24 text-lg",
 } as const;
 
 export default function VentureLogo({
@@ -34,14 +34,23 @@ export default function VentureLogo({
     <div
       aria-hidden="true"
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-2xl",
-        "font-display font-bold tracking-tight",
+        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl",
         sizeClasses[size],
-        accent.bg,
+        `${accent.bg}15`,
         className,
       )}
     >
-      <span className="text-white">{initials}</span>
+      {venture.image ? (
+        <img
+          src={venture.image}
+          alt=""
+          className="h-full w-full object-contain"
+        />
+      ) : (
+        <span className="font-display font-bold tracking-tight text-white">
+          {initials}
+        </span>
+      )}
     </div>
   );
 }
