@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { usePost } from "@/hooks/api/usePost";
+
 import { ImageUploader } from "@/components/ui/image-uploader";
 
 import { Button } from "@/components/ui/button";
@@ -130,8 +132,6 @@ export default function CreateVentureModal({
 }: CreateVentureModalProps) {
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const form = useForm<CreateVentureFormValues>({
     resolver: zodResolver(createVentureSchema),
 
@@ -184,6 +184,14 @@ export default function CreateVentureModal({
   const image = watch("image");
   const gallery = watch("gallery");
 
+  const {
+    isLoading: isSubmitting,
+    isError: postError,
+    mutate: createVenture,
+  } = usePost("/ventures/insert", {
+    revalidateKey: "/ventures/get-all",
+  });
+
   /*
    * Automatically generate the slug from the venture name.
    */
@@ -199,7 +207,6 @@ export default function CreateVentureModal({
   useEffect(() => {
     if (open) {
       setServerError(null);
-      setIsSubmitting(false);
 
       reset({
         slug: "",
@@ -226,9 +233,23 @@ export default function CreateVentureModal({
     }
   }, [open, reset]);
 
+  /*
+   * Surface the usePost error in the form.
+   */
+  useEffect(() => {
+    if (!postError) {
+      return;
+    }
+
+    setServerError(
+      postError instanceof Error
+        ? postError.message
+        : "Unable to create venture.",
+    );
+  }, [postError]);
+
   async function onSubmit(values: CreateVentureFormValues) {
     setServerError(null);
-    setIsSubmitting(true);
 
     const payload = {
       slug: values.slug,
@@ -252,21 +273,7 @@ export default function CreateVentureModal({
     };
 
     try {
-      const response = await fetch("/api/v1/ventures/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          result?.message || "Unable to create venture.",
-        );
-      }
+      await createVenture(payload);
 
       reset();
 
@@ -278,8 +285,6 @@ export default function CreateVentureModal({
           ? error.message
           : "Unable to create venture.",
       );
-    } finally {
-      setIsSubmitting(false);
     }
   }
 
@@ -338,8 +343,8 @@ export default function CreateVentureModal({
     );
 
     setValue("gallery", nextGallery, {
-      shouldDirty: true,
       shouldValidate: true,
+      shouldDirty: true,
     });
   }
 
@@ -354,7 +359,7 @@ export default function CreateVentureModal({
     >
       <DialogContent className="max-h-[90vh] !max-w-4xl overflow-hidden p-0">
         <DialogHeader className="border-b px-5 py-4 text-left sm:px-6">
-          <DialogTitle className="text-xl">
+          <DialogTitle className="text-lg font-semibold tracking-tight">
             Create new venture
           </DialogTitle>
 
@@ -365,9 +370,9 @@ export default function CreateVentureModal({
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex min-h-0 flex-1 flex-col"
+          className="flex min-h-0 flex-col"
         >
-          <div className="max-h-[calc(90vh-145px)] overflow-y-auto px-5 py-6 sm:px-6">
+          <div className="max-h-[calc(90vh-150px)] overflow-y-auto px-5 py-6 sm:px-6">
             <div className="space-y-8">
               {/* Basic information */}
               <section className="space-y-5">
@@ -377,17 +382,17 @@ export default function CreateVentureModal({
                   </h3>
 
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Basic information about the venture.
+                    Enter the core information about this venture.
                   </p>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
                   {/* Name */}
                   <div className="space-y-2">
-                    <Label htmlFor="venture-name">Venture name</Label>
+                    <Label htmlFor="name">Venture name</Label>
 
                     <Input
-                      id="venture-name"
+                      id="name"
                       placeholder="GM Food Point"
                       className="h-11 rounded-xl"
                       {...register("name")}
@@ -402,13 +407,13 @@ export default function CreateVentureModal({
 
                   {/* Slug */}
                   <div className="space-y-2">
-                    <Label htmlFor="venture-slug">Slug</Label>
+                    <Label htmlFor="slug">Slug</Label>
 
                     <Input
-                      id="venture-slug"
-                      value={watch("slug")}
+                      id="slug"
                       disabled
                       className="h-11 rounded-xl bg-muted/50"
+                      {...register("slug")}
                     />
 
                     <p className="text-xs text-muted-foreground">
@@ -423,11 +428,11 @@ export default function CreateVentureModal({
                   </div>
 
                   {/* Tagline */}
-                  <div className="space-y-2">
-                    <Label htmlFor="venture-tagline">Tagline</Label>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label htmlFor="tagline">Tagline</Label>
 
                     <Input
-                      id="venture-tagline"
+                      id="tagline"
                       placeholder="Food and restaurant operations."
                       className="h-11 rounded-xl"
                       {...register("tagline")}
@@ -442,10 +447,10 @@ export default function CreateVentureModal({
 
                   {/* Industry */}
                   <div className="space-y-2">
-                    <Label htmlFor="venture-industry">Industry</Label>
+                    <Label htmlFor="industry">Industry</Label>
 
                     <Input
-                      id="venture-industry"
+                      id="industry"
                       placeholder="Food & Hospitality"
                       className="h-11 rounded-xl"
                       {...register("industry")}
@@ -460,14 +465,11 @@ export default function CreateVentureModal({
 
                   {/* Established */}
                   <div className="space-y-2">
-                    <Label htmlFor="venture-established">
-                      Established
-                    </Label>
+                    <Label htmlFor="established">Established</Label>
 
                     <Input
-                      id="venture-established"
+                      id="established"
                       placeholder="2024"
-                      inputMode="numeric"
                       maxLength={4}
                       className="h-11 rounded-xl"
                       {...register("established")}
@@ -482,37 +484,44 @@ export default function CreateVentureModal({
 
                   {/* Accent */}
                   <div className="space-y-2">
-                    <Label>Accent</Label>
+                    <Label htmlFor="accent">Accent</Label>
 
                     <Select
                       value={accent}
-                      onValueChange={(value: string) =>
+                      onValueChange={(value) =>
                         setValue("accent", value, {
                           shouldValidate: true,
                           shouldDirty: true,
                         })
                       }
                     >
-                      <SelectTrigger className="h-11 rounded-xl">
+                      <SelectTrigger
+                        id="accent"
+                        className="h-11 rounded-xl"
+                      >
                         <SelectValue placeholder="Select accent" />
                       </SelectTrigger>
 
                       <SelectContent>
-                        <SelectItem value="indigo">Indigo</SelectItem>
-
-                        <SelectItem value="teal">Teal</SelectItem>
-
-                        <SelectItem value="violet">Violet</SelectItem>
-
-                        <SelectItem value="blue">Blue</SelectItem>
-
-                        <SelectItem value="emerald">
-                          Emerald
+                        <SelectItem value="indigo">
+                          Indigo
                         </SelectItem>
 
-                        <SelectItem value="amber">Amber</SelectItem>
+                        <SelectItem value="teal">
+                          Teal
+                        </SelectItem>
 
-                        <SelectItem value="rose">Rose</SelectItem>
+                        <SelectItem value="violet">
+                          Violet
+                        </SelectItem>
+
+                        <SelectItem value="amber">
+                          Amber
+                        </SelectItem>
+
+                        <SelectItem value="rose">
+                          Rose
+                        </SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -544,6 +553,7 @@ export default function CreateVentureModal({
                         shouldDirty: true,
                       })
                     }
+                    disabled={isSubmitting}
                   />
                 </div>
               </section>
@@ -570,7 +580,7 @@ export default function CreateVentureModal({
                     <Textarea
                       id="short-description"
                       placeholder="A concise description of the venture."
-                      className="min-h-24 rounded-xl resize-none"
+                      className="min-h-24 resize-none rounded-xl"
                       {...register("shortDescription")}
                     />
 
@@ -601,7 +611,9 @@ export default function CreateVentureModal({
 
                   {/* What it does */}
                   <div className="space-y-2">
-                    <Label htmlFor="what-it-does">What it does</Label>
+                    <Label htmlFor="what-it-does">
+                      What it does
+                    </Label>
 
                     <Textarea
                       id="what-it-does"
@@ -695,7 +707,6 @@ export default function CreateVentureModal({
                   <ImageUploader
                     value={image?.url ?? null}
                     publicId={image?.publicId ?? null}
-                    folder="gm-group/ventures"
                     onChange={handleImageChange}
                     disabled={isSubmitting}
                   />
@@ -725,19 +736,15 @@ export default function CreateVentureModal({
                   </div>
 
                   {gallery.length === 0 ? (
-                    <div className="mt-4 flex flex-col items-center justify-center rounded-xl border border-dashed p-8 text-center">
-                      <ImagePlus className="h-8 w-8 text-muted-foreground/60" />
+                    <div className="mt-4 rounded-xl border border-dashed p-6 text-center">
+                      <ImagePlus className="mx-auto h-6 w-6 text-muted-foreground" />
 
-                      <p className="mt-2 text-sm font-medium">
-                        No gallery images
-                      </p>
-
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Add images using the button above.
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        No gallery images added yet.
                       </p>
                     </div>
                   ) : (
-                    <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
                       {gallery.map((galleryImage, index) => (
                         <div
                           key={`${galleryImage.publicId}-${index}`}
@@ -745,7 +752,7 @@ export default function CreateVentureModal({
                         >
                           <div className="mb-3 flex items-center justify-between">
                             <p className="text-sm font-medium">
-                              Image {index + 1}
+                              Gallery image {index + 1}
                             </p>
 
                             <Button
@@ -757,7 +764,9 @@ export default function CreateVentureModal({
                                 removeGalleryImage(index)
                               }
                               disabled={isSubmitting}
-                              aria-label={`Remove gallery image ${index + 1}`}
+                              aria-label={`Remove gallery image ${
+                                index + 1
+                              }`}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -766,7 +775,6 @@ export default function CreateVentureModal({
                           <ImageUploader
                             value={galleryImage.url || null}
                             publicId={galleryImage.publicId || null}
-                            folder="gm-group/ventures/gallery"
                             onChange={(image) =>
                               handleGalleryImageChange(index, image)
                             }
@@ -781,7 +789,7 @@ export default function CreateVentureModal({
 
               {/* Key information */}
               <section className="space-y-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h3 className="text-sm font-semibold">
                       Key information
@@ -862,9 +870,12 @@ export default function CreateVentureModal({
                           className="h-10 w-10 text-destructive hover:text-destructive"
                           onClick={() => removeKeyInfo(index)}
                           disabled={
-                            isSubmitting || keyInfoFields.length === 1
+                            isSubmitting ||
+                            keyInfoFields.length === 1
                           }
-                          aria-label={`Remove key information field ${index + 1}`}
+                          aria-label={`Remove key information field ${
+                            index + 1
+                          }`}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
