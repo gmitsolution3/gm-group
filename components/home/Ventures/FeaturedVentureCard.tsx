@@ -1,14 +1,15 @@
 "use client";
 
-import { ventureAccentMap, type Venture } from "@/content/ventures";
+import { ventureAccentMap } from "@/content/ventures";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { VentureLogo } from "./VentureLogo";
+import { IVenture } from "@/types";
 
 interface FeaturedVentureCardProps {
-  venture: Venture;
+  venture: IVenture;
   className?: string;
 }
 
@@ -17,7 +18,6 @@ export function FeaturedVentureCard({
   className,
 }: FeaturedVentureCardProps) {
   const reduce = useReducedMotion();
-  const accent = ventureAccentMap[venture.accent];
 
   return (
     <motion.div
@@ -37,14 +37,14 @@ export function FeaturedVentureCard({
       <div
         className="pointer-events-none absolute inset-0 opacity-50 transition-opacity duration-700 group-hover:opacity-70"
         style={{
-          background: `radial-gradient(circle at 80% 20%, ${accent.hex}40, transparent 60%)`,
+          background: `radial-gradient(circle at 80% 20%, #5B5FEF40, transparent 60%)`,
         }}
       />
 
       <div
         className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full opacity-20 blur-3xl transition-all duration-700 group-hover:scale-110 group-hover:opacity-40"
         style={{
-          backgroundColor: accent.hex,
+          backgroundColor: "#5B5FEF",
         }}
       />
 

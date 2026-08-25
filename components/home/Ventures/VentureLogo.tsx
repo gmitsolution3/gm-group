@@ -1,9 +1,11 @@
-import { ventureAccentMap, type Venture } from "@/content/ventures";
+import Image from "next/image";
+
+import { IVenture } from "@/types";
 
 import { cn } from "@/lib/utils";
 
 interface VentureLogoProps {
-  venture: Venture;
+  venture: IVenture;
   size?: "sm" | "md" | "lg";
   className?: string;
 }
@@ -12,15 +14,13 @@ interface VentureLogoProps {
  * Venture visual mark.
  *
  * Uses the venture image when available,
- * otherwise falls back to the abstract typographic mark.
+ * otherwise falls back to a typographic mark.
  */
 export function VentureLogo({
   venture,
   size = "md",
   className,
 }: VentureLogoProps) {
-  const accent = ventureAccentMap[venture.accent];
-
   const sizes = {
     sm: {
       box: "h-16 w-16",
@@ -48,47 +48,44 @@ export function VentureLogo({
   return (
     <div
       className={cn(
-        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-xl",
+        "relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl",
+        "border border-white/60",
+        "bg-white/55",
+        "shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+        "backdrop-blur-xl backdrop-saturate-150",
         s.box,
         className,
       )}
-      style={{ backgroundColor: `${accent.hex}15` }}
       aria-hidden="true"
     >
+      {/* Glass highlight */}
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-white/80 via-white/20 to-transparent" />
+
       {venture.image ? (
-        <img
-          src={venture.image}
-          alt=""
-          className="h-full w-full object-contain"
-        />
+        <div className="relative z-10 h-full w-full p-2.5">
+          <Image
+            src={venture.image}
+            alt=""
+            fill
+            sizes={
+              size === "sm"
+                ? "64px"
+                : size === "md"
+                  ? "80px"
+                  : "96px"
+            }
+            className="object-contain p-1"
+          />
+        </div>
       ) : (
-        <>
-          <div
-            className="absolute -right-1 -top-1 h-6 w-6 rounded-full opacity-60"
-            style={{
-              backgroundColor: accent.hex,
-              mixBlendMode: "screen",
-            }}
-          />
-
-          <div
-            className="absolute -bottom-1 -left-1 h-5 w-5 rounded-full opacity-40"
-            style={{
-              backgroundColor: accent.hex,
-              mixBlendMode: "screen",
-            }}
-          />
-
-          <span
-            className={cn(
-              "relative font-display font-extrabold tracking-tighter",
-              s.text,
-            )}
-            style={{ color: accent.hex }}
-          >
-            {initials}
-          </span>
-        </>
+        <span
+          className={cn(
+            "relative z-10 font-display font-extrabold tracking-tighter text-ink",
+            s.text,
+          )}
+        >
+          {initials}
+        </span>
       )}
     </div>
   );

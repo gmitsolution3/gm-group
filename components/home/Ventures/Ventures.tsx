@@ -1,14 +1,24 @@
 "use client";
 
-import { Reveal } from "@/components/visual/motion";
-import { ventures, type Venture } from "@/content/ventures";
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
-import { FeaturedVentureCard } from "./FeaturedVentureCard";
-import { SmallVentureCard } from "./SmallVentureCard";
+import { useMemo } from "react";
 
-function chunkVentures(items: Venture[], size: number) {
-  const chunks: Venture[][] = [];
+import { useFetch } from "@/hooks/api/useFetch";
+
+import { Reveal } from "@/components/visual/motion";
+
+import { IVenture } from "@/types";
+
+import { ArrowUpRight } from "lucide-react";
+
+import Link from "next/link";
+
+import { FeaturedVentureCard } from "./FeaturedVentureCard";
+
+import { SmallVentureCard } from "./SmallVentureCard";
+import VentureSectionLoader from "./VentureLoader";
+
+function chunkVentures(items: IVenture[], size: number) {
+  const chunks: IVenture[][] = [];
 
   for (let i = 0; i < items.length; i += size) {
     chunks.push(items.slice(i, i + size));
@@ -18,7 +28,24 @@ function chunkVentures(items: Venture[], size: number) {
 }
 
 export default function Ventures() {
-  const ventureGroups = chunkVentures(ventures, 3);
+  const { data, isLoading, isError } = useFetch<IVenture[]>(
+    "/ventures/get-all",
+  );
+
+  const ventures = data ?? [];
+
+  const ventureGroups = useMemo(
+    () => chunkVentures(ventures, 3),
+    [ventures],
+  );
+
+  if (isLoading) {
+    return <VentureSectionLoader />;
+  }
+
+  if (isError || ventures.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative bg-white py-24 sm:py-32 lg:py-40">
@@ -67,7 +94,7 @@ export default function Ventures() {
 
             return (
               <div
-                key={first.slug}
+                key={`venture-group-${groupIndex}`}
                 className="grid gap-6 lg:grid-cols-12 lg:gap-8"
               >
                 {reversed ? (

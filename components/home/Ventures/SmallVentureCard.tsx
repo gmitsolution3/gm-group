@@ -1,18 +1,18 @@
 "use client";
 
-import { ventureAccentMap, type Venture } from "@/content/ventures";
+import { ventureAccentMap } from "@/content/ventures";
+import { IVenture } from "@/types";
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { VentureLogo } from "./VentureLogo";
 
 interface SmallVentureCardProps {
-  venture: Venture;
+  venture: IVenture;
 }
 
 export function SmallVentureCard({ venture }: SmallVentureCardProps) {
   const reduce = useReducedMotion();
-  const accent = ventureAccentMap[venture.accent];
 
   return (
     <motion.div
@@ -28,7 +28,7 @@ export function SmallVentureCard({ venture }: SmallVentureCardProps) {
       <div
         className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30"
         style={{
-          backgroundColor: accent.hex,
+          backgroundColor: "#5B5FEF",
         }}
       />
 

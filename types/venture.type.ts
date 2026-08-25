@@ -1,4 +1,4 @@
-export interface Venture {
+export interface IVenture {
   _id: string;
   slug: string;
   name: string;
@@ -10,7 +10,7 @@ export interface Venture {
   roleInGroup: string;
   website: string;
   featured: boolean;
-  accent: string;
+  accent: "indigo" | "teal" | "yellow" | "coral";
   established: string;
   image: string;
   gallery: string[];
