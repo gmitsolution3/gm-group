@@ -2,15 +2,14 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 
-import { cn } from "@/lib/utils";
-
-import { ventureAccentMap, type Venture } from "@/content/ventures";
+import { IVenture } from "@/types";
 
 import VentureLogo from "./VentureLogo";
 
 type VentureCardProps = {
-  venture: Venture;
+  venture: IVenture;
   index?: number;
 };
 
@@ -18,72 +17,52 @@ export default function VentureCard({
   venture,
   index = 0,
 }: VentureCardProps) {
-  const accent = ventureAccentMap[venture.accent];
+  const reduce = useReducedMotion();
 
   return (
-    <Link
-      href={`/ventures/${venture.slug}`}
-      className={cn(
-        "group relative isolate block overflow-hidden rounded-2xl border",
-        "border-black/8 bg-white p-6",
-        "transition-all duration-300",
-        "hover:-translate-y-1 hover:border-black/15 hover:shadow-xl hover:shadow-black/5",
-      )}
-      style={{
-        animationDelay: `${index * 75}ms`,
+    <motion.div
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 30 }}
+      whileInView={
+        reduce ? { opacity: 1 } : { opacity: 1, y: 0 }
+      }
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.08,
       }}
+      className="group relative flex flex-1 items-center justify-between overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-7 transition-all duration-500 hover:border-transparent hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]"
     >
-      {/* Accent glow */}
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-16 -top-16 -z-10 h-40 w-40 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-20"
-        style={{
-          backgroundColor: accent.hex,
-        }}
+        className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#5B5FEF] opacity-0 blur-2xl transition-opacity duration-500 group-hover:opacity-30"
       />
 
       <div className="relative">
-        <div className="flex items-start justify-between gap-4">
-          <VentureLogo venture={venture} size="md" />
+        <div className="mb-4 flex items-center gap-3">
+          <VentureLogo venture={venture} size="sm" />
 
-          <ArrowUpRight
-            aria-hidden="true"
-            className="h-5 w-5 text-muted-foreground transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink"
-          />
-        </div>
-
-        <div className="mt-8">
-          <p
-            className={cn(
-              "text-xs font-semibold uppercase tracking-[0.18em]",
-              accent.text,
-            )}
-          >
+          <span className="text-xs font-semibold uppercase tracking-widest text-mutedText">
             {venture.industry}
-          </p>
-
-          <h3 className="mt-2 font-display text-2xl font-bold tracking-tight">
-            {venture.name}
-          </h3>
-
-          <p className="mt-2 text-sm font-medium text-muted-foreground">
-            {venture.tagline}
-          </p>
-
-          <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground">
-            {venture.shortDescription}
-          </p>
+          </span>
         </div>
 
-        <div className="mt-8 flex items-center gap-2 text-sm font-semibold text-ink">
-          <span>Explore Venture</span>
+        <h3 className="font-display text-2xl font-bold tracking-tightest text-ink">
+          {venture.name}
+        </h3>
 
-          <ArrowUpRight
-            aria-hidden="true"
-            className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-          />
-        </div>
+        <p className="mt-2 max-w-xs text-sm text-mutedText text-pretty">
+          {venture.shortDescription}
+        </p>
+
+        <Link
+          href={`/ventures/${venture.slug}`}
+          className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ink transition-colors group-hover:text-indigo"
+        >
+          Explore
+
+          <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+        </Link>
       </div>
-    </Link>
+    </motion.div>
   );
 }

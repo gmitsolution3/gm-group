@@ -50,7 +50,7 @@ export function VentureLogo({
       className={cn(
         "relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl",
         "border border-white/60",
-        "bg-white/55",
+        "bg-white",
         "shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
         "backdrop-blur-xl backdrop-saturate-150",
         s.box,

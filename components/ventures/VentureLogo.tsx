@@ -1,9 +1,11 @@
+import Image from "next/image";
+
+import { IVenture } from "@/types";
+
 import { cn } from "@/lib/utils";
 
-import { ventureAccentMap, type Venture } from "@/content/ventures";
-
 type VentureLogoProps = {
-  venture: Pick<Venture, "name" | "accent" | "image">;
+  venture: Pick<IVenture, "name" | "image">;
   size?: "sm" | "md" | "lg";
   className?: string;
 };
@@ -11,7 +13,7 @@ type VentureLogoProps = {
 const sizeClasses = {
   sm: "h-16 w-16 text-xs",
   md: "h-20 w-20 text-sm",
-  lg: "h-24 w-24 text-lg",
+  lg: "h-24 w-24 text-base",
 } as const;
 
 export default function VentureLogo({
@@ -19,8 +21,6 @@ export default function VentureLogo({
   size = "md",
   className,
 }: VentureLogoProps) {
-  const accent = ventureAccentMap[venture.accent];
-
   const initials =
     venture.name
       .trim()
@@ -30,24 +30,38 @@ export default function VentureLogo({
       .join("")
       .toUpperCase() || "GM";
 
+  const imageSizes =
+    size === "sm"
+      ? "64px"
+      : size === "md"
+        ? "80px"
+        : "96px";
+
   return (
     <div
       aria-hidden="true"
       className={cn(
         "relative flex shrink-0 items-center justify-center overflow-hidden rounded-2xl",
+        "border border-white/60 bg-white",
+        "shadow-[0_8px_30px_rgba(0,0,0,0.08)]",
+        "backdrop-blur-xl backdrop-saturate-150",
         sizeClasses[size],
-        `${accent.bg}15`,
         className,
       )}
     >
+
       {venture.image ? (
-        <img
-          src={venture.image}
-          alt=""
-          className="h-full w-full object-contain"
-        />
+        <div className="relative z-10 h-full w-full p-2.5">
+          <Image
+            src={venture.image}
+            alt=""
+            fill
+            sizes={imageSizes}
+            className="object-contain p-1"
+          />
+        </div>
       ) : (
-        <span className="font-display font-bold tracking-tight text-white">
+        <span className="relative z-10 font-display font-extrabold tracking-tighter text-ink">
           {initials}
         </span>
       )}
