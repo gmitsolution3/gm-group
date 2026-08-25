@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImagePlus, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -704,9 +705,11 @@ export default function UpdateVentureModal({
                       </p>
 
                       <div className="h-32 w-32 overflow-hidden rounded-2xl border bg-muted">
-                        <img
+                        <Image
                           src={venture.image}
                           alt={venture.name}
+                          width={128}
+                          height={128}
                           className="h-full w-full object-cover"
                         />
                       </div>
@@ -751,11 +754,13 @@ export default function UpdateVentureModal({
                                 key={`${galleryImage}-${index}`}
                                 className="aspect-video overflow-hidden rounded-xl border bg-muted"
                               >
-                                <img
+                                <Image
                                   src={galleryImage}
                                   alt={`${venture.name} gallery ${
                                     index + 1
                                   }`}
+                                  width={640}
+                                  height={360}
                                   className="h-full w-full object-cover"
                                 />
                               </div>

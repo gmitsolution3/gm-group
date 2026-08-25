@@ -13,6 +13,8 @@ import {
   Trash2,
 } from "lucide-react";
 
+import Image from "next/image";
+
 import { useMemo, useState } from "react";
 
 import {
@@ -101,9 +103,11 @@ export default function VenturesDashboard() {
             <div className="flex min-w-0 items-center gap-3">
               <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-white">
                 {venture.image ? (
-                  <img
+                  <Image
                     src={venture.image}
                     alt={venture.name}
+                    width={64}
+                    height={64}
                     className="h-full w-full object-contain"
                   />
                 ) : (
@@ -438,9 +442,11 @@ export default function VenturesDashboard() {
                         <div className="flex items-start gap-3">
                           <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border bg-muted">
                             {venture.image ? (
-                              <img
+                              <Image
                                 src={venture.image}
                                 alt={venture.name}
+                                width={48}
+                                height={48}
                                 className="h-full w-full object-cover"
                               />
                             ) : (

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 
 import {
@@ -44,9 +45,11 @@ export default function VentureDetailsModal({
           <div className="flex items-start gap-4">
             <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border bg-muted">
               {venture.image ? (
-                <img
+                <Image
                   src={venture.image}
                   alt={venture.name}
+                  width={56}
+                  height={56}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -78,7 +81,6 @@ export default function VentureDetailsModal({
 
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 <DetailItem label="Name" value={venture.name} />
-
                 <DetailItem label="Slug" value={venture.slug} />
 
                 <DetailItem
@@ -154,6 +156,7 @@ export default function VentureDetailsModal({
                     className="inline-flex items-center gap-2 text-sm font-medium text-indigo hover:underline"
                   >
                     {venture.website}
+
                     <ExternalLink className="h-4 w-4" />
                   </a>
                 ) : (
@@ -194,9 +197,11 @@ export default function VentureDetailsModal({
                       key={`${image}-${index}`}
                       className="aspect-video overflow-hidden rounded-xl border bg-muted"
                     >
-                      <img
+                      <Image
                         src={image}
                         alt={`${venture.name} gallery ${index + 1}`}
+                        width={640}
+                        height={360}
                         className="h-full w-full object-cover"
                       />
                     </div>

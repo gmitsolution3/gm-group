@@ -1,21 +1,28 @@
 "use client";
 
+import Image from "next/image";
 import { ImagePlus, Loader2, X } from "lucide-react";
+
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
 interface ImageUploaderProps {
   value?: string | null;
+
   publicId?: string | null;
+
   onChange: (
     image: {
       url: string;
       publicId: string;
     } | null,
   ) => void;
+
   folder?: string;
+
   disabled?: boolean;
+
   className?: string;
 }
 
@@ -45,7 +52,9 @@ export function ImageUploader({
     );
 
   const [isUploading, setIsUploading] = useState(false);
+
   const [isRemoving, setIsRemoving] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   /*
@@ -200,7 +209,9 @@ export function ImageUploader({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result?.message || "Unable to remove image.");
+        throw new Error(
+          result?.message || "Unable to remove image.",
+        );
       }
 
       /*
@@ -248,9 +259,11 @@ export function ImageUploader({
       {currentImage ? (
         <div className="space-y-3">
           <div className="relative h-32 w-32 overflow-hidden rounded-2xl border bg-muted">
-            <img
+            <Image
               src={currentImage.url}
               alt="Uploaded image"
+              width={128}
+              height={128}
               className="h-full w-full object-cover"
             />
 
