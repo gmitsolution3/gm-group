@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Venture } from "@/types";
+import { IVenture } from "@/types";
 
 const updateVentureSchema = z.object({
   slug: z.string().min(1, "Slug is required."),
@@ -109,7 +109,7 @@ const updateVentureSchema = z.object({
 type UpdateVentureFormValues = z.infer<typeof updateVentureSchema>;
 
 type UpdateVentureModalProps = {
-  venture: Venture | null;
+  venture: IVenture | null;
   open: boolean;
   onClose: () => void;
   onUpdated?: () => void;
@@ -746,7 +746,7 @@ export default function UpdateVentureModal({
 
                         <div className="grid gap-4 sm:grid-cols-2">
                           {venture?.gallery?.map(
-                            (galleryImage, index) => (
+                            (galleryImage: string, index: number) => (
                               <div
                                 key={`${galleryImage}-${index}`}
                                 className="aspect-video overflow-hidden rounded-xl border bg-muted"

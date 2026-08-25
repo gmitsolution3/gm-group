@@ -46,7 +46,7 @@ import EmptyVentures from "./EmptyVentures";
 import VenturesDashboardError from "./VenturesDashboardError";
 import VenturesTableLoader from "./VenturesTableLoader";
 
-import { Venture } from "@/types";
+import { IVenture } from "@/types";
 import { formatDate } from "@/utils";
 
 import CreateVentureModal from "./CreateVentureModal";
@@ -69,17 +69,17 @@ export default function VenturesDashboard() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const [selectedVenture, setSelectedVenture] =
-    useState<Venture | null>(null);
+    useState<IVenture | null>(null);
 
-  const [updateVenture, setUpdateVenture] = useState<Venture | null>(
+  const [updateVenture, setUpdateVenture] = useState<IVenture | null>(
     null,
   );
 
-  const [deleteVenture, setDeleteVenture] = useState<Venture | null>(
+  const [deleteVenture, setDeleteVenture] = useState<IVenture | null>(
     null,
   );
 
-  const { data, isLoading, isError, refetch } = useFetch<Venture[]>(
+  const { data, isLoading, isError, refetch } = useFetch<IVenture[]>(
     "/ventures/get-all",
   );
 
@@ -88,7 +88,7 @@ export default function VenturesDashboard() {
 
   const ventures = data ?? [];
 
-  const columns = useMemo<ColumnDef<typeof features, Venture>[]>(
+  const columns = useMemo<ColumnDef<typeof features, IVenture>[]>(
     () => [
       {
         id: "venture",

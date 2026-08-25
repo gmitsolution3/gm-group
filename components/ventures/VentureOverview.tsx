@@ -1,8 +1,11 @@
 import { Reveal } from "@/components/visual/motion";
-import { ventureAccentMap, type Venture } from "@/content/ventures";
+
+import { IVenture } from "@/types";
+
+import { ventureAccentMap } from "@/content/ventures";
 
 type VentureOverviewProps = {
-  venture: Venture;
+  venture: IVenture;
 };
 
 export default function VentureOverview({
@@ -20,9 +23,7 @@ export default function VentureOverview({
               <p
                 className={`flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] ${accent.text}`}
               >
-                <span
-                  className={`h-px w-10 ${accent.bg}`}
-                />
+                <span className={`h-px w-10 ${accent.bg}`} />
                 About the Venture
               </p>
             </Reveal>
@@ -33,18 +34,21 @@ export default function VentureOverview({
               </h2>
             </Reveal>
 
-            <Reveal delay={0.2}>
-              <p className="mt-7 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <Reveal delay={0.18}>
+              <p className="mt-6 max-w-3xl text-base font-medium leading-relaxed text-ink/80 sm:text-lg">
+                {venture.shortDescription}
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.25}>
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
                 {venture.description}
               </p>
             </Reveal>
           </div>
 
           {/* Key information */}
-          <Reveal
-            delay={0.15}
-            className="lg:pt-1"
-          >
+          <Reveal delay={0.15} className="lg:pt-1">
             <div className="rounded-2xl border border-black/8 bg-white p-6 sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Key Information

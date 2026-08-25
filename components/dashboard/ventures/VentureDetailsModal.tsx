@@ -12,11 +12,11 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 
-import { Venture } from "@/types";
+import { IVenture } from "@/types";
 import { formatDate } from "@/utils";
 
 type VentureDetailsModalProps = {
-  venture: Venture | null;
+  venture: IVenture | null;
   open: boolean;
   onClose: () => void;
 };

@@ -1,14 +1,17 @@
+import Image from "next/image";
+
 import { Reveal } from "@/components/visual/motion";
-import type { Venture } from "@/content/ventures";
+
+import { IVenture } from "@/types";
 
 type VentureGalleryProps = {
-  venture: Venture;
+  venture: IVenture;
 };
 
 export default function VentureGallery({
   venture,
 }: VentureGalleryProps) {
-  if (venture.gallery.length === 0) {
+  if (!venture.gallery?.length) {
     return null;
   }
 
@@ -31,15 +34,19 @@ export default function VentureGallery({
         <div className="mt-10 grid gap-5 sm:grid-cols-2">
           {venture.gallery.map((image, index) => (
             <Reveal
-              key={image}
+              key={`${image}-${index}`}
               delay={index * 0.08}
             >
               <div className="overflow-hidden rounded-2xl border border-black/8 bg-muted">
-                <img
-                  src={image}
-                  alt={`${venture.name} gallery image ${index + 1}`}
-                  className="aspect-[16/10] w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
-                />
+                <div className="relative aspect-[16/10]">
+                  <Image
+                    src={image}
+                    alt={`${venture.name} gallery image ${index + 1}`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 hover:scale-[1.02]"
+                  />
+                </div>
               </div>
             </Reveal>
           ))}

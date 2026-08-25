@@ -1,11 +1,11 @@
 import { Reveal } from "@/components/visual/motion";
-import {
-  ventureAccentMap,
-  type Venture,
-} from "@/content/ventures";
+
+import { IVenture } from "@/types";
+
+import { ventureAccentMap } from "@/content/ventures";
 
 type VentureDetailContentProps = {
-  venture: Venture;
+  venture: IVenture;
 };
 
 export default function VentureDetailContent({
