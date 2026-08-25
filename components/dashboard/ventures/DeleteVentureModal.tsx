@@ -15,12 +15,12 @@ import {
 
 import { useDelete } from "@/hooks/api/useDelete";
 
-import { Venture } from "@/types";
+import { IVenture } from "@/types";
 
 import { toast } from "sonner";
 
 type DeleteVentureModalProps = {
-  venture: Venture | null;
+  venture: IVenture | null;
   open: boolean;
   onClose: () => void;
   onDeleted?: () => void;
