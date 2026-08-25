@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
@@ -71,15 +72,20 @@ export function RegisterForm() {
     });
 
     if (error) {
-      setServerError(
+      const message =
         error.message ||
-          "Unable to create your account. Please try again.",
-      );
+        "Unable to create your account. Please try again.";
+
+      setServerError(message);
+
+      toast.error(message);
+
       return;
     }
 
+    toast.success("Account created successfully.");
+
     router.push("/verify-email");
-    router.refresh();
   }
 
   return (

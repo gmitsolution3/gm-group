@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -57,19 +58,21 @@ export function LoginForm({ callbackUrl }: { callbackUrl?: string }) {
     });
 
     if (error) {
-      if (error.status === 403) {
-        setServerError(
-          "Please verify your email address before logging in.",
-        );
-      } else {
-        setServerError(error.message || "Invalid email or password.");
-      }
+      const message =
+        error.status === 403
+          ? "Please verify your email address before logging in."
+          : error.message || "Invalid email or password.";
+
+      setServerError(message);
+
+      toast.error(message);
 
       return;
     }
 
+    toast.success("Logged in successfully.");
+
     router.push(getSafeRedirectUrl(callbackUrl));
-    router.refresh();
   }
 
   return (
