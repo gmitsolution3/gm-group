@@ -11,7 +11,7 @@ import { IVenture } from "@/types";
 
 import { ventureAccentMap } from "@/content/ventures";
 
-import VentureLogo from "./VentureLogo";
+import VentureLogo from "../VentureLogo";
 
 type VentureDetailHeroProps = {
   venture: IVenture;
@@ -48,10 +48,7 @@ export default function VentureDetailHero({
           <div>
             <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
               <Reveal>
-                <VentureLogo
-                  venture={venture}
-                  size="lg"
-                />
+                <VentureLogo venture={venture} size="lg" />
               </Reveal>
 
               <Reveal delay={0.1}>
@@ -70,10 +67,7 @@ export default function VentureDetailHero({
             </div>
 
             <h1 className="mt-8 max-w-5xl font-display text-display tracking-tightest text-balance">
-              <RevealWords
-                text={venture.name}
-                delay={0.18}
-              />
+              <RevealWords text={venture.name} delay={0.18} />
             </h1>
 
             <Reveal delay={0.35}>
@@ -100,7 +94,6 @@ export default function VentureDetailHero({
                   className="group inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-yellow"
                 >
                   Visit Website
-
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </a>
               )}
@@ -108,10 +101,7 @@ export default function VentureDetailHero({
           </div>
 
           {venture.image && (
-            <Reveal
-              delay={0.2}
-              className="lg:justify-self-end"
-            >
+            <Reveal delay={0.2} className="lg:justify-self-end">
               <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-2 shadow-2xl backdrop-blur-xl">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl lg:w-[32rem]">
                   <Image

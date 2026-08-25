@@ -1,4 +1,4 @@
-import VentureDetailPageContent from "@/components/ventures/VentureDetailPageContent";
+import VentureDetailPageContent from "@/components/ventures/ventureDetail/VentureDetailPageContent";
 
 export const dynamic = "force-dynamic";
 
