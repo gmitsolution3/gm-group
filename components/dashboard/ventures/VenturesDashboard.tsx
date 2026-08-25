@@ -99,12 +99,12 @@ export default function VenturesDashboard() {
 
           return (
             <div className="flex min-w-0 items-center gap-3">
-              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl border bg-muted">
+              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border bg-white">
                 {venture.image ? (
                   <img
                     src={venture.image}
                     alt={venture.name}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-xs font-semibold">
