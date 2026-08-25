@@ -6,5 +6,5 @@ export const postFetcher = async (
 ) => {
   const res = await axiosInstance.post(url, arg);
 
-  return res.data;
+  return res?.data;
 };

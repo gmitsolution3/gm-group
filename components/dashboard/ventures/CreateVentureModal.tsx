@@ -192,6 +192,7 @@ export default function CreateVentureModal({
   /*
    * Automatically generate the slug from the venture name.
    */
+  
   useEffect(() => {
     setValue("slug", slugify(ventureName), {
       shouldValidate: true,
@@ -261,12 +262,9 @@ export default function CreateVentureModal({
 
       onCreated?.();
       onClose();
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Unable to create venture.",
-      );
+    } catch (error: any) {
+      console.log(error.message);
+      toast.error(error.message || "Unable to create venture.");
     }
   }
 
