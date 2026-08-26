@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { ImagePlus, Loader2, X } from "lucide-react";
+import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 
