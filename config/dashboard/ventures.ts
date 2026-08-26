@@ -67,7 +67,7 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "IT Dashboard",
         description: "Manage GM IT Solution operations.",
-        href: "/dashboard/venture-dashboards/gm-it",
+        href: "/dashboard/venture-dashboards/gm-it-solution",
         icon: LayoutDashboard,
       },
     ],
