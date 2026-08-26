@@ -10,4 +10,9 @@ export const API_ENDPOINTS = {
     dashboard:
       "https://ai-learning-academy-server.vercel.app/api/v1/analytics/dashboard",
   },
+
+  gmItSolution: {
+    analytics:
+      "https://gm-it-solution-backend.vercel.app/api/v1/analytics",
+  },
 };
