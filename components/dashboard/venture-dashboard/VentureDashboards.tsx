@@ -2,8 +2,11 @@
 
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 import {
   dashboardVentures,
@@ -15,9 +18,15 @@ import SelectedVenture from "./SelectedVenture";
 
 export function VentureDashboards() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const [selectedVenture, setSelectedVenture] =
-    useState<DashboardVenture | null>(null);
+  const ventureParam = searchParams.get("venture");
+
+  const selectedVenture: DashboardVenture | null =
+    dashboardVentures.find(
+      (venture) => venture.name === ventureParam,
+    ) ?? null;
 
   function handleVentureClick(venture: DashboardVenture) {
     if (venture.dashboards.length === 1) {
@@ -25,11 +34,25 @@ export function VentureDashboards() {
       return;
     }
 
-    setSelectedVenture(venture);
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set("venture", venture.name);
+
+    router.push(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
   }
 
   function handleBack() {
-    setSelectedVenture(null);
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("venture");
+
+    const query = params.toString();
+
+    router.push(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
   }
 
   if (selectedVenture) {
