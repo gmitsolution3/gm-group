@@ -142,7 +142,7 @@ export function TrendList({
 
             <div className="h-2 overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full rounded-full bg-primary transition-all"
+                className="h-full rounded-full bg-indigo transition-all"
                 style={{
                   width: `${percentage}%`,
                 }}
@@ -210,7 +210,7 @@ export function BreakdownList<
 
             <div className="h-2 overflow-hidden rounded-full bg-muted">
               <div
-                className="h-full rounded-full bg-primary"
+                className="h-full rounded-full bg-indigo"
                 style={{
                   width: `${percentage}%`,
                 }}
