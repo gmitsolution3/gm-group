@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { UsersAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -12,11 +17,7 @@ import {
   TrendList,
 } from "../AnalyticsShared";
 
-export default function UsersTab({
-  data,
-}: {
-  data: UsersAnalytics;
-}) {
+export default function UsersTab({ data }: { data: UsersAnalytics }) {
   return (
     <div className="space-y-8">
       <Section
@@ -26,10 +27,7 @@ export default function UsersTab({
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard label="Total Users" value={data.summary.total} />
           <KpiCard label="Admins" value={data.summary.admins} />
-          <KpiCard
-            label="Verified"
-            value={data.summary.verified}
-          />
+          <KpiCard label="Verified" value={data.summary.verified} />
           <KpiCard
             label="Verification Rate"
             value={`${data.summary.verificationRate}%`}
@@ -55,6 +53,7 @@ export default function UsersTab({
                   count: data.summary.unverified,
                 },
               ]}
+              labelKey="label"
             />
           </CardContent>
         </Card>
@@ -65,7 +64,10 @@ export default function UsersTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.byRole} />
+            <BreakdownList
+              items={data.breakdowns.byRole}
+              labelKey="role"
+            />
           </CardContent>
         </Card>
       </section>

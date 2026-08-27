@@ -35,19 +35,64 @@ export type GrowthPoint = {
   count: number;
 };
 
-export type AnalyticsBreakdown = {
-  label: string;
+export type TechnologyBreakdown = {
+  technology: string;
+  count: number;
+};
+
+export type PortfolioCategoryBreakdown = {
+  category: string;
+  count: number;
+};
+
+export type BlogCategoryBreakdown = {
+  category: string;
+  count: number;
+};
+
+export type RoleBreakdown = {
+  role: string;
+  count: number;
+};
+
+export type AuthorBreakdown = {
+  author: string;
+  count: number;
+};
+
+export type DepartmentBreakdown = {
+  department: string;
+  count: number;
+};
+
+export type EmploymentTypeBreakdown = {
+  employmentType: string;
+  count: number;
+};
+
+export type WorkplaceTypeBreakdown = {
+  workplaceType: string;
+  count: number;
+};
+
+export type ExperienceLevelBreakdown = {
+  experienceLevel: string;
+  count: number;
+};
+
+export type JobApplicationsBreakdown = {
+  job: string;
+  count: number;
+};
+
+export type PortfolioBreakdown = {
+  portfolio: string;
   count: number;
 };
 
 export type AnalyticsActivity = {
   id: string;
-  type:
-    | "user"
-    | "portfolio"
-    | "blog"
-    | "job"
-    | "application";
+  type: "user" | "portfolio" | "blog" | "job" | "application";
   title: string;
   description: string;
   date: string;
@@ -107,9 +152,9 @@ export type OverviewAnalytics = {
   };
 
   breakdowns: {
-    technologies: AnalyticsBreakdown[];
-    portfolioCategories: AnalyticsBreakdown[];
-    blogCategories: AnalyticsBreakdown[];
+    technologies: TechnologyBreakdown[];
+    portfolioCategories: PortfolioCategoryBreakdown[];
+    blogCategories: BlogCategoryBreakdown[];
   };
 
   recent: {
@@ -139,7 +184,7 @@ export type UsersAnalytics = {
   };
 
   breakdowns: {
-    byRole: AnalyticsBreakdown[];
+    byRole: RoleBreakdown[];
   };
 
   trends: {
@@ -163,7 +208,7 @@ export type ServicesAnalytics = {
   };
 
   breakdowns: {
-    technologies: AnalyticsBreakdown[];
+    technologies: TechnologyBreakdown[];
   };
 
   trends: {
@@ -186,7 +231,7 @@ export type PortfoliosAnalytics = {
   };
 
   breakdowns: {
-    categories: AnalyticsBreakdown[];
+    categories: PortfolioCategoryBreakdown[];
   };
 
   trends: {
@@ -210,8 +255,9 @@ export type CaseStudiesAnalytics = {
   };
 
   breakdowns: {
-    technologies: AnalyticsBreakdown[];
-    portfolios: AnalyticsBreakdown[];
+    technologies: TechnologyBreakdown[];
+    portfolios: PortfolioBreakdown[];
+    categories: PortfolioCategoryBreakdown[];
   };
 
   trends: {
@@ -235,7 +281,7 @@ export type TeamAnalytics = {
   };
 
   breakdowns: {
-    byRole: AnalyticsBreakdown[];
+    byRole: RoleBreakdown[];
   };
 
   trends: {
@@ -260,8 +306,8 @@ export type BlogAnalytics = {
   };
 
   breakdowns: {
-    categories: AnalyticsBreakdown[];
-    authors: AnalyticsBreakdown[];
+    categories: BlogCategoryBreakdown[];
+    authors: AuthorBreakdown[];
   };
 
   trends: {
@@ -289,11 +335,11 @@ export type RecruitmentAnalytics = {
   };
 
   breakdowns: {
-    departments: AnalyticsBreakdown[];
-    employmentTypes: AnalyticsBreakdown[];
-    workplaceTypes: AnalyticsBreakdown[];
-    experienceLevels: AnalyticsBreakdown[];
-    applicationsByJob: AnalyticsBreakdown[];
+    departments: DepartmentBreakdown[];
+    employmentTypes: EmploymentTypeBreakdown[];
+    workplaceTypes: WorkplaceTypeBreakdown[];
+    experienceLevels: ExperienceLevelBreakdown[];
+    applicationsByJob: JobApplicationsBreakdown[];
   };
 
   trends: {

@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { TeamAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -12,11 +17,7 @@ import {
   TrendList,
 } from "../AnalyticsShared";
 
-export default function TeamTab({
-  data,
-}: {
-  data: TeamAnalytics;
-}) {
+export default function TeamTab({ data }: { data: TeamAnalytics }) {
   return (
     <div className="space-y-8">
       <Section title="Team">
@@ -39,7 +40,10 @@ export default function TeamTab({
         </CardHeader>
 
         <CardContent>
-          <BreakdownList items={data.breakdowns.byRole} />
+          <BreakdownList
+            items={data.breakdowns.byRole}
+            labelKey="role"
+          />
         </CardContent>
       </Card>
 

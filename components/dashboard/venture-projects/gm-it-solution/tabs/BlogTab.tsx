@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { BlogAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -12,20 +17,13 @@ import {
   TrendList,
 } from "../AnalyticsShared";
 
-export default function BlogTab({
-  data,
-}: {
-  data: BlogAnalytics;
-}) {
+export default function BlogTab({ data }: { data: BlogAnalytics }) {
   return (
     <div className="space-y-8">
       <Section title="Blog Analytics">
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard label="Total Blogs" value={data.summary.total} />
-          <KpiCard
-            label="Featured"
-            value={data.summary.featured}
-          />
+          <KpiCard label="Featured" value={data.summary.featured} />
           <KpiCard label="Regular" value={data.summary.regular} />
           <KpiCard
             label="Featured Rate"
@@ -41,7 +39,10 @@ export default function BlogTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.categories} />
+            <BreakdownList
+              items={data.breakdowns.categories}
+              labelKey="category"
+            />
           </CardContent>
         </Card>
 
@@ -51,7 +52,10 @@ export default function BlogTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.authors} />
+            <BreakdownList
+              items={data.breakdowns.authors}
+              labelKey="author"
+            />
           </CardContent>
         </Card>
       </section>
@@ -68,7 +72,13 @@ export default function BlogTab({
 
       <Section title="Recent Blogs">
         <RecentTable
-          columns={["Title", "Category", "Author", "Featured", "Date"]}
+          columns={[
+            "Title",
+            "Category",
+            "Author",
+            "Featured",
+            "Date",
+          ]}
           rows={data.recent.blogs.map((item) => [
             item.title,
             item.category,

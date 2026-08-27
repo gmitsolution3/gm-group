@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { PortfoliosAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -39,7 +44,10 @@ export default function PortfoliosTab({
         </CardHeader>
 
         <CardContent>
-          <BreakdownList items={data.breakdowns.categories} />
+          <BreakdownList
+            items={data.breakdowns.categories}
+            labelKey="category"
+          />
         </CardContent>
       </Card>
 

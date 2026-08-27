@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { RecruitmentAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -68,7 +73,10 @@ export default function RecruitmentTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.departments} />
+            <BreakdownList
+              items={data.breakdowns.departments}
+              labelKey="department"
+            />
           </CardContent>
         </Card>
 
@@ -80,6 +88,7 @@ export default function RecruitmentTab({
           <CardContent>
             <BreakdownList
               items={data.breakdowns.employmentTypes}
+              labelKey="employmentType"
             />
           </CardContent>
         </Card>
@@ -92,6 +101,7 @@ export default function RecruitmentTab({
           <CardContent>
             <BreakdownList
               items={data.breakdowns.workplaceTypes}
+              labelKey="workplaceType"
             />
           </CardContent>
         </Card>
@@ -104,6 +114,7 @@ export default function RecruitmentTab({
           <CardContent>
             <BreakdownList
               items={data.breakdowns.experienceLevels}
+              labelKey="experienceLevel"
             />
           </CardContent>
         </Card>
@@ -117,6 +128,7 @@ export default function RecruitmentTab({
         <CardContent>
           <BreakdownList
             items={data.breakdowns.applicationsByJob}
+            labelKey="job"
           />
         </CardContent>
       </Card>
@@ -133,7 +145,13 @@ export default function RecruitmentTab({
 
       <Section title="Recent Jobs">
         <RecentTable
-          columns={["Title", "Department", "Type", "Openings", "Date"]}
+          columns={[
+            "Title",
+            "Department",
+            "Type",
+            "Openings",
+            "Date",
+          ]}
           rows={data.recent.jobs.map((item) => [
             item.title,
             item.department || "—",

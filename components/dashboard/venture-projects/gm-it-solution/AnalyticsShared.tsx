@@ -8,11 +8,10 @@ import {
   Users,
 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import type {
   AnalyticsActivity,
-  AnalyticsBreakdown,
   GrowthPoint,
 } from "@/types/dashboard/gm-it-solution.type";
 
@@ -102,48 +101,54 @@ export function EmptyState({
 
 export function BreakdownList({
   items,
+  labelKey,
 }: {
-  items: AnalyticsBreakdown[];
+  items: Record<string, string | number>[];
+  labelKey: string;
 }) {
   if (!items.length) {
     return <EmptyState />;
   }
 
-  const max = Math.max(...items.map((item) => item.count), 1);
+  const max = Math.max(
+    ...items.map((item) => Number(item.count) || 0),
+    1,
+  );
 
   return (
     <div className="space-y-4">
-      {items.map((item) => (
-        <div key={item.label}>
-          <div className="mb-1.5 flex items-center justify-between gap-3">
-            <span className="truncate text-sm font-medium">
-              {item.label}
-            </span>
+      {items.map((item, index) => {
+        const label = String(item[labelKey] ?? "");
+        const count = Number(item.count) || 0;
 
-            <span className="text-sm font-semibold">
-              {item.count.toLocaleString()}
-            </span>
-          </div>
+        return (
+          <div key={`${label}-${index}`}>
+            <div className="mb-1.5 flex items-center justify-between gap-3">
+              <span className="truncate text-sm font-medium">
+                {label}
+              </span>
 
-          <div className="h-2 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full bg-indigo transition-all"
-              style={{
-                width: `${(item.count / max) * 100}%`,
-              }}
-            />
+              <span className="text-sm font-semibold">
+                {count.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="h-2 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-indigo transition-all"
+                style={{
+                  width: `${(count / max) * 100}%`,
+                }}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
 
-export function TrendList({
-  items,
-}: {
-  items: GrowthPoint[];
-}) {
+export function TrendList({ items }: { items: GrowthPoint[] }) {
   if (!items.length) {
     return <EmptyState />;
   }
@@ -164,10 +169,7 @@ export function TrendList({
           <div
             className="w-full min-w-3 rounded-t-md bg-indigo"
             style={{
-              height: `${Math.max(
-                (item.count / max) * 150,
-                4,
-              )}px`,
+              height: `${Math.max((item.count / max) * 150, 4)}px`,
             }}
           />
 
@@ -261,10 +263,7 @@ export function RecentTable({
           {rows.map((row, rowIndex) => (
             <tr key={rowIndex} className="hover:bg-muted/20">
               {row.map((cell, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className="px-4 py-3 text-sm"
-                >
+                <td key={cellIndex} className="px-4 py-3 text-sm">
                   {cell}
                 </td>
               ))}

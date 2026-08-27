@@ -101,6 +101,7 @@ export default function OverviewTab({
           <CardContent>
             <BreakdownList
               items={data.breakdowns.portfolioCategories}
+              labelKey="category"
             />
           </CardContent>
         </Card>
@@ -111,7 +112,10 @@ export default function OverviewTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.blogCategories} />
+            <BreakdownList
+              items={data.breakdowns.blogCategories}
+              labelKey="category"
+            />
           </CardContent>
         </Card>
       </section>

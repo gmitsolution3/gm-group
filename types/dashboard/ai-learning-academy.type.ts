@@ -17,8 +17,8 @@ export interface AILearningDashboardData {
     totalModules: number;
     totalLessons: number;
     totalConsultancyRequests: number;
-    courseGrowth: GrowthAnalytics;
-    consultancyGrowth: GrowthAnalytics;
+    courseGrowth: AILearningGrowthAnalytics;
+    consultancyGrowth: AILearningGrowthAnalytics;
   };
 
   courses: {
@@ -61,7 +61,7 @@ export interface AILearningDashboardData {
   };
 }
 
-export interface GrowthAnalytics {
+export interface AILearningGrowthAnalytics {
   thisMonth: number;
   lastMonth: number;
   growthPercentage: number;

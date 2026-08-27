@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { ServicesAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -24,7 +29,10 @@ export default function ServicesTab({
         description="Service portfolio and technology usage."
       >
         <div className="grid gap-4 sm:grid-cols-3">
-          <KpiCard label="Total Services" value={data.summary.total} />
+          <KpiCard
+            label="Total Services"
+            value={data.summary.total}
+          />
           <KpiCard
             label="Avg. Features"
             value={data.summary.averageFeatures}
@@ -42,7 +50,10 @@ export default function ServicesTab({
         </CardHeader>
 
         <CardContent>
-          <BreakdownList items={data.breakdowns.technologies} />
+          <BreakdownList
+            items={data.breakdowns.technologies}
+            labelKey="technology"
+          />
         </CardContent>
       </Card>
 

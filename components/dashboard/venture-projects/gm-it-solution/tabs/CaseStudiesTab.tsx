@@ -1,6 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import type { CaseStudiesAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
@@ -45,7 +50,10 @@ export default function CaseStudiesTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.technologies} />
+            <BreakdownList
+              items={data.breakdowns.technologies}
+              labelKey="technology"
+            />
           </CardContent>
         </Card>
 
@@ -55,7 +63,10 @@ export default function CaseStudiesTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList items={data.breakdowns.portfolios} />
+            <BreakdownList
+              items={data.breakdowns.categories}
+              labelKey="category"
+            />
           </CardContent>
         </Card>
       </section>
