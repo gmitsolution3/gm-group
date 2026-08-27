@@ -1,6 +1,12 @@
 "use client";
 
-import { BriefcaseBusiness, FileText, Users } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  FileText,
+  Layers,
+  LayoutDashboard,
+  Users,
+} from "lucide-react";
 
 import {
   Card,
@@ -27,6 +33,7 @@ export default function OverviewTab({
 }) {
   return (
     <div className="space-y-8">
+      {/* ==================== OVERVIEW ==================== */}
       <Section
         title="Overview"
         description="Company-wide view of GM IT Solution activity."
@@ -34,92 +41,138 @@ export default function OverviewTab({
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           <KpiCard
             label="Users"
-            value={data?.users?.total ?? 0}
+            value={data.summary.users.total}
             icon={Users}
           />
 
           <KpiCard
+            label="Services"
+            value={data.summary.services.total}
+            icon={Layers}
+          />
+
+          <KpiCard
             label="Portfolios"
-            value={data?.portfolios?.total ?? 0}
+            value={data.summary.portfolios.total}
             icon={BriefcaseBusiness}
           />
 
           <KpiCard
             label="Blog Posts"
-            value={data?.blog?.total ?? 0}
+            value={data.summary.blog.total}
             icon={FileText}
           />
 
           <KpiCard
-            label="Team Members"
-            value={data?.team?.total ?? 0}
-            icon={Users}
-          />
-
-          <KpiCard
             label="Active Jobs"
-            value={data?.recruitment?.activeJobs ?? 0}
+            value={data.summary.recruitment.activeJobs}
             icon={BriefcaseBusiness}
           />
 
           <KpiCard
             label="Applications"
-            value={data?.recruitment?.applications ?? 0}
+            value={data.summary.recruitment.totalApplications}
             icon={FileText}
           />
         </div>
       </Section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>User Growth</CardTitle>
-          </CardHeader>
+      {/* ==================== TRENDS ==================== */}
+      <Section
+        title="Growth Trends"
+        description="Activity growth across key areas."
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Growth</CardTitle>
+            </CardHeader>
 
-          <CardContent>
-            <TrendList items={data.trends.users} />
-          </CardContent>
-        </Card>
+            <CardContent>
+              <TrendList items={data.trends.users} />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Application Growth</CardTitle>
-          </CardHeader>
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio Growth</CardTitle>
+            </CardHeader>
 
-          <CardContent>
-            <TrendList items={data.trends.applications} />
-          </CardContent>
-        </Card>
-      </section>
+            <CardContent>
+              <TrendList items={data.trends.portfolios} />
+            </CardContent>
+          </Card>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Portfolio Categories</CardTitle>
-          </CardHeader>
+          <Card>
+            <CardHeader>
+              <CardTitle>Blog Growth</CardTitle>
+            </CardHeader>
 
-          <CardContent>
-            <BreakdownList
-              items={data.breakdowns.portfolioCategories}
-              labelKey="category"
-            />
-          </CardContent>
-        </Card>
+            <CardContent>
+              <TrendList items={data.trends.blogs} />
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Blog Categories</CardTitle>
-          </CardHeader>
+          <Card>
+            <CardHeader>
+              <CardTitle>Application Growth</CardTitle>
+            </CardHeader>
 
-          <CardContent>
-            <BreakdownList
-              items={data.breakdowns.blogCategories}
-              labelKey="category"
-            />
-          </CardContent>
-        </Card>
-      </section>
+            <CardContent>
+              <TrendList items={data.trends.applications} />
+            </CardContent>
+          </Card>
+        </div>
+      </Section>
 
+      {/* ==================== BREAKDOWNS ==================== */}
+      <Section
+        title="Content Breakdown"
+        description="Distribution across technologies and categories."
+      >
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Technologies</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <BreakdownList
+                items={data.breakdowns.technologies}
+                labelKey="technology"
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Portfolio Categories</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <BreakdownList
+                items={data.breakdowns.portfolioCategories}
+                labelKey="category"
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Blog Categories</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <BreakdownList
+                items={data.breakdowns.blogCategories}
+                labelKey="category"
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </Section>
+
+      {/* ==================== ACTIVITY ==================== */}
       <Section
         title="Recent Activity"
         description="Latest activity across GM IT Solution."
@@ -127,7 +180,11 @@ export default function OverviewTab({
         <ActivityTimeline items={data.activity} />
       </Section>
 
-      <Section title="Recent Portfolios">
+      {/* ==================== RECENT PORTFOLIOS ==================== */}
+      <Section
+        title="Recent Portfolios"
+        description="Recently added portfolio projects."
+      >
         <RecentTable
           columns={["Project", "Category", "Date"]}
           rows={data.recent.portfolios.map((item) => [
@@ -138,13 +195,50 @@ export default function OverviewTab({
         />
       </Section>
 
-      <Section title="Recent Applications">
+      {/* ==================== RECENT BLOGS ==================== */}
+      <Section
+        title="Recent Blogs"
+        description="Recently published blog posts."
+      >
         <RecentTable
-          columns={["Applicant", "Job", "Date"]}
-          rows={data.recent.applications.map((item) => [
-            item.name || "Applicant",
-            item.job || "—",
+          columns={["Title", "Category", "Author", "Date"]}
+          rows={data.recent.blogs.map((item) => [
+            item.title,
+            item.category,
+            item.author,
             new Date(item.createdAt).toLocaleDateString(),
+          ])}
+        />
+      </Section>
+
+      {/* ==================== RECENT APPLICATIONS ==================== */}
+      <Section
+        title="Recent Applications"
+        description="Latest job applications received."
+      >
+        <RecentTable
+          columns={["Applicant", "Email", "Phone", "Date"]}
+          rows={data.recent.applications.map((item) => [
+            item.fullName,
+            item.email,
+            item.phone,
+            new Date(item.createdAt).toLocaleDateString(),
+          ])}
+        />
+      </Section>
+
+      {/* ==================== RECENT JOBS ==================== */}
+      <Section
+        title="Recent Jobs"
+        description="Recently created job listings."
+      >
+        <RecentTable
+          columns={["Job", "Department", "Type", "Status"]}
+          rows={data.recent.jobs.map((item) => [
+            item.title,
+            item.department,
+            item.employmentType,
+            item.isActive ? "Active" : "Inactive",
           ])}
         />
       </Section>

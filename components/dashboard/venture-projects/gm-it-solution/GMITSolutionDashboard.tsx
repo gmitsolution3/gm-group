@@ -155,6 +155,8 @@ export default function GMITSolutionDashboard() {
       period: activeTab === "growth" ? activePeriod : undefined,
     });
 
+    console.log(data)
+
   function updateUrl(
     changes: Partial<{
       tab: AnalyticsTab;

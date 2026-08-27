@@ -1,472 +1,157 @@
-export type AnalyticsTab =
-  | "overview"
-  | "users"
-  | "services"
-  | "portfolios"
-  | "case-studies"
-  | "team"
-  | "blog"
-  | "recruitment"
-  | "content"
-  | "growth";
+// ==============================
+// Overview Analytics
+// ==============================
 
-export type AnalyticsPeriod =
-  | "daily"
-  | "weekly"
-  | "monthly"
-  | "yearly";
-
-export type AnalyticsFilters = {
-  from: string | null;
-  to: string | null;
-  period?: AnalyticsPeriod;
-};
-
-export type AnalyticsResponse<T> = {
-  success: boolean;
-  tab: AnalyticsTab;
-  filters: AnalyticsFilters;
-  data: T;
-  message?: string;
-};
-
-export type GrowthPoint = {
+export interface OverviewTrendItem {
+  count: number;
   period: string;
-  count: number;
-};
+}
 
-export type TechnologyBreakdown = {
+export interface OverviewTechnologyBreakdown {
+  count: number;
   technology: string;
-  count: number;
-};
+}
 
-export type PortfolioCategoryBreakdown = {
+export interface OverviewCategoryBreakdown {
+  count: number;
   category: string;
-  count: number;
-};
+}
 
-export type BlogCategoryBreakdown = {
-  category: string;
-  count: number;
-};
-
-export type RoleBreakdown = {
+export interface OverviewUser {
+  _id: string;
+  name: string;
+  email: string;
+  image: string;
+  createdAt: string;
   role: string;
-  count: number;
-};
+}
 
-export type AuthorBreakdown = {
+export interface OverviewPortfolio {
+  _id: string;
+  title: string;
+  category: string;
+  image: string;
+  url: string;
+  createdAt: string;
+}
+
+export interface OverviewBlog {
+  _id: string;
+  title: string;
+  category: string;
   author: string;
-  count: number;
-};
+  date: string;
+  image: string;
+  featured: boolean;
+  createdAt: string;
+}
 
-export type DepartmentBreakdown = {
+export interface OverviewJob {
+  _id: string;
+  title: string;
   department: string;
-  count: number;
-};
-
-export type EmploymentTypeBreakdown = {
   employmentType: string;
-  count: number;
-};
-
-export type WorkplaceTypeBreakdown = {
   workplaceType: string;
-  count: number;
-};
+  applicationDeadline: string;
+  openings: number;
+  isActive: boolean;
+  createdAt: string;
+}
 
-export type ExperienceLevelBreakdown = {
-  experienceLevel: string;
-  count: number;
-};
+export interface OverviewApplication {
+  _id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  jobId: string;
+  portfolioUrl: string;
+  resume: string;
+  createdAt: string;
+}
 
-export type JobApplicationsBreakdown = {
-  job: string;
-  count: number;
-};
+export interface OverviewService {
+  _id: string;
+  title: string;
+  technologies: string[];
+  image: string;
+  createdAt: string;
+}
 
-export type PortfolioBreakdown = {
-  portfolio: string;
-  count: number;
-};
-
-export type AnalyticsActivity = {
-  id: string;
-  type: "user" | "portfolio" | "blog" | "job" | "application";
+export interface OverviewActivity {
+  type: string;
   title: string;
   description: string;
   date: string;
-};
+  id: string;
+}
 
-/* -------------------------------------------------------------------------- */
-/* Overview                                                                   */
-/* -------------------------------------------------------------------------- */
+export interface OverviewAnalytics {
+  summary: {
+    users: {
+      total: number;
+      admins: number;
+      regularUsers: number;
+    };
 
-export type OverviewAnalytics = {
-  users: {
-    total: number;
-    admins: number;
-    regularUsers: number;
-  };
+    services: {
+      total: number;
+    };
 
-  services: {
-    total: number;
-  };
+    portfolios: {
+      total: number;
+    };
 
-  portfolios: {
-    total: number;
-  };
+    caseStudies: {
+      total: number;
+    };
 
-  caseStudies: {
-    total: number;
-  };
+    team: {
+      total: number;
+    };
 
-  team: {
-    total: number;
-  };
+    blog: {
+      total: number;
+      featured: number;
+      regular: number;
+    };
 
-  blog: {
-    total: number;
-    featured: number;
-  };
+    recruitment: {
+      totalJobs: number;
+      activeJobs: number;
+      inactiveJobs: number;
+      totalApplications: number;
+    };
 
-  recruitment: {
-    jobs: number;
-    activeJobs: number;
-    applications: number;
-  };
+    leadership: {
+      total: number;
+    };
 
-  leadership: {
-    total: number;
-  };
-
-  sliders: {
-    total: number;
+    sliders: {
+      total: number;
+    };
   };
 
   trends: {
-    users: GrowthPoint[];
-    blogs: GrowthPoint[];
-    portfolios: GrowthPoint[];
-    applications: GrowthPoint[];
+    users: OverviewTrendItem[];
+    blogs: OverviewTrendItem[];
+    portfolios: OverviewTrendItem[];
+    applications: OverviewTrendItem[];
   };
 
   breakdowns: {
-    technologies: TechnologyBreakdown[];
-    portfolioCategories: PortfolioCategoryBreakdown[];
-    blogCategories: BlogCategoryBreakdown[];
+    technologies: OverviewTechnologyBreakdown[];
+    portfolioCategories: OverviewCategoryBreakdown[];
+    blogCategories: OverviewCategoryBreakdown[];
   };
 
   recent: {
-    users: RecentUser[];
-    portfolios: RecentPortfolio[];
-    blogs: RecentBlog[];
-    jobs: RecentJob[];
-    applications: RecentApplication[];
-    services: RecentService[];
+    users: OverviewUser[];
+    portfolios: OverviewPortfolio[];
+    blogs: OverviewBlog[];
+    jobs: OverviewJob[];
+    applications: OverviewApplication[];
+    services: OverviewService[];
   };
 
-  activity: AnalyticsActivity[];
-};
-
-/* -------------------------------------------------------------------------- */
-/* Users                                                                      */
-/* -------------------------------------------------------------------------- */
-
-export type UsersAnalytics = {
-  summary: {
-    total: number;
-    admins: number;
-    regularUsers: number;
-    verified: number;
-    unverified: number;
-    verificationRate: number;
-  };
-
-  breakdowns: {
-    byRole: RoleBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    users: RecentUser[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Services                                                                   */
-/* -------------------------------------------------------------------------- */
-
-export type ServicesAnalytics = {
-  summary: {
-    total: number;
-    averageFeatures: number;
-    averageTechnologies: number;
-  };
-
-  breakdowns: {
-    technologies: TechnologyBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    services: RecentService[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Portfolios                                                                 */
-/* -------------------------------------------------------------------------- */
-
-export type PortfoliosAnalytics = {
-  summary: {
-    total: number;
-    categories: number;
-  };
-
-  breakdowns: {
-    categories: PortfolioCategoryBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    portfolios: RecentPortfolio[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Case Studies                                                               */
-/* -------------------------------------------------------------------------- */
-
-export type CaseStudiesAnalytics = {
-  summary: {
-    total: number;
-    technologies: number;
-    portfolios: number;
-  };
-
-  breakdowns: {
-    technologies: TechnologyBreakdown[];
-    portfolios: PortfolioBreakdown[];
-    categories: PortfolioCategoryBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    caseStudies: RecentCaseStudy[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Team                                                                       */
-/* -------------------------------------------------------------------------- */
-
-export type TeamAnalytics = {
-  summary: {
-    total: number;
-    linkedinProfiles: number;
-    linkedinCoverage: number;
-  };
-
-  breakdowns: {
-    byRole: RoleBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    members: RecentTeamMember[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Blog                                                                       */
-/* -------------------------------------------------------------------------- */
-
-export type BlogAnalytics = {
-  summary: {
-    total: number;
-    featured: number;
-    regular: number;
-    featuredRate: number;
-  };
-
-  breakdowns: {
-    categories: BlogCategoryBreakdown[];
-    authors: AuthorBreakdown[];
-  };
-
-  trends: {
-    growth: GrowthPoint[];
-  };
-
-  recent: {
-    blogs: RecentBlog[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Recruitment                                                                */
-/* -------------------------------------------------------------------------- */
-
-export type RecruitmentAnalytics = {
-  summary: {
-    totalJobs: number;
-    activeJobs: number;
-    inactiveJobs: number;
-    totalOpenings: number;
-    totalApplications: number;
-    averageApplicationsPerJob: number;
-    averageOpeningsPerJob: number;
-  };
-
-  breakdowns: {
-    departments: DepartmentBreakdown[];
-    employmentTypes: EmploymentTypeBreakdown[];
-    workplaceTypes: WorkplaceTypeBreakdown[];
-    experienceLevels: ExperienceLevelBreakdown[];
-    applicationsByJob: JobApplicationsBreakdown[];
-  };
-
-  trends: {
-    applications: GrowthPoint[];
-  };
-
-  recent: {
-    jobs: RecentJob[];
-    applications: RecentApplication[];
-  };
-
-  limitations: string[];
-};
-
-/* -------------------------------------------------------------------------- */
-/* Content                                                                    */
-/* -------------------------------------------------------------------------- */
-
-export type ContentAnalytics = {
-  summary: {
-    sliders: number;
-    services: number;
-    portfolios: number;
-    caseStudies: number;
-    blogs: number;
-    teamMembers: number;
-    leadershipMessages: number;
-    jobPostings: number;
-    totalContentItems: number;
-  };
-
-  recent: {
-    users: RecentUser[];
-    services: RecentService[];
-    portfolios: RecentPortfolio[];
-    caseStudies: RecentCaseStudy[];
-    blogs: RecentBlog[];
-    teamMembers: RecentTeamMember[];
-    jobs: RecentJob[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Growth                                                                     */
-/* -------------------------------------------------------------------------- */
-
-export type GrowthAnalytics = {
-  series: {
-    users: GrowthPoint[];
-    blogs: GrowthPoint[];
-    portfolios: GrowthPoint[];
-    caseStudies: GrowthPoint[];
-    services: GrowthPoint[];
-    jobPostings: GrowthPoint[];
-    jobApplications: GrowthPoint[];
-    teamMembers: GrowthPoint[];
-  };
-};
-
-/* -------------------------------------------------------------------------- */
-/* Recent records                                                             */
-/* -------------------------------------------------------------------------- */
-
-export type RecentUser = {
-  _id: string;
-  name?: string;
-  email?: string;
-  role?: string;
-  verified?: boolean;
-  createdAt: string;
-};
-
-export type RecentService = {
-  _id: string;
-  title: string;
-  technologies: string[];
-  createdAt: string;
-};
-
-export type RecentPortfolio = {
-  _id: string;
-  title: string;
-  category: string;
-  image?: string;
-  url?: string;
-  createdAt: string;
-};
-
-export type RecentCaseStudy = {
-  _id: string;
-  title: string;
-  portfolio: string;
-  technologies: string[];
-  createdAt: string;
-};
-
-export type RecentTeamMember = {
-  _id: string;
-  name: string;
-  role: string;
-  linkedin?: string;
-  createdAt: string;
-};
-
-export type RecentBlog = {
-  _id: string;
-  title: string;
-  category: string;
-  author: string;
-  featured: boolean;
-  image?: string;
-  createdAt: string;
-};
-
-export type RecentJob = {
-  _id: string;
-  title: string;
-  department?: string;
-  employmentType?: string;
-  workplaceType?: string;
-  openings?: number;
-  createdAt: string;
-};
-
-export type RecentApplication = {
-  _id: string;
-  name?: string;
-  job?: string;
-  createdAt: string;
-};
+  activity: OverviewActivity[];
+}
