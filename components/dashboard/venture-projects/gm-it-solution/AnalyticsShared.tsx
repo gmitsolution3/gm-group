@@ -16,6 +16,24 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
 type IconComponent = ComponentType<{
   className?: string;
 }>;
@@ -219,6 +237,473 @@ export function BreakdownList<
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/* ========================================================================== */
+/* ANALYTICS AREA CHART                                                       */
+/* ========================================================================== */
+
+export function AnalyticsAreaChart({
+  items,
+  height = 280,
+}: {
+  items: Array<{
+    count: number;
+    period: string;
+  }>;
+  height?: number;
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyState text="No trend data available for this period." />
+    );
+  }
+
+  const chartData = items.map((item) => ({
+    period: formatPeriod(item.period),
+    count: item.count,
+  }));
+
+  return (
+    <div
+      className="w-full"
+      style={{ height }}
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <AreaChart
+          data={chartData}
+          margin={{
+            top: 10,
+            right: 10,
+            left: -20,
+            bottom: 0,
+          }}
+        >
+          <defs>
+            <linearGradient
+              id="analyticsAreaGradient"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop
+                offset="0%"
+                stopColor="currentColor"
+                stopOpacity={0.3}
+              />
+
+              <stop
+                offset="100%"
+                stopColor="currentColor"
+                stopOpacity={0}
+              />
+            </linearGradient>
+          </defs>
+
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="3 3"
+            className="stroke-border"
+          />
+
+          <XAxis
+            dataKey="period"
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <YAxis
+            allowDecimals={false}
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <Tooltip
+            contentStyle={{
+              borderRadius: "12px",
+            }}
+          />
+
+          <Area
+            type="monotone"
+            dataKey="count"
+            stroke="hsl(var(--primary))"
+            strokeWidth={2.5}
+            fill="hsl(var(--primary))"
+            fillOpacity={0.15}
+            activeDot={{
+              r: 5,
+            }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/* ========================================================================== */
+/* ANALYTICS BAR CHART                                                        */
+/* ========================================================================== */
+
+export function AnalyticsBarChart<
+  T extends {
+    count: number;
+  },
+>({
+  items,
+  labelKey,
+  height,
+}: {
+  items: T[];
+  labelKey: keyof T;
+  height?: number;
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyState text="No breakdown data available." />
+    );
+  }
+
+  const chartData = items.map((item) => ({
+    label: String(item[labelKey] ?? "Unknown"),
+    count: item.count,
+  }));
+
+  const chartHeight =
+    height ??
+    Math.max(260, chartData.length * 42);
+
+  return (
+    <div
+      className="w-full"
+      style={{
+        height: chartHeight,
+      }}
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <BarChart
+          data={chartData}
+          layout="vertical"
+          margin={{
+            top: 5,
+            right: 20,
+            left: 20,
+            bottom: 5,
+          }}
+        >
+          <CartesianGrid
+            horizontal={false}
+            strokeDasharray="3 3"
+            className="stroke-border"
+          />
+
+          <XAxis
+            type="number"
+            allowDecimals={false}
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <YAxis
+            type="category"
+            dataKey="label"
+            width={140}
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <Tooltip
+            contentStyle={{
+              borderRadius: "12px",
+            }}
+          />
+
+          <Bar
+            dataKey="count"
+            radius={[0, 8, 8, 0]}
+            fill="hsl(var(--primary))"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+/* ========================================================================== */
+/* ANALYTICS DONUT CHART                                                      */
+/* ========================================================================== */
+
+const donutColors = [
+  "hsl(var(--primary))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--muted-foreground))",
+];
+
+export function AnalyticsDonutChart<
+  T extends {
+    count: number;
+  },
+>({
+  items,
+  labelKey,
+  centerLabel = "Total",
+  height = 300,
+}: {
+  items: T[];
+  labelKey: keyof T;
+  centerLabel?: string;
+  height?: number;
+}) {
+  if (items.length === 0) {
+    return (
+      <EmptyState text="No breakdown data available." />
+    );
+  }
+
+  const chartData = items.map((item) => ({
+    name: String(item[labelKey] ?? "Unknown"),
+    value: item.count,
+  }));
+
+  const total = chartData.reduce(
+    (sum, item) => sum + item.value,
+    0,
+  );
+
+  return (
+    <div className="space-y-5">
+      <div
+        className="relative w-full"
+        style={{
+          height,
+        }}
+      >
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              innerRadius="60%"
+              outerRadius="82%"
+              paddingAngle={3}
+              strokeWidth={0}
+            >
+              {chartData.map((item, index) => (
+                <Cell
+                  key={`${item.name}-${index}`}
+                  fill={
+                    donutColors[
+                      index % donutColors.length
+                    ]
+                  }
+                />
+              ))}
+            </Pie>
+
+            <Tooltip
+              contentStyle={{
+                borderRadius: "12px",
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-bold tracking-tight">
+            {total.toLocaleString()}
+          </span>
+
+          <span className="mt-1 text-xs text-muted-foreground">
+            {centerLabel}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        {chartData.map((item, index) => (
+          <div
+            key={`${item.name}-${index}`}
+            className="flex items-center justify-between gap-3 rounded-lg bg-muted/40 px-3 py-2"
+          >
+            <div className="flex min-w-0 items-center gap-2">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{
+                  backgroundColor:
+                    donutColors[
+                      index % donutColors.length
+                    ],
+                }}
+              />
+
+              <span className="truncate text-sm text-muted-foreground">
+                {item.name}
+              </span>
+            </div>
+
+            <span className="shrink-0 text-sm font-semibold">
+              {item.value.toLocaleString()}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ========================================================================== */
+/* ANALYTICS MULTI LINE CHART                                                 */
+/* ========================================================================== */
+
+type MultiLineSeries = {
+  key: string;
+  label: string;
+  items: Array<{
+    count: number;
+    period: string;
+  }>;
+};
+
+const lineColors = [
+  "hsl(var(--primary))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+];
+
+export function AnalyticsMultiLineChart({
+  series,
+  height = 340,
+}: {
+  series: MultiLineSeries[];
+  height?: number;
+}) {
+  const periods = Array.from(
+    new Set(
+      series.flatMap((seriesItem) =>
+        seriesItem.items.map(
+          (item) => item.period,
+        ),
+      ),
+    ),
+  ).sort();
+
+  if (periods.length === 0) {
+    return (
+      <EmptyState text="No growth data available for this period." />
+    );
+  }
+
+  const chartData = periods.map((period) => {
+    const row: Record<string, string | number> = {
+      period: formatPeriod(period),
+    };
+
+    series.forEach((seriesItem) => {
+      const match = seriesItem.items.find(
+        (item) => item.period === period,
+      );
+
+      row[seriesItem.key] =
+        match?.count ?? 0;
+    });
+
+    return row;
+  });
+
+  return (
+    <div
+      className="w-full"
+      style={{
+        height,
+      }}
+    >
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <LineChart
+          data={chartData}
+          margin={{
+            top: 10,
+            right: 20,
+            left: -20,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="3 3"
+            className="stroke-border"
+          />
+
+          <XAxis
+            dataKey="period"
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <YAxis
+            allowDecimals={false}
+            tickLine={false}
+            axisLine={false}
+            className="fill-muted-foreground text-xs"
+          />
+
+          <Tooltip
+            contentStyle={{
+              borderRadius: "12px",
+            }}
+          />
+
+          <Legend />
+
+          {series.map(
+            (seriesItem, index) => (
+              <Line
+                key={seriesItem.key}
+                type="monotone"
+                dataKey={seriesItem.key}
+                name={seriesItem.label}
+                stroke={
+                  lineColors[
+                    index % lineColors.length
+                  ]
+                }
+                strokeWidth={2.5}
+                dot={{
+                  r: 3,
+                }}
+                activeDot={{
+                  r: 5,
+                }}
+              />
+            ),
+          )}
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

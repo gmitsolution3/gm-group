@@ -17,19 +17,14 @@ import {
 
 import type { UsersAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
+import { KpiCard, RecentTable, Section } from "../AnalyticsShared";
+
 import {
-  BreakdownList,
-  KpiCard,
-  RecentTable,
-  Section,
-  TrendList,
+  AnalyticsAreaChart,
+  AnalyticsDonutChart,
 } from "../AnalyticsShared";
 
-export default function UsersTab({
-  data,
-}: {
-  data: UsersAnalytics;
-}) {
+export default function UsersTab({ data }: { data: UsersAnalytics }) {
   return (
     <div className="space-y-8">
       {/* ================================================================ */}
@@ -91,9 +86,7 @@ export default function UsersTab({
           </CardHeader>
 
           <CardContent>
-            <TrendList
-              items={data.trends.growth}
-            />
+            <AnalyticsAreaChart items={data.trends.growth} />
           </CardContent>
         </Card>
 
@@ -103,9 +96,10 @@ export default function UsersTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList
+            <AnalyticsDonutChart
               items={data.breakdowns.byRole}
               labelKey="role"
+              centerLabel="Users"
             />
           </CardContent>
         </Card>
@@ -131,12 +125,8 @@ export default function UsersTab({
             user.name || "—",
             user.email || "—",
             user.role || "—",
-            user.emailVerified
-              ? "Verified"
-              : "Unverified",
-            new Date(
-              user.createdAt,
-            ).toLocaleDateString(),
+            user.emailVerified ? "Verified" : "Unverified",
+            new Date(user.createdAt).toLocaleDateString(),
           ])}
         />
       </Section>
