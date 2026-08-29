@@ -22,7 +22,7 @@ export function useAnalytics<T>({
   period?: AnalyticsPeriod;
 }) {
   const url = buildAnalyticsUrl({
-    baseUrl: API_ENDPOINTS.gmItSolution.analytics,
+    baseUrl: API_ENDPOINTS.gmItSolution.dashboard,
     tab,
     from,
     to,

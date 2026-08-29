@@ -41,6 +41,10 @@ import UsersTab from "./tabs/UsersTab";
 import GMITSolutionDashboardError from "./GMITSolutionDashboardError";
 import GMITSolutionDashboardLoader from "./GMITSolutionDashboardLoader";
 
+/* ====================================================================== */
+/* TAB CONFIGURATION                                                      */
+/* ====================================================================== */
+
 const analyticsTabs: {
   key: AnalyticsTab;
   label: string;
@@ -87,6 +91,10 @@ const analyticsTabs: {
   },
 ];
 
+/* ====================================================================== */
+/* PERIOD CONFIGURATION                                                   */
+/* ====================================================================== */
+
 const analyticsPeriods: {
   key: AnalyticsPeriod;
   label: string;
@@ -109,6 +117,10 @@ const analyticsPeriods: {
   },
 ];
 
+/* ====================================================================== */
+/* DATA TYPES                                                             */
+/* ====================================================================== */
+
 type AnalyticsData =
   | OverviewAnalytics
   | UsersAnalytics
@@ -121,20 +133,79 @@ type AnalyticsData =
   | ContentAnalytics
   | GrowthAnalytics;
 
+/* ====================================================================== */
+/* ANALYTICS TABS                                                         */
+/* ====================================================================== */
+
+function AnalyticsTabs({
+  activeTab,
+  onChange,
+}: {
+  activeTab: AnalyticsTab;
+  onChange: (tab: AnalyticsTab) => void;
+}) {
+  return (
+    <div className="border-b border-border">
+      <div className="flex w-full overflow-x-auto">
+        {analyticsTabs.map((tab) => {
+          const isActive = activeTab === tab.key;
+
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => onChange(tab.key)}
+              className={[
+                "relative flex shrink-0 items-center px-4 py-3 text-sm font-medium transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                isActive
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              ].join(" ")}
+            >
+              <span>{tab.label}</span>
+
+              {isActive && (
+                <span className="absolute inset-x-0 bottom-[-1px] h-0.5 bg-foreground" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ====================================================================== */
+/* MAIN DASHBOARD                                                         */
+/* ====================================================================== */
+
 export default function GMITSolutionDashboard() {
   const router = useRouter();
+
   const searchParams = useSearchParams();
 
   const tabParam = searchParams.get("tab");
+
   const fromParam = searchParams.get("from") ?? "";
+
   const toParam = searchParams.get("to") ?? "";
+
   const periodParam = searchParams.get("period");
+
+  /* ================================================================== */
+  /* ACTIVE TAB                                                         */
+  /* ================================================================== */
 
   const activeTab: AnalyticsTab = analyticsTabs.some(
     (item) => item.key === tabParam,
   )
     ? (tabParam as AnalyticsTab)
     : "overview";
+
+  /* ================================================================== */
+  /* ACTIVE PERIOD                                                      */
+  /* ================================================================== */
 
   const activePeriod: AnalyticsPeriod =
     periodParam === "daily" ||
@@ -143,19 +214,32 @@ export default function GMITSolutionDashboard() {
       ? periodParam
       : "monthly";
 
+  /* ================================================================== */
+  /* LOCAL FILTER STATE                                                 */
+  /* ================================================================== */
+
   const [fromDate, setFromDate] = useState(fromParam);
 
   const [toDate, setToDate] = useState(toParam);
+
+  /* ================================================================== */
+  /* ANALYTICS REQUEST                                                  */
+  /* ================================================================== */
 
   const { data, isLoading, isError, refetch } =
     useAnalytics<AnalyticsData>({
       tab: activeTab,
       from: fromParam || undefined,
       to: toParam || undefined,
-      period: activeTab === "growth" ? activePeriod : undefined,
+      period:
+        activeTab === "growth"
+          ? activePeriod
+          : undefined,
     });
 
-    console.log(data)
+  /* ================================================================== */
+  /* URL UPDATE                                                         */
+  /* ================================================================== */
 
   function updateUrl(
     changes: Partial<{
@@ -165,7 +249,9 @@ export default function GMITSolutionDashboard() {
       period: AnalyticsPeriod;
     }>,
   ) {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(
+      searchParams.toString(),
+    );
 
     if (changes.tab) {
       params.set("tab", changes.tab);
@@ -191,7 +277,10 @@ export default function GMITSolutionDashboard() {
       params.set("period", changes.period);
     }
 
-    if (changes.tab && changes.tab !== "growth") {
+    if (
+      changes.tab &&
+      changes.tab !== "growth"
+    ) {
       params.delete("period");
     }
 
@@ -199,6 +288,10 @@ export default function GMITSolutionDashboard() {
       scroll: false,
     });
   }
+
+  /* ================================================================== */
+  /* FILTER ACTIONS                                                     */
+  /* ================================================================== */
 
   function handleApply() {
     updateUrl({
@@ -209,6 +302,7 @@ export default function GMITSolutionDashboard() {
 
   function handleClear() {
     setFromDate("");
+
     setToDate("");
 
     updateUrl({
@@ -217,11 +311,23 @@ export default function GMITSolutionDashboard() {
     });
   }
 
+  /* ================================================================== */
+  /* LOADING                                                            */
+  /* ================================================================== */
+
   if (isLoading) {
     return <GMITSolutionDashboardLoader />;
   }
 
-  if (isError || !data?.success || !data.data) {
+  /* ================================================================== */
+  /* ERROR                                                              */
+  /* ================================================================== */
+
+  if (
+    isError ||
+    !data?.success ||
+    !data.data
+  ) {
     return (
       <GMITSolutionDashboardError
         message={data?.message}
@@ -230,9 +336,18 @@ export default function GMITSolutionDashboard() {
     );
   }
 
+  /* ================================================================== */
+  /* DASHBOARD                                                          */
+  /* ================================================================== */
+
   return (
     <div className="space-y-8 p-6 lg:p-8">
       <div className="mx-auto w-full max-w-[1440px] space-y-8">
+
+        {/* ============================================================ */}
+        {/* HEADER                                                       */}
+        {/* ============================================================ */}
+
         <section>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -259,49 +374,57 @@ export default function GMITSolutionDashboard() {
             >
               <RefreshCw
                 className={`mr-2 h-4 w-4 ${
-                  isLoading ? "animate-spin" : ""
+                  isLoading
+                    ? "animate-spin"
+                    : ""
                 }`}
               />
+
               Refresh
             </Button>
           </div>
         </section>
 
-        <div className="overflow-x-auto">
-          <div className="inline-flex min-w-full gap-1 rounded-2xl border border-border/70 bg-muted/30 p-1 sm:min-w-0">
-            {analyticsTabs.map((tab) => {
-              const active = tab.key === activeTab;
+        {/* ============================================================ */}
+        {/* ANALYTICS TABS                                               */}
+        {/* ============================================================ */}
 
-              return (
-                <button
-                  key={tab.key}
-                  type="button"
-                  onClick={() =>
-                    updateUrl({
-                      tab: tab.key,
-                    })
-                  }
-                  className={`whitespace-nowrap rounded-xl px-3.5 py-2 text-sm font-medium transition-colors ${
-                    active
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-background/70 hover:text-foreground"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <AnalyticsTabs
+          activeTab={activeTab}
+          onChange={(tab) =>
+            updateUrl({
+              tab,
+            })
+          }
+        />
 
-        <Card className="rounded-2xl border-border/70 shadow-none">
-          <CardContent className="p-5">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="grid gap-4 sm:grid-cols-2">
+        {/* ============================================================ */}
+        {/* FILTERS                                                      */}
+        {/* ============================================================ */}
+
+        <Card>
+          <CardContent className="p-5 sm:p-6">
+
+            <div className="flex flex-col gap-5">
+
+              <div>
+                <p className="text-sm font-semibold">
+                  Analytics filters
+                </p>
+
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Filter analytics data by a custom date range.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+
+                {/* FROM DATE */}
+
                 <div className="space-y-2">
                   <label
                     htmlFor="analytics-from"
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+                    className="text-sm font-medium"
                   >
                     From
                   </label>
@@ -313,14 +436,15 @@ export default function GMITSolutionDashboard() {
                     onChange={(event) =>
                       setFromDate(event.target.value)
                     }
-                    className="h-10 rounded-xl"
                   />
                 </div>
+
+                {/* TO DATE */}
 
                 <div className="space-y-2">
                   <label
                     htmlFor="analytics-to"
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+                    className="text-sm font-medium"
                   >
                     To
                   </label>
@@ -332,109 +456,143 @@ export default function GMITSolutionDashboard() {
                     onChange={(event) =>
                       setToDate(event.target.value)
                     }
-                    className="h-10 rounded-xl"
                   />
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  className="rounded-full bg-indigo"
-                  onClick={handleApply}
-                >
-                  Apply
-                </Button>
+                {/* ACTIONS */}
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="rounded-full"
-                  onClick={handleClear}
-                >
-                  Clear
-                </Button>
-              </div>
-            </div>
+                <div className="flex items-end gap-2">
+                  <Button
+                    type="button"
+                    onClick={handleApply}
+                  >
+                    Apply
+                  </Button>
 
-            {activeTab === "growth" && (
-              <div className="mt-5 border-t border-border/60 pt-5">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold">
-                      Growth period
-                    </p>
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Choose the grouping used by the Growth
-                      analytics.
-                    </p>
-                  </div>
-
-                  <div className="relative">
-                    <select
-                      value={activePeriod}
-                      onChange={(event) =>
-                        updateUrl({
-                          period: event.target
-                            .value as AnalyticsPeriod,
-                        })
-                      }
-                      className="h-10 appearance-none rounded-xl border border-border bg-background px-3 pr-9 text-sm font-medium outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/10"
-                    >
-                      {analyticsPeriods.map((period) => (
-                        <option key={period.key} value={period.key}>
-                          {period.label}
-                        </option>
-                      ))}
-                    </select>
-
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClear}
+                  >
+                    Clear
+                  </Button>
                 </div>
               </div>
-            )}
+
+              {/* ====================================================== */}
+              {/* GROWTH PERIOD                                         */}
+              {/* ====================================================== */}
+
+              {activeTab === "growth" && (
+                <div className="border-t border-border/60 pt-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                    <div>
+                      <p className="text-sm font-semibold">
+                        Growth period
+                      </p>
+
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Choose the grouping used by the Growth
+                        analytics.
+                      </p>
+                    </div>
+
+                    <div className="relative">
+                      <select
+                        value={activePeriod}
+                        onChange={(event) =>
+                          updateUrl({
+                            period:
+                              event.target
+                                .value as AnalyticsPeriod,
+                          })
+                        }
+                        className="h-10 appearance-none rounded-xl border border-border bg-background px-3 pr-9 text-sm font-medium outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/10"
+                      >
+                        {analyticsPeriods.map(
+                          (period) => (
+                            <option
+                              key={period.key}
+                              value={period.key}
+                            >
+                              {period.label}
+                            </option>
+                          ),
+                        )}
+                      </select>
+
+                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
+        {/* ============================================================ */}
+        {/* ACTIVE TAB                                                   */}
+        {/* ============================================================ */}
+
         {activeTab === "overview" && (
-          <OverviewTab data={data.data as OverviewAnalytics} />
+          <OverviewTab
+            data={data.data as OverviewAnalytics}
+          />
         )}
 
         {activeTab === "users" && (
-          <UsersTab data={data.data as UsersAnalytics} />
+          <UsersTab
+            data={data.data as UsersAnalytics}
+          />
         )}
 
         {activeTab === "services" && (
-          <ServicesTab data={data.data as ServicesAnalytics} />
+          <ServicesTab
+            data={data.data as ServicesAnalytics}
+          />
         )}
 
         {activeTab === "portfolios" && (
-          <PortfoliosTab data={data.data as PortfoliosAnalytics} />
+          <PortfoliosTab
+            data={data.data as PortfoliosAnalytics}
+          />
         )}
 
         {activeTab === "case-studies" && (
-          <CaseStudiesTab data={data.data as CaseStudiesAnalytics} />
+          <CaseStudiesTab
+            data={data.data as CaseStudiesAnalytics}
+          />
         )}
 
         {activeTab === "team" && (
-          <TeamTab data={data.data as TeamAnalytics} />
+          <TeamTab
+            data={data.data as TeamAnalytics}
+          />
         )}
 
         {activeTab === "blog" && (
-          <BlogTab data={data.data as BlogAnalytics} />
+          <BlogTab
+            data={data.data as BlogAnalytics}
+          />
         )}
 
         {activeTab === "recruitment" && (
-          <RecruitmentTab data={data.data as RecruitmentAnalytics} />
+          <RecruitmentTab
+            data={data.data as RecruitmentAnalytics}
+          />
         )}
 
         {activeTab === "content" && (
-          <ContentTab data={data.data as ContentAnalytics} />
+          <ContentTab
+            data={data.data as ContentAnalytics}
+          />
         )}
 
         {activeTab === "growth" && (
-          <GrowthTab data={data.data as GrowthAnalytics} />
+          <GrowthTab
+            data={data.data as GrowthAnalytics}
+          />
         )}
       </div>
     </div>

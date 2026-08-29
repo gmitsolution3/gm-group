@@ -12,7 +12,7 @@ export const API_ENDPOINTS = {
   },
 
   gmItSolution: {
-    analytics:
+    dashboard:
       "https://gm-it-solution-backend.vercel.app/api/v1/analytics",
   },
 };
