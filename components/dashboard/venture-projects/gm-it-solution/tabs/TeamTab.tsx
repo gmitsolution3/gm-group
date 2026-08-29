@@ -1,5 +1,7 @@
 "use client";
 
+import { Users, UserCheck } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -17,53 +19,96 @@ import {
   TrendList,
 } from "../AnalyticsShared";
 
-export default function TeamTab({ data }: { data: TeamAnalytics }) {
+export default function TeamTab({
+  data,
+}: {
+  data: TeamAnalytics;
+}) {
   return (
     <div className="space-y-8">
-      <Section title="Team">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <KpiCard label="Team Members" value={data.summary.total} />
+      {/* ============================================
+          SUMMARY
+      ============================================ */}
+
+      <Section
+        title="Team Analytics"
+        description="Overview of team members, roles, and LinkedIn profile coverage."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <KpiCard
+            label="Total Members"
+            value={data.summary.total}
+            icon={Users}
+          />
+
           <KpiCard
             label="LinkedIn Profiles"
             value={data.summary.linkedinProfiles}
+            icon={UserCheck}
           />
+
           <KpiCard
             label="LinkedIn Coverage"
-            value={`${data.summary.linkedinCoverage}%`}
+            value={data.summary.linkedinCoverage}
+            icon={UserCheck}
           />
         </div>
       </Section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Team by Role</CardTitle>
-        </CardHeader>
+      {/* ============================================
+          TEAM GROWTH
+      ============================================ */}
 
-        <CardContent>
-          <BreakdownList
-            items={data.breakdowns.byRole}
-            labelKey="role"
-          />
-        </CardContent>
-      </Card>
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Team Growth</CardTitle>
+          </CardHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Team Growth</CardTitle>
-        </CardHeader>
+          <CardContent>
+            <TrendList items={data.trends.growth} />
+          </CardContent>
+        </Card>
+      </section>
 
-        <CardContent>
-          <TrendList items={data.trends.growth} />
-        </CardContent>
-      </Card>
+      {/* ============================================
+          TEAM BY ROLE
+      ============================================ */}
 
-      <Section title="Recent Team Members">
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Team Members by Role</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <BreakdownList
+              items={data.breakdowns.byRole}
+              labelKey="role"
+            />
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* ============================================
+          RECENT TEAM MEMBERS
+      ============================================ */}
+
+      <Section
+        title="Team Members"
+        description="Current team members in GM IT Solution."
+      >
         <RecentTable
-          columns={["Name", "Role", "LinkedIn", "Joined"]}
+          columns={[
+            "Name",
+            "Role",
+            "LinkedIn",
+            "Joined",
+          ]}
           rows={data.recent.members.map((item) => [
             item.name,
             item.role,
-            item.linkedin ? "Available" : "—",
+            item.linkedin ? "Available" : "Not Available",
             new Date(item.createdAt).toLocaleDateString(),
           ])}
         />

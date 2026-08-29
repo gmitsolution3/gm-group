@@ -1,107 +1,150 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  BriefcaseBusiness,
+  FileText,
+  FolderKanban,
+  Layers3,
+  Users,
+} from "lucide-react";
 
 import type { GrowthAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
 import {
+  KpiCard,
   Section,
   TrendList,
 } from "../AnalyticsShared";
-
-const metrics = [
-  {
-    key: "users",
-    label: "Users",
-  },
-  {
-    key: "blogs",
-    label: "Blogs",
-  },
-  {
-    key: "portfolios",
-    label: "Portfolios",
-  },
-  {
-    key: "caseStudies",
-    label: "Case Studies",
-  },
-  {
-    key: "services",
-    label: "Services",
-  },
-  {
-    key: "jobPostings",
-    label: "Job Postings",
-  },
-  {
-    key: "jobApplications",
-    label: "Job Applications",
-  },
-  {
-    key: "teamMembers",
-    label: "Team Members",
-  },
-] as const;
-
-type GrowthMetric = (typeof metrics)[number]["key"];
 
 export default function GrowthTab({
   data,
 }: {
   data: GrowthAnalytics;
 }) {
-  const [metric, setMetric] =
-    useState<GrowthMetric>("users");
+  const getLatestCount = (
+    series: { count: number; period: string }[] | undefined
+  ) => {
+    if (!series || series.length === 0) return 0;
 
-  const points = useMemo(
-    () => data.series[metric],
-    [data.series, metric],
-  );
+    return series[series.length - 1]?.count ?? 0;
+  };
 
   return (
     <div className="space-y-8">
+      {/* Overview */}
       <Section
-        title="Growth"
-        description="Time-series growth across available business metrics."
+        title="Growth Overview"
+        description={`Growth analytics grouped by ${data?.period ?? "monthly"} periods.`}
       >
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle>
-                {metrics.find(
-                  (item) => item.key === metric,
-                )?.label}
-              </CardTitle>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <KpiCard
+            label="Users"
+            value={getLatestCount(data?.series?.users)}
+            icon={Users}
+          />
 
-              <select
-                value={metric}
-                onChange={(event) =>
-                  setMetric(
-                    event.target.value as GrowthMetric,
-                  )
-                }
-                className="h-10 rounded-xl border border-border bg-background px-3 text-sm font-medium outline-none focus:border-indigo focus:ring-2 focus:ring-indigo/10"
-              >
-                {metrics.map((item) => (
-                  <option
-                    key={item.key}
-                    value={item.key}
-                  >
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </CardHeader>
+          <KpiCard
+            label="Blogs"
+            value={getLatestCount(data?.series?.blogs)}
+            icon={FileText}
+          />
 
-          <CardContent>
-            <TrendList items={points} />
-          </CardContent>
-        </Card>
+          <KpiCard
+            label="Portfolios"
+            value={getLatestCount(data?.series?.portfolios)}
+            icon={FolderKanban}
+          />
+
+          <KpiCard
+            label="Services"
+            value={getLatestCount(data?.series?.services)}
+            icon={BriefcaseBusiness}
+          />
+        </div>
       </Section>
+
+      {/* Core Growth */}
+      <Section
+        title="Core Growth"
+        description="Growth trends for the main platform content."
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <TrendCard
+            title="User Growth"
+            items={data?.series?.users ?? []}
+          />
+
+          <TrendCard
+            title="Blog Growth"
+            items={data?.series?.blogs ?? []}
+          />
+
+          <TrendCard
+            title="Portfolio Growth"
+            items={data?.series?.portfolios ?? []}
+          />
+
+          <TrendCard
+            title="Service Growth"
+            items={data?.series?.services ?? []}
+          />
+        </div>
+      </Section>
+
+      {/* Content Growth */}
+      <Section
+        title="Content Growth"
+        description="Growth across case studies and team content."
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <TrendCard
+            title="Case Study Growth"
+            items={data?.series?.caseStudies ?? []}
+          />
+
+          <TrendCard
+            title="Team Growth"
+            items={data?.series?.teamMembers ?? []}
+          />
+        </div>
+      </Section>
+
+      {/* Recruitment Growth */}
+      <Section
+        title="Recruitment Growth"
+        description="Growth trends for job postings and applications."
+      >
+        <div className="grid gap-6 lg:grid-cols-2">
+          <TrendCard
+            title="Job Posting Growth"
+            items={data?.series?.jobPostings ?? []}
+          />
+
+          <TrendCard
+            title="Job Application Growth"
+            items={data?.series?.jobApplications ?? []}
+          />
+        </div>
+      </Section>
+    </div>
+  );
+}
+
+function TrendCard({
+  title,
+  items,
+}: {
+  title: string;
+  items: {
+    count: number;
+    period: string;
+  }[];
+}) {
+  return (
+    <div className="rounded-xl border bg-card p-6">
+      <h3 className="mb-4 text-base font-semibold">{title}</h3>
+
+      <TrendList items={items} />
     </div>
   );
 }

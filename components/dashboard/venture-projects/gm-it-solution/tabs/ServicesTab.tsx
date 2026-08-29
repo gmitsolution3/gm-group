@@ -1,6 +1,13 @@
 "use client";
 
 import {
+  BarChart3,
+  Code2,
+  Layers3,
+  Wrench,
+} from "lucide-react";
+
+import {
   Card,
   CardContent,
   CardHeader,
@@ -24,56 +31,89 @@ export default function ServicesTab({
 }) {
   return (
     <div className="space-y-8">
+      {/* =========================
+          OVERVIEW
+      ========================== */}
       <Section
-        title="Services"
-        description="Service portfolio and technology usage."
+        title="Services Analytics"
+        description="Performance overview and technology distribution across GM IT Solution services."
       >
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <KpiCard
             label="Total Services"
-            value={data.summary.total}
+            value={data.summary.total ?? 0}
+            icon={Layers3}
           />
+
           <KpiCard
-            label="Avg. Features"
-            value={data.summary.averageFeatures}
+            label="Average Features"
+            value={data.summary.averageFeatures ?? 0}
+            icon={Wrench}
           />
+
           <KpiCard
-            label="Avg. Technologies"
-            value={data.summary.averageTechnologies}
+            label="Average Technologies"
+            value={data.summary.averageTechnologies ?? 0}
+            icon={Code2}
           />
         </div>
       </Section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Technology Usage</CardTitle>
-        </CardHeader>
+      {/* =========================
+          SERVICE GROWTH
+      ========================== */}
+      <section className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="size-5" />
+              Service Growth
+            </CardTitle>
+          </CardHeader>
 
-        <CardContent>
-          <BreakdownList
-            items={data.breakdowns.technologies}
-            labelKey="technology"
-          />
-        </CardContent>
-      </Card>
+          <CardContent>
+            <TrendList
+              items={data.trends.growth}
+            />
+          </CardContent>
+        </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Service Growth</CardTitle>
-        </CardHeader>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Code2 className="size-5" />
+              Technologies Used
+            </CardTitle>
+          </CardHeader>
 
-        <CardContent>
-          <TrendList items={data.trends.growth} />
-        </CardContent>
-      </Card>
+          <CardContent>
+            <BreakdownList
+              items={data.breakdowns.technologies}
+              labelKey="technology"
+            />
+          </CardContent>
+        </Card>
+      </section>
 
-      <Section title="Recent Services">
+      {/* =========================
+          RECENT SERVICES
+      ========================== */}
+      <Section
+        title="Services"
+        description="All recently created services available in the system."
+      >
         <RecentTable
-          columns={["Title", "Technologies", "Date"]}
-          rows={data.recent.services.map((item) => [
-            item.title,
-            item.technologies.join(", "),
-            new Date(item.createdAt).toLocaleDateString(),
+          columns={[
+            "Service",
+            "Features",
+            "Technologies",
+            "Created",
+          ]}
+          rows={data.recent.services.map((service) => [
+            service.title,
+            service.features.length.toString(),
+            service.technologies.length.toString(),
+            new Date(service.createdAt).toLocaleDateString(),
           ])}
         />
       </Section>

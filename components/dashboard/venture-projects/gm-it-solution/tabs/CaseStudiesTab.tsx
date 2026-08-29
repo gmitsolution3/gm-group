@@ -1,6 +1,13 @@
 "use client";
 
 import {
+  BarChart3,
+  BriefcaseBusiness,
+  Code2,
+  FileStack,
+} from "lucide-react";
+
+import {
   Card,
   CardContent,
   CardHeader,
@@ -24,29 +31,57 @@ export default function CaseStudiesTab({
 }) {
   return (
     <div className="space-y-8">
-      <Section title="Case Studies">
-        <div className="grid gap-4 sm:grid-cols-3">
+      {/* =========================
+          OVERVIEW
+      ========================== */}
+      <Section
+        title="Case Studies Analytics"
+        description="Overview of case studies, technologies, and portfolio coverage."
+      >
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <KpiCard
             label="Total Case Studies"
-            value={data.summary.total}
+            value={data.summary.total ?? 0}
+            icon={FileStack}
           />
 
           <KpiCard
-            label="Technologies"
-            value={data.summary.technologies}
+            label="Technologies Used"
+            value={data.summary.technologiesUsed ?? 0}
+            icon={Code2}
           />
 
           <KpiCard
-            label="Portfolios"
-            value={data.summary.portfolios}
+            label="Portfolios Covered"
+            value={data.summary.portfoliosWithCaseStudies ?? 0}
+            icon={BriefcaseBusiness}
           />
         </div>
       </Section>
 
+      {/* =========================
+          GROWTH & TECHNOLOGIES
+      ========================== */}
       <section className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Technology Usage</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="size-5" />
+              Case Study Growth
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <TrendList items={data.trends.growth} />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Code2 className="size-5" />
+              Technologies
+            </CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -56,39 +91,46 @@ export default function CaseStudiesTab({
             />
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Case Studies by Portfolio</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <BreakdownList
-              items={data.breakdowns.categories}
-              labelKey="category"
-            />
-          </CardContent>
-        </Card>
       </section>
 
+      {/* =========================
+          PORTFOLIO BREAKDOWN
+      ========================== */}
       <Card>
         <CardHeader>
-          <CardTitle>Case Study Growth</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <BriefcaseBusiness className="size-5" />
+            Portfolio Distribution
+          </CardTitle>
         </CardHeader>
 
         <CardContent>
-          <TrendList items={data.trends.growth} />
+          <BreakdownList
+            items={data.breakdowns.portfolios}
+            labelKey="portfolioId"
+          />
         </CardContent>
       </Card>
 
-      <Section title="Recent Case Studies">
+      {/* =========================
+          RECENT CASE STUDIES
+      ========================== */}
+      <Section
+        title="Recent Case Studies"
+        description="Latest case studies created in the system."
+      >
         <RecentTable
-          columns={["Title", "Portfolio", "Technologies", "Date"]}
-          rows={data.recent.caseStudies.map((item) => [
-            item.title,
-            item.portfolio,
-            item.technologies.join(", "),
-            new Date(item.createdAt).toLocaleDateString(),
+          columns={[
+            "Portfolio ID",
+            "Features",
+            "Technologies",
+            "Created",
+          ]}
+          rows={data.recent.caseStudies.map((caseStudy) => [
+            caseStudy.portfolioId,
+            caseStudy.features.length.toString(),
+            caseStudy.technologies.length.toString(),
+            new Date(caseStudy.createdAt).toLocaleDateString(),
           ])}
         />
       </Section>

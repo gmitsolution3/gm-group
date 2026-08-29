@@ -1,5 +1,7 @@
 "use client";
 
+import { FileText, Star, UserCheck } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -20,22 +22,65 @@ import {
 export default function BlogTab({ data }: { data: BlogAnalytics }) {
   return (
     <div className="space-y-8">
-      <Section title="Blog Analytics">
+      {/* ============================================
+          SUMMARY
+      ============================================ */}
+
+      <Section
+        title="Blog Analytics"
+        description="Overview of blog posts, featured content, categories, and authors."
+      >
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <KpiCard label="Total Blogs" value={data.summary.total} />
-          <KpiCard label="Featured" value={data.summary.featured} />
-          <KpiCard label="Regular" value={data.summary.regular} />
+          <KpiCard
+            label="Total Posts"
+            value={data.summary.total}
+            icon={FileText}
+          />
+
+          <KpiCard
+            label="Featured Posts"
+            value={data.summary.featured}
+            icon={Star}
+          />
+
+          <KpiCard
+            label="Regular Posts"
+            value={data.summary.regular}
+            icon={FileText}
+          />
+
           <KpiCard
             label="Featured Rate"
-            value={`${data.summary.featuredRate}%`}
+            value={data.summary.featuredRate}
+            icon={UserCheck}
           />
         </div>
       </Section>
 
+      {/* ============================================
+          GROWTH
+      ============================================ */}
+
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Blog Growth</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <TrendList items={data.trends.growth} />
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* ============================================
+          BREAKDOWNS
+      ============================================ */}
+
       <section className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Blogs by Category</CardTitle>
+            <CardTitle>Posts by Category</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -48,7 +93,7 @@ export default function BlogTab({ data }: { data: BlogAnalytics }) {
 
         <Card>
           <CardHeader>
-            <CardTitle>Blogs by Author</CardTitle>
+            <CardTitle>Posts by Author</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -60,22 +105,20 @@ export default function BlogTab({ data }: { data: BlogAnalytics }) {
         </Card>
       </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Blog Growth</CardTitle>
-        </CardHeader>
+      {/* ============================================
+          RECENT BLOG POSTS
+      ============================================ */}
 
-        <CardContent>
-          <TrendList items={data.trends.growth} />
-        </CardContent>
-      </Card>
-
-      <Section title="Recent Blogs">
+      <Section
+        title="Recent Blog Posts"
+        description="Latest blog content published on GM IT Solution."
+      >
         <RecentTable
           columns={[
             "Title",
             "Category",
             "Author",
+            "Read Time",
             "Featured",
             "Date",
           ]}
@@ -83,6 +126,7 @@ export default function BlogTab({ data }: { data: BlogAnalytics }) {
             item.title,
             item.category,
             item.author,
+            item.readTime,
             item.featured ? "Yes" : "No",
             new Date(item.createdAt).toLocaleDateString(),
           ])}

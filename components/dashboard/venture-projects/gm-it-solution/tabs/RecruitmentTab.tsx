@@ -1,5 +1,7 @@
 "use client";
 
+import { BriefcaseBusiness, FileText, Users } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -22,49 +24,81 @@ export default function RecruitmentTab({
 }: {
   data: RecruitmentAnalytics;
 }) {
+  const getJobTitle = (jobId: string) => {
+    return (
+      data.recent.jobs.find((job) => job._id === jobId)?.title ??
+      "Unknown Job"
+    );
+  };
+
   return (
     <div className="space-y-8">
+      {/* ============================================
+          SUMMARY
+      ============================================ */}
+
       <Section
-        title="Recruitment"
-        description="Jobs, openings and application analytics."
+        title="Recruitment Analytics"
+        description="Overview of jobs, applications, openings, and recruitment activity."
       >
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           <KpiCard
             label="Total Jobs"
-            value={data.summary.totalJobs}
+            value={data.summary.jobs.total}
+            icon={BriefcaseBusiness}
           />
 
           <KpiCard
             label="Active Jobs"
-            value={data.summary.activeJobs}
+            value={data.summary.jobs.active}
+            icon={BriefcaseBusiness}
           />
 
           <KpiCard
             label="Inactive Jobs"
-            value={data.summary.inactiveJobs}
-          />
-
-          <KpiCard
-            label="Total Openings"
-            value={data.summary.totalOpenings}
+            value={data.summary.jobs.inactive}
+            icon={BriefcaseBusiness}
           />
 
           <KpiCard
             label="Applications"
-            value={data.summary.totalApplications}
+            value={data.summary.applications.total}
+            icon={Users}
+          />
+
+          <KpiCard
+            label="Total Openings"
+            value={data.summary.openings.total}
+            icon={FileText}
           />
 
           <KpiCard
             label="Avg. Applications / Job"
-            value={data.summary.averageApplicationsPerJob}
-          />
-
-          <KpiCard
-            label="Avg. Openings / Job"
-            value={data.summary.averageOpeningsPerJob}
+            value={data.summary.applications.averagePerJob}
+            icon={Users}
           />
         </div>
       </Section>
+
+      {/* ============================================
+          APPLICATION TREND
+      ============================================ */}
+
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle>Application Growth</CardTitle>
+          </CardHeader>
+
+          <CardContent>
+            <TrendList items={data.trends.applications} />
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* ============================================
+          DEPARTMENTS
+      ============================================ */}
 
       <section className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -72,17 +106,35 @@ export default function RecruitmentTab({
             <CardTitle>Jobs by Department</CardTitle>
           </CardHeader>
 
-          <CardContent>
-            <BreakdownList
-              items={data.breakdowns.departments}
-              labelKey="department"
-            />
+          <CardContent className="space-y-4">
+            {data.breakdowns.departments.map((item) => (
+              <div
+                key={item.department}
+                className="flex items-center justify-between rounded-lg border p-4"
+              >
+                <div>
+                  <p className="font-medium">{item.department}</p>
+
+                  <p className="text-sm text-muted-foreground">
+                    {item.jobs} jobs
+                  </p>
+                </div>
+
+                <div className="text-right">
+                  <p className="font-semibold">{item.openings}</p>
+
+                  <p className="text-sm text-muted-foreground">
+                    Openings
+                  </p>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Employment Type</CardTitle>
+            <CardTitle>Employment Types</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -92,10 +144,16 @@ export default function RecruitmentTab({
             />
           </CardContent>
         </Card>
+      </section>
 
+      {/* ============================================
+          WORKPLACE & EXPERIENCE
+      ============================================ */}
+
+      <section className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Workplace Type</CardTitle>
+            <CardTitle>Workplace Types</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -108,7 +166,7 @@ export default function RecruitmentTab({
 
         <Card>
           <CardHeader>
-            <CardTitle>Experience Level</CardTitle>
+            <CardTitle>Experience Levels</CardTitle>
           </CardHeader>
 
           <CardContent>
@@ -120,69 +178,100 @@ export default function RecruitmentTab({
         </Card>
       </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Applications by Job</CardTitle>
-        </CardHeader>
+      {/* ============================================
+          APPLICATIONS BY JOB
+      ============================================ */}
 
-        <CardContent>
-          <BreakdownList
-            items={data.breakdowns.applicationsByJob}
-            labelKey="job"
-          />
-        </CardContent>
-      </Card>
+      <Section
+        title="Applications by Job"
+        description="Number of applications received for each available job."
+      >
+        <RecentTable
+          columns={["Job", "Applications"]}
+          rows={data.breakdowns.applicationsByJob.map((item) => [
+            getJobTitle(item._id),
+            item.applications,
+          ])}
+        />
+      </Section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Application Growth</CardTitle>
-        </CardHeader>
+      {/* ============================================
+          RECENT JOBS
+      ============================================ */}
 
-        <CardContent>
-          <TrendList items={data.trends.applications} />
-        </CardContent>
-      </Card>
-
-      <Section title="Recent Jobs">
+      <Section
+        title="Recent Jobs"
+        description="Latest job postings created in the recruitment system."
+      >
         <RecentTable
           columns={[
-            "Title",
+            "Job",
             "Department",
-            "Type",
+            "Location",
+            "Employment",
+            "Workplace",
             "Openings",
-            "Date",
+            "Status",
           ]}
           rows={data.recent.jobs.map((item) => [
             item.title,
-            item.department || "—",
-            item.employmentType || "—",
-            item.openings ?? "—",
+            item.department,
+            item.location,
+            item.employmentType,
+            item.workplaceType,
+            item.openings,
+            item.isActive ? "Active" : "Inactive",
+          ])}
+        />
+      </Section>
+
+      {/* ============================================
+          RECENT APPLICATIONS
+      ============================================ */}
+
+      <Section
+        title="Recent Applications"
+        description="Latest applications received for available positions."
+      >
+        <RecentTable
+          columns={[
+            "Applicant",
+            "Email",
+            "Phone",
+            "Applied For",
+            "Date",
+          ]}
+          rows={data.recent.applications.map((item) => [
+            item.fullName,
+            item.email,
+            item.phone,
+            getJobTitle(item.jobId),
             new Date(item.createdAt).toLocaleDateString(),
           ])}
         />
       </Section>
 
-      <Section title="Recent Applications">
-        <RecentTable
-          columns={["Applicant", "Job", "Date"]}
-          rows={data.recent.applications.map((item) => [
-            item.name || "Applicant",
-            item.job || "—",
-            new Date(item.createdAt).toLocaleDateString(),
-          ])}
-        />
-      </Section>
+      {/* ============================================
+          DATA LIMITATIONS
+      ============================================ */}
 
       {data.limitations.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50/50">
+        <Card>
           <CardHeader>
-            <CardTitle>Analytics limitations</CardTitle>
+            <CardTitle>Analytics Limitations</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {data.limitations.map((item) => (
-                <li key={item}>• {item}</li>
+            <ul className="space-y-3">
+              {data.limitations.map((limitation) => (
+                <li
+                  key={limitation}
+                  className="flex gap-3 text-sm text-muted-foreground"
+                >
+                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-muted-foreground" />
+
+                  <span>{limitation}</span>
+                </li>
               ))}
             </ul>
           </CardContent>
