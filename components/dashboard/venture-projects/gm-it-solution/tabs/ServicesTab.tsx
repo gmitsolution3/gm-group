@@ -17,11 +17,11 @@ import {
 import type { ServicesAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
 import {
-  BreakdownList,
+  AnalyticsAreaChart,
+  AnalyticsBarChart,
   KpiCard,
   RecentTable,
   Section,
-  TrendList,
 } from "../AnalyticsShared";
 
 export default function ServicesTab({
@@ -31,9 +31,10 @@ export default function ServicesTab({
 }) {
   return (
     <div className="space-y-8">
-      {/* =========================
-          OVERVIEW
-      ========================== */}
+      {/* ================================================================ */}
+      {/* SERVICES OVERVIEW                                               */}
+      {/* ================================================================ */}
+
       <Section
         title="Services Analytics"
         description="Performance overview and technology distribution across GM IT Solution services."
@@ -59,10 +60,13 @@ export default function ServicesTab({
         </div>
       </Section>
 
-      {/* =========================
-          SERVICE GROWTH
-      ========================== */}
-      <section className="grid gap-6 lg:grid-cols-2">
+      {/* ================================================================ */}
+      {/* GROWTH + TECHNOLOGIES                                           */}
+      {/* ================================================================ */}
+
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+        {/* SERVICE GROWTH */}
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -72,11 +76,13 @@ export default function ServicesTab({
           </CardHeader>
 
           <CardContent>
-            <TrendList
+            <AnalyticsAreaChart
               items={data.trends.growth}
             />
           </CardContent>
         </Card>
+
+        {/* TECHNOLOGY DISTRIBUTION */}
 
         <Card>
           <CardHeader>
@@ -87,17 +93,19 @@ export default function ServicesTab({
           </CardHeader>
 
           <CardContent>
-            <BreakdownList
+            <AnalyticsBarChart
               items={data.breakdowns.technologies}
               labelKey="technology"
+              height={420}
             />
           </CardContent>
         </Card>
       </section>
 
-      {/* =========================
-          RECENT SERVICES
-      ========================== */}
+      {/* ================================================================ */}
+      {/* RECENT SERVICES                                                 */}
+      {/* ================================================================ */}
+
       <Section
         title="Services"
         description="All recently created services available in the system."
@@ -113,7 +121,9 @@ export default function ServicesTab({
             service.title,
             service.features.length.toString(),
             service.technologies.length.toString(),
-            new Date(service.createdAt).toLocaleDateString(),
+            new Date(
+              service.createdAt,
+            ).toLocaleDateString(),
           ])}
         />
       </Section>

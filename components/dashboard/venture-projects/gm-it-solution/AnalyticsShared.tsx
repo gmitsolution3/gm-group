@@ -11,7 +11,7 @@ import {
   FileText,
   Layers3,
   User,
-  Users
+  Users,
 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,6 +37,12 @@ import {
 type IconComponent = ComponentType<{
   className?: string;
 }>;
+
+/* ========================================================================== */
+/* ANALYTICS COLORS                                                           */
+/* ========================================================================== */
+
+const ANALYTICS_PRIMARY_COLOR = "var(--gm-indigo)";
 
 /* ========================================================================== */
 /* SECTION                                                                    */
@@ -294,14 +300,14 @@ export function AnalyticsAreaChart({
             >
               <stop
                 offset="0%"
-                stopColor="currentColor"
-                stopOpacity={0.3}
+                stopColor={ANALYTICS_PRIMARY_COLOR}
+                stopOpacity={0.35}
               />
 
               <stop
                 offset="100%"
-                stopColor="currentColor"
-                stopOpacity={0}
+                stopColor={ANALYTICS_PRIMARY_COLOR}
+                stopOpacity={0.02}
               />
             </linearGradient>
           </defs>
@@ -335,12 +341,14 @@ export function AnalyticsAreaChart({
           <Area
             type="monotone"
             dataKey="count"
-            stroke="hsl(var(--primary))"
+            stroke={ANALYTICS_PRIMARY_COLOR}
             strokeWidth={2.5}
-            fill="hsl(var(--primary))"
-            fillOpacity={0.15}
+            fill="url(#analyticsAreaGradient)"
             activeDot={{
               r: 5,
+              fill: ANALYTICS_PRIMARY_COLOR,
+              stroke: "var(--background)",
+              strokeWidth: 2,
             }}
           />
         </AreaChart>
@@ -434,7 +442,7 @@ export function AnalyticsBarChart<
           <Bar
             dataKey="count"
             radius={[0, 8, 8, 0]}
-            fill="hsl(var(--primary))"
+            fill={ANALYTICS_PRIMARY_COLOR}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -447,7 +455,7 @@ export function AnalyticsBarChart<
 /* ========================================================================== */
 
 const donutColors = [
-  "hsl(var(--primary))",
+  ANALYTICS_PRIMARY_COLOR,
   "hsl(var(--chart-2))",
   "hsl(var(--chart-3))",
   "hsl(var(--chart-4))",
@@ -463,7 +471,7 @@ export function AnalyticsDonutChart<
   items,
   labelKey,
   centerLabel = "Total",
-  height = 300,
+  height = 280,
 }: {
   items: T[];
   labelKey: keyof T;
@@ -503,10 +511,10 @@ export function AnalyticsDonutChart<
               data={chartData}
               dataKey="value"
               nameKey="name"
-              innerRadius="60%"
+              innerRadius="62%"
               outerRadius="82%"
               paddingAngle={3}
-              strokeWidth={0}
+              stroke="none"
             >
               {chartData.map((item, index) => (
                 <Cell
@@ -585,11 +593,11 @@ type MultiLineSeries = {
 };
 
 const lineColors = [
-  "hsl(var(--primary))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
+  ANALYTICS_PRIMARY_COLOR,
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
 ];
 
 export function AnalyticsMultiLineChart({
@@ -698,6 +706,12 @@ export function AnalyticsMultiLineChart({
                 }}
                 activeDot={{
                   r: 5,
+                  fill:
+                    lineColors[
+                      index % lineColors.length
+                    ],
+                  stroke: "var(--background)",
+                  strokeWidth: 2,
                 }}
               />
             ),
