@@ -1,4 +1,5 @@
 import CareersCta from "@/components/home/CareersCta";
+import GlobeDemo from "@/components/home/GlobeDemo";
 import GroupIdentity from "@/components/home/GroupIdentity";
 import Growth from "@/components/home/Growth";
 import Hero from "@/components/home/Hero";
@@ -20,6 +21,7 @@ export default function HomePage() {
       <Story />
       <CareersCta />
       <News />
+      <GlobeDemo />
     </>
   );
 }
