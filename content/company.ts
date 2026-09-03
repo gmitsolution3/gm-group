@@ -32,10 +32,19 @@ export const siteConfig = {
 
 export const heroContent = {
   headline: ["Building Businesses.", "Growing Possibilities."],
+
   supportText:
-    "GM Group is a parent company focused on building, managing, and growing businesses for the long term.",
-  primaryCta: { label: "Explore Our Ventures", href: "/ventures" },
-  secondaryCta: { label: "About GM Group", href: "/about" },
+    "GM Group brings together diverse businesses across multiple industries—from international consultancy and technology to media, logistics, agro services, restaurant solutions, and e-commerce—creating practical opportunities for people and businesses locally and internationally.",
+
+  primaryCta: {
+    label: "Explore Our Ventures",
+    href: "/ventures",
+  },
+
+  secondaryCta: {
+    label: "About GM Group",
+    href: "/about",
+  },
 } as const;
 
 export const groupIdentity = {
@@ -44,8 +53,9 @@ export const groupIdentity = {
     "Multiple Businesses.",
     "A Shared Direction.",
   ],
+
   supportText:
-    "A parent company structured around long-term value — uniting independent businesses under a shared ambition for growth, stability, and leadership.",
+    "GM Group brings together businesses across diverse industries under one shared vision—creating practical services and opportunities for individuals and businesses across local and international markets.",
 } as const;
 
 export const growthStages = [
