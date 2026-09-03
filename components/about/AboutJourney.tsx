@@ -23,7 +23,7 @@ export default function AboutJourney() {
           <div className="grid gap-0 lg:grid-cols-6">
             {journey.map((entry, index) => (
               <Reveal
-                key={index}
+                key={entry.title}
                 delay={index * 0.06}
                 className="relative border-b border-black/10 py-8 pl-8 last:border-b-0 lg:border-b-0 lg:border-r lg:px-6 lg:pb-0 lg:pt-8 last:lg:border-r-0"
               >
@@ -32,7 +32,7 @@ export default function AboutJourney() {
                   {entry.year}
                 </p>
                 <h3 className="mt-4 font-display text-2xl font-bold tracking-tightest text-ink">
-                  {entry.label}
+                  {entry.title}
                 </h3>
                 <p className="mt-4 text-sm leading-relaxed text-mutedText text-pretty">
                   {entry.description}

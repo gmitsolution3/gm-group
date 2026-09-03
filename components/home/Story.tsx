@@ -43,7 +43,7 @@ export default function Story() {
                 {/* Right — content */}
                 <div className="pl-8 md:pl-0">
                   <h3 className="font-display text-2xl font-bold tracking-tightest text-ink lg:text-3xl">
-                    {item.label}
+                    {item.title}
                   </h3>
 
                   <p className="mt-3 max-w-lg text-base leading-relaxed text-mutedText text-pretty">
