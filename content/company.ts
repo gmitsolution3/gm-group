@@ -77,12 +77,16 @@ export const growthStages = [
 
 export const visionMission = {
   headline: ["Growing Beyond Today.", "Building for Tomorrow."],
+
   visionLabel: "Vision",
+
   visionContent:
-    "[PLACEHOLDER] GM Group envisions becoming a globally recognized business group that creates enduring value across industries, driven by a commitment to building businesses that outlast generations.",
+    "To become a leading and trusted multi-industry business group, delivering world-class services and creating meaningful opportunities for people and businesses across local and international markets.",
+
   missionLabel: "Mission",
+
   missionContent:
-    "[PLACEHOLDER] GM Group’s mission is to build, manage, and grow businesses with discipline and ambition — creating long-term value for stakeholders, communities, and the industries we enter.",
+    "To build and grow diverse businesses that deliver reliable, innovative, and high-quality solutions across multiple industries—helping individuals achieve their goals and businesses solve real-world challenges through technology, expertise, and practical services.",
 } as const;
 
 export const values = [
@@ -126,40 +130,40 @@ export const values = [
 
 export const journey = [
   {
-    label: "Foundation",
-    year: "[Year]",
+    year: "2025",
+    title: "The Beginning",
     description:
-      "[Placeholder] GM Group is established with a clear purpose — to build and grow businesses for the long term.",
+      "The journey began in 2025 with GM International, establishing the foundation for what would grow into a broader group of businesses serving individuals and organizations.",
   },
   {
-    label: "First Venture",
-    year: "[Year]",
+    year: "2026",
+    title: "A Bigger Vision",
     description:
-      "[Placeholder] The group launches its first business, establishing the operating model for ventures to come.",
+      "Building on the foundation of GM International, the vision expanded beyond a single business toward creating GM Group—a diversified business ecosystem operating across multiple sectors.",
   },
   {
-    label: "Expansion",
-    year: "[Year]",
+    year: "2026",
+    title: "Rapid Expansion",
     description:
-      "[Placeholder] GM Group expands its portfolio, extending into new industries and markets.",
+      "GM Group expanded into multiple industries, developing businesses and services in technology, media, logistics, agro services, restaurant solutions, e-commerce, and other growing sectors.",
   },
   {
-    label: "New Ventures",
-    year: "[Year]",
+    year: "2026",
+    title: "Building the Ecosystem",
     description:
-      "[Placeholder] Additional businesses join the group, each contributing to a diversified, resilient portfolio.",
+      "New ventures were developed to serve different customer needs while operating under the shared direction and long-term vision of GM Group.",
   },
   {
-    label: "Today",
-    year: "[Year]",
+    year: "Today",
+    title: "A Growing Group",
     description:
-      "[Placeholder] GM Group operates as a modern business group — managing, growing, and developing its ventures.",
+      "GM Group continues to grow as a multi-industry business group, supporting individuals pursuing international opportunities and businesses seeking technology, media, logistics, and operational solutions.",
   },
   {
-    label: "The Future",
-    year: "[Year]",
+    year: "The Future",
+    title: "Building for Long-Term Growth",
     description:
-      "[Placeholder] The group continues to expand into new industries, building long-term value wherever opportunity exists.",
+      "The journey continues with a focus on strengthening existing ventures, exploring new industries, expanding into international markets, and building sustainable businesses that create long-term value.",
   },
 ] as const;
 
