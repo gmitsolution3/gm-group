@@ -1,12 +1,41 @@
 "use client";
 
-import { ventureAccentMap } from "@/content/ventures";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { VentureLogo } from "./VentureLogo";
 import { IVenture } from "@/types";
+
+export const ventureAccentMap = {
+  indigo: {
+    bg: "bg-indigo",
+    text: "text-indigo",
+    ring: "ring-indigo",
+    hex: "#5B5FEF",
+  },
+
+  teal: {
+    bg: "bg-teal",
+    text: "text-teal",
+    ring: "ring-teal",
+    hex: "#00BFA6",
+  },
+
+  yellow: {
+    bg: "bg-yellow",
+    text: "text-yellow",
+    ring: "ring-yellow",
+    hex: "#FFD23F",
+  },
+
+  coral: {
+    bg: "bg-coral",
+    text: "text-coral",
+    ring: "ring-coral",
+    hex: "#F43F5E",
+  },
+} as const;
 
 interface FeaturedVentureCardProps {
   venture: IVenture;

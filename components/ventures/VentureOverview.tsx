@@ -2,7 +2,35 @@ import { Reveal } from "@/components/visual/motion";
 
 import { IVenture } from "@/types";
 
-import { ventureAccentMap } from "@/content/ventures";
+export const ventureAccentMap = {
+  indigo: {
+    bg: "bg-indigo",
+    text: "text-indigo",
+    ring: "ring-indigo",
+    hex: "#5B5FEF",
+  },
+
+  teal: {
+    bg: "bg-teal",
+    text: "text-teal",
+    ring: "ring-teal",
+    hex: "#00BFA6",
+  },
+
+  yellow: {
+    bg: "bg-yellow",
+    text: "text-yellow",
+    ring: "ring-yellow",
+    hex: "#FFD23F",
+  },
+
+  coral: {
+    bg: "bg-coral",
+    text: "text-coral",
+    ring: "ring-coral",
+    hex: "#F43F5E",
+  },
+} as const;
 
 type VentureOverviewProps = {
   venture: IVenture;

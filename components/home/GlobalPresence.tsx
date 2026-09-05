@@ -9,25 +9,25 @@ const countries = [
     name: "Bangladesh",
     location: "Dhaka",
     code: "BD",
-    coordinates: [90.4125, 23.8103] as [number, number],
+    coordinates: [23.8103, 90.4125] as [number, number],
   },
   {
     name: "China",
     location: "Beijing",
     code: "CN",
-    coordinates: [116.4074, 39.9042] as [number, number],
+    coordinates: [39.9042, 116.4074] as [number, number],
   },
   {
     name: "Malaysia",
     location: "Kuala Lumpur",
     code: "MY",
-    coordinates: [101.6869, 3.139] as [number, number],
+    coordinates: [3.139, 101.6869] as [number, number],
   },
   {
     name: "Thailand",
     location: "Bangkok",
     code: "TH",
-    coordinates: [100.5018, 13.7563] as [number, number],
+    coordinates: [13.7563, 100.5018] as [number, number],
   },
 ];
 

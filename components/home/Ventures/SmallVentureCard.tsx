@@ -1,6 +1,5 @@
 "use client";
 
-import { ventureAccentMap } from "@/content/ventures";
 import { IVenture } from "@/types";
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";

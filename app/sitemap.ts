@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { articles } from "@/content/news";
-import { ventures } from "@/content/ventures";
+// import { ventures } from "@/content/ventures";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.gmgroupbd.com";
@@ -23,10 +23,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const ventureEntries = ventures.map((venture) => ({
-    url: `${baseUrl}/ventures/${venture.slug}`,
-    lastModified: new Date(),
-  }));
+  // const ventureEntries = ventures.map((venture) => ({
+  //   url: `${baseUrl}/ventures/${venture.slug}`,
+  //   lastModified: new Date(),
+  // }));
 
   const articleEntries = articles.map((article) => ({
     url: `${baseUrl}/news/${article.slug}`,
@@ -35,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...staticEntries,
-    ...ventureEntries,
+    // ...ventureEntries,
     ...articleEntries,
   ];
 }

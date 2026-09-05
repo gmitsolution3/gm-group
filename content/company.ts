@@ -34,7 +34,7 @@ export const heroContent = {
   headline: ["Building Businesses.", "Growing Possibilities."],
 
   supportText:
-    "GM Group brings together diverse businesses across multiple industries—from international consultancy and technology to media, logistics, agro services, restaurant solutions, and e-commerce—creating practical opportunities for people and businesses locally and internationally.",
+    "GM Group brings together diverse businesses across multiple industries from international consultancy and technology to media, logistics, agro services, restaurant solutions, and e-commerce creating practical opportunities for people and businesses locally and internationally.",
 
   primaryCta: {
     label: "Explore Our Ventures",
