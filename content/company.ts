@@ -179,13 +179,13 @@ export const journey = [
 
 export const aboutContent = {
   whoWeAre:
-    "[Placeholder] GM Group is a parent company that owns and operates multiple businesses across industries. The group exists to build, manage, grow, and expand businesses — creating long-term value through disciplined operation and ambitious direction.",
+    "GM Group is a multi-industry business group that brings together diverse businesses under one shared direction. The group builds and develops businesses across areas including international consultancy, technology, media, logistics, agro services, restaurant solutions, e-commerce, and aviation. By bringing different businesses together, GM Group aims to create practical services and meaningful opportunities for individuals and businesses across local and international markets.",
   ourStory:
-    "[Placeholder] GM Group began with a simple conviction: that a group of businesses, united under shared direction and long-term thinking, can achieve more than any could alone. Over time, the group has grown into a diversified parent company — expanding into new industries while maintaining the discipline that defined its start.",
+    "GM Group began its journey in 2025 with the establishment of GM International. What started as the foundation for one business developed into a broader vision in 2026: building a diversified group of businesses serving different needs and markets. From that foundation, GM Group began expanding into technology, media, logistics, agro services, restaurant solutions, e-commerce, aviation, and other growing areas. Today, the group continues to develop its businesses with a long-term ambition to grow its presence locally and internationally while creating practical value and opportunities for people and businesses.",
   philosophy:
-    "[Placeholder] GM Group believes in building for the long term. Decisions are made to create value that compounds over years and decades, not quarters. Growth is pursued with discipline; expansion is pursued with intention. The group measures success not by speed, but by durability.",
+    "We believe strong businesses are built by solving real needs, delivering reliable value, and continuing to improve over time. GM Group focuses on developing businesses with clear purpose and practical services while remaining open to new ideas, technologies, industries, and markets. Our long-term direction is to build a trusted group of businesses that can grow sustainably and create meaningful value for people and organizations.",
   approach:
-    "[Placeholder] GM Group approaches each business with a four-stage operating philosophy: Build, Manage, Grow, and Expand. This framework guides every venture — from foundation to scale — and ensures each business is structured for sustainable operation from the start.",
+    "GM Group takes a practical approach to building and developing businesses. We identify opportunities, establish strong foundations, improve and operate our businesses effectively, strengthen what works, and explore new industries and markets where we can create meaningful value. This approach allows each venture to develop while remaining connected to the broader direction of GM Group.",
 } as const;
 
 export const careersContent = {
