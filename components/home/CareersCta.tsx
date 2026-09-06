@@ -52,7 +52,7 @@ export default function CareersCta() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+      <div className="relative mx-auto !max-w-[1400px] px-5 sm:px-8 lg:px-12">
         <div className="max-w-4xl">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] text-yellow">
             08 — Careers
@@ -69,9 +69,7 @@ export default function CareersCta() {
           </h2>
 
           <p className="mt-8 max-w-xl text-lg text-white/60 text-pretty">
-            Join a group building businesses across industries — with
-            the ambition, direction, and long-term thinking that
-            define GM Group.
+            {careersContent.why[0].description}
           </p>
 
           <Link

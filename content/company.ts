@@ -63,25 +63,25 @@ export const growthStages = [
     number: "01",
     title: "Build",
     description:
-      "We establish foundations — identifying opportunity, assembling capability, and structuring businesses for sustainable operation from day one.",
+      "We identify opportunities and build businesses around real needs—establishing practical foundations, clear direction, and services that create value for customers and markets.",
   },
   {
     number: "02",
     title: "Manage",
     description:
-      "We operate with discipline — applying governance, systems, and strategic oversight so each business performs with clarity and accountability.",
+      "We focus on running each business effectively—bringing together the people, technology, processes, and resources needed to deliver reliable services and support sustainable operations.",
   },
   {
     number: "03",
     title: "Grow",
     description:
-      "We scale what works — investing in capability, talent, and market position to extend each business beyond its starting point.",
+      "We strengthen businesses by improving their services, reaching more customers, developing new capabilities, and creating opportunities for continued growth.",
   },
   {
     number: "04",
     title: "Expand",
     description:
-      "We move into new territory — entering adjacent industries and geographies where the group’s strengths can create lasting value.",
+      "We explore new industries and international markets, developing new ventures and extending the group’s ability to serve people and businesses across different markets.",
   },
 ] as const;
 
@@ -104,37 +104,37 @@ export const values = [
     number: "01",
     title: "Integrity",
     description:
-      "We operate with honesty and transparency. Every decision is made to withstand scrutiny — today and in the decades ahead.",
+      "We act with honesty, responsibility, and transparency in the way we work, serve our customers, and build our businesses.",
   },
   {
     number: "02",
     title: "Excellence",
     description:
-      "We hold a high standard across every business we touch. Good enough is never the finish line; it is the starting point.",
+      "We aim to deliver reliable, high-quality services and continuously improve the way our businesses create value.",
   },
   {
     number: "03",
     title: "Responsibility",
     description:
-      "We own the outcomes. The businesses we build carry our name, and we stand behind the impact they create.",
+      "We take ownership of our work, our commitments, and the impact our businesses have on the people and communities we serve.",
   },
   {
     number: "04",
     title: "Innovation",
     description:
-      "We look forward. New industries, new models, new methods — progress is part of how the group operates, not an exception to it.",
+      "We remain open to better ideas, new technologies, and practical solutions that help our businesses and customers move forward.",
   },
   {
     number: "05",
     title: "Collaboration",
     description:
-      "We move as one group. Businesses under GM Group share direction, insight, and ambition — a shared strength greater than its parts.",
+      "We believe stronger businesses are built by working together—across teams, ventures, industries, and markets.",
   },
   {
     number: "06",
     title: "Long-Term Thinking",
     description:
-      "We build for decades, not quarters. Value that compounds over time is the measure that matters most to this group.",
+      "We focus beyond short-term results, building businesses, relationships, and opportunities with sustainable growth in mind.",
   },
 ] as const;
 
@@ -194,41 +194,41 @@ export const careersContent = {
     {
       title: "Ambition With Direction",
       description:
-        "[Placeholder] We pursue ambitious goals with clear direction — giving our people room to build work that matters.",
+        "We pursue meaningful goals with clear direction, giving people the opportunity to contribute to businesses that are being built for the future.",
     },
     {
       title: "Long-Term Growth",
       description:
-        "[Placeholder] We invest in careers the way we invest in businesses — for the long term, with intention.",
+        "GM Group is growing across businesses and industries, creating opportunities to develop experience and take on new challenges over time.",
     },
     {
       title: "Across Industries",
       description:
-        "[Placeholder] Working at GM Group means exposure to multiple businesses, industries, and challenges.",
+        "Working with GM Group means being part of a multi-industry group where different businesses, ideas, and challenges come together.",
     },
   ],
   culture:
-    "[Placeholder] GM Group’s culture is built on ownership, collaboration, and long-term thinking. We move as one group — sharing insight, ambition, and direction across every business we operate.",
+    "GM Group values ownership, collaboration, continuous development, and long-term thinking. We believe people can create greater impact when they take responsibility for their work, learn from others, and contribute to a shared direction across the group.",
   workingWithUs: [
     {
       title: "Ownership",
       description:
-        "[Placeholder] People here own their work end-to-end, with the trust and accountability that comes with it.",
+        "Take responsibility for your work, follow through on your commitments, and contribute to the success of the business you work with.",
     },
     {
       title: "Collaboration",
       description:
-        "[Placeholder] Businesses across the group share knowledge, tools, and direction.",
+        "Work with others, share ideas, and contribute to a stronger group by learning from different people, businesses, and perspectives.",
     },
     {
       title: "Development",
       description:
-        "[Placeholder] We invest in continuous learning and growth across every role.",
+        "Keep learning and building your capabilities as you gain experience across your role, your business, and the wider group.",
     },
     {
       title: "Impact",
       description:
-        "[Placeholder] Work here reaches across industries — not a single product or market.",
+        "Contribute to businesses and services that create practical value for individuals, organizations, and the markets GM Group serves.",
     },
   ],
-};
+} as const;
