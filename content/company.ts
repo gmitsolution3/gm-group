@@ -178,6 +178,9 @@ export const journey = [
 ] as const;
 
 export const aboutContent = {
+  heroDescription:
+    "GM Group is a growing multi-industry business group bringing together diverse businesses across technology, international consultancy, media, logistics, agro services, restaurant solutions, e-commerce, and aviation, with a shared direction to create practical value and meaningful opportunities locally and internationally.",
+
   whoWeAre:
     "GM Group is a multi-industry business group that brings together diverse businesses under one shared direction. The group builds and develops businesses across areas including international consultancy, technology, media, logistics, agro services, restaurant solutions, e-commerce, and aviation. By bringing different businesses together, GM Group aims to create practical services and meaningful opportunities for individuals and businesses across local and international markets.",
   ourStory:

@@ -3,6 +3,7 @@
 import { Reveal, RevealWords } from "@/components/visual/motion";
 import { VisualIdentity } from "@/components/visual/visual-identity";
 import { siteConfig } from "@/content/company";
+import { aboutContent } from "@/content/company";
 
 export default function AboutHero() {
   return (
@@ -35,7 +36,7 @@ export default function AboutHero() {
 
         <Reveal delay={0.45}>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/60 text-pretty sm:text-xl">
-            {siteConfig.description}
+            {aboutContent.heroDescription}
           </p>
         </Reveal>
       </div>
