@@ -192,7 +192,11 @@ export const aboutContent = {
 } as const;
 
 export const careersContent = {
-  headline: "Build the Future With GM Group.",
+  hero: {
+    headline: ["Build the Future.", "With GM Group."],
+    description:
+      "Join a growing group building businesses across industries with ambition, direction, and a long-term approach.",
+  },
   why: [
     {
       title: "Ambition With Direction",

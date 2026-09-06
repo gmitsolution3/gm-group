@@ -60,10 +60,8 @@ export default function CareersCta() {
 
           <h2 className="mt-6 font-display text-[clamp(2.5rem,6.5vw,5rem)] font-extrabold leading-[1.02] tracking-tightest text-balance">
             <RevealWords
-              text={careersContent.headline}
-              highlightIndices={[
-                careersContent.headline.split(" ").length - 1,
-              ]}
+              text={careersContent.hero.headline.join(" ")}
+              highlightIndices={[4,5]}
               highlightClass="text-indigo"
             />
           </h2>
