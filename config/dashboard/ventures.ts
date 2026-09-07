@@ -82,7 +82,7 @@ export const dashboardVentures: DashboardVenture[] = [
       {
         name: "Food Dashboard",
         description: "Manage GM Food Point operations.",
-        href: "/dashboard/venture-dashboards/gm-food",
+        href: "/dashboard/venture-dashboards/gm-food-point",
         icon: LayoutDashboard,
       },
     ],
