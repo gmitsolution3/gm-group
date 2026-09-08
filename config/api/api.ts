@@ -15,4 +15,9 @@ export const API_ENDPOINTS = {
     dashboard:
       "https://gm-it-solution-backend.vercel.app/api/v1/analytics",
   },
+
+  gmFoodPoint: {
+    dashboard:
+      "https://gm-food-point-backend.vercel.app/api/v1/dashboard/statistics",
+  },
 };
