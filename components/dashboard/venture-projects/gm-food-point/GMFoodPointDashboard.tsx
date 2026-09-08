@@ -2,6 +2,10 @@
 
 import { cn } from "@/lib/utils";
 import {
+  BarChart3,
+  WalletCards,
+} from "lucide-react";
+import {
   usePathname,
   useRouter,
   useSearchParams,
@@ -11,10 +15,12 @@ const tabs = [
   {
     value: "statistics",
     label: "Statistics",
+    icon: BarChart3,
   },
   {
     value: "finance",
     label: "Finance",
+    icon: WalletCards,
   },
 ] as const;
 
@@ -30,6 +36,7 @@ export default function GMFoodPointDashboard() {
   const searchParams = useSearchParams();
 
   const currentTab = searchParams.get("tab");
+
   const activeTab: TabValue = isValidTab(currentTab)
     ? currentTab
     : "statistics";
@@ -63,34 +70,37 @@ export default function GMFoodPointDashboard() {
           </p>
         </div>
 
-        <div className="border-b border-border">
-          <div className="flex items-center gap-6 overflow-x-auto">
-            {tabs.map((tab) => {
-              const isActive = activeTab === tab.value;
+        {/* Tabs */}
+        <section>
+          <div className="rounded-2xl border border-border/70 bg-card p-2">
+            <div className="grid grid-cols-2 gap-2">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.value;
 
-              return (
-                <button
-                  key={tab.value}
-                  type="button"
-                  onClick={() => handleTabChange(tab.value)}
-                  className={cn(
-                    "relative whitespace-nowrap pb-3 text-sm font-medium transition-colors",
-                    isActive
-                      ? "text-indigo"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                >
-                  {tab.label}
-
-                  {isActive && (
-                    <span className="absolute inset-x-0 -bottom-px h-0.5 bg-indigo" />
-                  )}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={tab.value}
+                    type="button"
+                    onClick={() => handleTabChange(tab.value)}
+                    className={cn(
+                      "flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                      isActive
+                        ? "bg-indigo text-primary-foreground shadow-sm"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </section>
 
+        {/* Tab Content */}
         <div className="pt-8">
           {activeTab === "statistics" && (
             <div className="rounded-xl border border-border p-6">
