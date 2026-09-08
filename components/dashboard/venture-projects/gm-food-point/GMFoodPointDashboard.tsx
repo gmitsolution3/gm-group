@@ -4,9 +4,6 @@ import { cn } from "@/lib/utils";
 import {
   BarChart3,
   WalletCards,
-  Users,
-  Utensils,
-  Folder,
   Clock,
   ChefHat,
   CheckCircle,
@@ -30,6 +27,7 @@ import { GMFoodPointDashboardResponse } from "@/types";
 
 import { GMFoodPointDashboardLoader } from "./GMFoodPointDashboardLoader";
 import { GMFoodPointDashboardError } from "./GMFoodPointDashboardError";
+import { FinanceTab } from "./FinanceTab";
 
 const tabs = [
   {
@@ -308,22 +306,7 @@ export default function GMFoodPointDashboard() {
           )}
 
           {activeTab === "finance" && (
-            <div className="rounded-xl border border-border bg-card p-6">
-              <div className="flex flex-col items-center justify-center space-y-4 py-12 text-center">
-                <WalletCards className="h-16 w-16 text-muted-foreground" />
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Finance Dashboard
-                  </h3>
-                  <p className="text-muted-foreground">
-                    Financial analytics and reports will be displayed here.
-                  </p>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  This section is under development.
-                </p>
-              </div>
-            </div>
+            <FinanceTab onRetry={() => refetch()} />
           )}
         </div>
       </div>

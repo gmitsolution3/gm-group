@@ -1,0 +1,554 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { useFetch } from "@/hooks/api/useFetch";
+import { API_ENDPOINTS } from "@/config/api/api";
+import { GMFoodPointFinanceResponse, FinanceDateRange, ChartGranularity } from "@/types";
+import {
+  DollarSign,
+  BarChart3,
+  Calendar,
+  ShoppingBag,
+  Calculator,
+  Smartphone,
+  Wallet,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Helper function to format currency
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+// Helper function to format number
+function formatNumber(value: number): string {
+  return value.toLocaleString();
+}
+
+// Helper function to format average order value
+function formatAverageOrder(value: number): string {
+  return formatCurrency(value);
+}
+
+// Date range options
+const dateRangeOptions = [
+  { value: "today", label: "Today", granularity: "hourly" },
+  { value: "7days", label: "Last 7 Days", granularity: "daily" },
+  { value: "15days", label: "Last 15 Days", granularity: "daily" },
+  { value: "1month", label: "Last Month", granularity: "daily" },
+  { value: "3months", label: "Last 3 Months", granularity: "weekly" },
+  { value: "6months", label: "Last 6 Months", granularity: "monthly" },
+  { value: "1year", label: "Last Year", granularity: "monthly" },
+] as const;
+
+// Financial metric card component
+interface FinancialMetricCardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  format: "currency" | "number" | "average";
+  description?: string;
+  color?: "blue" | "green" | "orange" | "purple" | "cyan" | "indigo";
+}
+
+function FinancialMetricCard({
+  title,
+  value,
+  icon,
+  format,
+  description,
+  color = "blue",
+}: FinancialMetricCardProps) {
+  const formattedValue = format === "currency"
+    ? formatCurrency(value)
+    : format === "average"
+    ? formatAverageOrder(value)
+    : formatNumber(value);
+
+  const colorClasses = {
+    blue: "border-blue-100 bg-blue-50/50",
+    green: "border-green-100 bg-green-50/50",
+    orange: "border-orange-100 bg-orange-50/50",
+    purple: "border-purple-100 bg-purple-50/50",
+    cyan: "border-cyan-100 bg-cyan-50/50",
+    indigo: "border-indigo-100 bg-indigo-50/50",
+  };
+
+  const iconClasses = {
+    blue: "bg-blue-100 text-blue-600",
+    green: "bg-green-100 text-green-600",
+    orange: "bg-orange-100 text-orange-600",
+    purple: "bg-purple-100 text-purple-600",
+    cyan: "bg-cyan-100 text-cyan-600",
+    indigo: "bg-indigo-100 text-indigo-600",
+  };
+
+  return (
+    <div className={cn(
+      "rounded-xl border p-4 transition-all hover:shadow-sm",
+      colorClasses[color]
+    )}>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="mt-2 text-2xl font-bold text-foreground">{formattedValue}</p>
+          {description && (
+            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
+          )}
+        </div>
+        <div className={cn("rounded-lg p-2", iconClasses[color])}>
+          {icon}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Simple bar chart component for revenue/orders visualization
+interface SimpleBarChartProps {
+  data: { label: string; value: number }[];
+  title: string;
+  color?: string;
+  format?: "currency" | "number";
+}
+
+function SimpleBarChart({ data, title, color = "bg-blue-500", format = "currency" }: SimpleBarChartProps) {
+  const maxValue = Math.max(...data.map(d => d.value), 1);
+
+  return (
+    <div className="space-y-4">
+      <h3 className="font-medium text-foreground">{title}</h3>
+      <div className="space-y-3">
+        {data.map((item, index) => {
+          const percentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+
+          return (
+            <div key={index} className="space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
+                <span className="font-medium">
+                  {format === "currency" ? formatCurrency(item.value) : formatNumber(item.value)}
+                </span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className={cn("h-full rounded-full transition-all", color)}
+                  style={{ width: `${percentage}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Payment methods breakdown
+interface PaymentMethodsBreakdownProps {
+  cashRevenue: number;
+  wechatRevenue: number;
+  totalRevenue: number;
+}
+
+function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: PaymentMethodsBreakdownProps) {
+  const cashPercentage = totalRevenue > 0 ? (cashRevenue / totalRevenue) * 100 : 0;
+  const wechatPercentage = totalRevenue > 0 ? (wechatRevenue / totalRevenue) * 100 : 0;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Payment Methods</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-3">
+          {/* Cash */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-blue-100 p-2">
+                <Wallet className="h-4 w-4 text-blue-600" />
+              </div>
+              <div>
+                <p className="font-medium">Cash</p>
+                <p className="text-sm text-muted-foreground">Physical cash payments</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold">{formatCurrency(cashRevenue)}</p>
+              <p className="text-sm text-muted-foreground">{cashPercentage.toFixed(1)}% of total</p>
+            </div>
+          </div>
+
+          {/* WeChat */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-green-100 p-2">
+                <Smartphone className="h-4 w-4 text-green-600" />
+              </div>
+              <div>
+                <p className="font-medium">WeChat Pay</p>
+                <p className="text-sm text-muted-foreground">Mobile payments</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold">{formatCurrency(wechatRevenue)}</p>
+              <p className="text-sm text-muted-foreground">{wechatPercentage.toFixed(1)}% of total</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="pt-4">
+          <div className="flex h-3 w-full overflow-hidden rounded-full">
+            <div
+              className="bg-blue-500 transition-all"
+              style={{ width: `${cashPercentage}%` }}
+              title={`Cash: ${formatCurrency(cashRevenue)}`}
+            />
+            <div
+              className="bg-green-500 transition-all"
+              style={{ width: `${wechatPercentage}%` }}
+              title={`WeChat Pay: ${formatCurrency(wechatRevenue)}`}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+            <span>Cash</span>
+            <span>WeChat Pay</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Granularity display helper
+function getGranularityDisplay(granularity: ChartGranularity, range: FinanceDateRange): string {
+  const rangeLabel = dateRangeOptions.find(opt => opt.value === range)?.label || range;
+
+  switch (granularity) {
+    case "hourly":
+      return `Hourly breakdown for ${rangeLabel}`;
+    case "daily":
+      return `Daily breakdown for ${rangeLabel}`;
+    case "weekly":
+      return `Weekly breakdown for ${rangeLabel}`;
+    case "monthly":
+      return `Monthly breakdown for ${rangeLabel}`;
+    default:
+      return `${rangeLabel} overview`;
+  }
+}
+
+interface FinanceTabProps {
+  onRetry?: () => void;
+}
+
+export function FinanceTab({ onRetry }: FinanceTabProps) {
+  const [selectedRange, setSelectedRange] = useState<FinanceDateRange>("7days");
+
+  // Build the API URL with selected range
+  const financeUrl = `${API_ENDPOINTS.gmFoodPoint.finance.base}?range=${selectedRange}`;
+
+  // Fetch finance data
+  const { data, isLoading, isError, refetch } = useFetch<GMFoodPointFinanceResponse>(
+    financeUrl,
+  );
+
+  const handleRangeChange = (range: string) => {
+    setSelectedRange(range as FinanceDateRange);
+  };
+
+  // Memoized chart data for better performance
+  const chartData = useMemo(() => {
+    if (!data?.data?.charts) return null;
+
+    // Limit the number of data points shown for better readability
+    const maxDataPoints = 12;
+    const revenueData = [...data.data.charts.revenue];
+    const ordersData = [...data.data.charts.orders];
+
+    if (revenueData.length > maxDataPoints) {
+      revenueData.splice(maxDataPoints);
+      ordersData.splice(maxDataPoints);
+    }
+
+    return {
+      revenue: revenueData,
+      orders: ordersData,
+      granularity: data.data.charts.granularity,
+    };
+  }, [data]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        {/* Header with Range Selector */}
+        <div className="flex items-center justify-between">
+          <div>
+            <Skeleton className="h-7 w-48 rounded-lg" />
+            <Skeleton className="mt-1 h-4 w-64 rounded-md" />
+          </div>
+          <Skeleton className="h-10 w-32 rounded-lg" />
+        </div>
+
+        {/* Financial Metrics Grid */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="rounded-xl border border-border bg-card p-4">
+              <div className="flex items-start justify-between">
+                <div>
+                  <Skeleton className="h-4 w-20 rounded-md" />
+                  <Skeleton className="mt-2 h-8 w-24 rounded-lg" />
+                </div>
+                <Skeleton className="h-10 w-10 rounded-lg" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Charts Placeholder */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-xl border border-border bg-card p-6">
+            <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
+            <Skeleton className="h-64 w-full rounded-lg" />
+          </div>
+          <div className="rounded-xl border border-border bg-card p-6">
+            <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
+            <Skeleton className="h-64 w-full rounded-lg" />
+          </div>
+        </div>
+
+        {/* Payment Methods Placeholder */}
+        <div className="rounded-xl border border-border bg-card p-6">
+          <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
+          <Skeleton className="h-32 w-full rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError || !data?.success || !data.data) {
+    return (
+      <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border border-border bg-card p-12 text-center">
+        <div className="rounded-full bg-destructive/10 p-4">
+          <DollarSign className="h-12 w-12 text-destructive" />
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold text-foreground">
+            Unable to load financial data
+          </h3>
+          <p className="text-muted-foreground">
+            {data?.message || "Failed to fetch financial data"}
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+          >
+            Retry
+          </Button>
+          {onRetry && (
+            <Button onClick={onRetry}>
+              Refresh Dashboard
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  const financeData = data.data;
+  const { summary, charts } = financeData;
+  const selectedOption = dateRangeOptions.find(opt => opt.value === selectedRange);
+
+  return (
+    <div className="space-y-8">
+      {/* Header with Range Selector */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Financial Overview</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {getGranularityDisplay(charts.granularity, selectedRange)}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+          <Select value={selectedRange} onValueChange={handleRangeChange}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Select range" />
+            </SelectTrigger>
+            <SelectContent>
+              {dateRangeOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Financial Metrics Grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <FinancialMetricCard
+          title="Total Revenue"
+          value={summary.totalRevenue}
+          icon={<DollarSign className="h-5 w-5" />}
+          format="currency"
+          description="Total income generated"
+          color="green"
+        />
+
+        <FinancialMetricCard
+          title="Total Orders"
+          value={summary.totalOrders}
+          icon={<ShoppingBag className="h-5 w-5" />}
+          format="number"
+          description="Number of transactions"
+          color="blue"
+        />
+
+        <FinancialMetricCard
+          title="Avg Order Value"
+          value={summary.averageOrderValue}
+          icon={<Calculator className="h-5 w-5" />}
+          format="average"
+          description="Average revenue per order"
+          color="purple"
+        />
+
+        <FinancialMetricCard
+          title="Cash Revenue"
+          value={summary.cashRevenue}
+          icon={<Wallet className="h-5 w-5" />}
+          format="currency"
+          description="Revenue from cash payments"
+          color="orange"
+        />
+
+        <FinancialMetricCard
+          title="WeChat Revenue"
+          value={summary.wechatRevenue}
+          icon={<Smartphone className="h-5 w-5" />}
+          format="currency"
+          description="Revenue from WeChat Pay"
+          color="cyan"
+        />
+      </div>
+
+      {/* Charts Section */}
+      {chartData && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Revenue Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Revenue Trend</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {selectedOption?.label} • {charts.granularity} view
+              </p>
+            </CardHeader>
+            <CardContent>
+              <SimpleBarChart
+                data={chartData.revenue}
+                title="Revenue"
+                color="bg-green-500"
+                format="currency"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Orders Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Orders Trend</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {selectedOption?.label} • {charts.granularity} view
+              </p>
+            </CardHeader>
+            <CardContent>
+              <SimpleBarChart
+                data={chartData.orders}
+                title="Orders"
+                color="bg-blue-500"
+                format="number"
+              />
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Payment Methods Breakdown */}
+      <PaymentMethodsBreakdown
+        cashRevenue={summary.cashRevenue}
+        wechatRevenue={summary.wechatRevenue}
+        totalRevenue={summary.totalRevenue}
+      />
+
+      {/* Summary Stats */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Performance Summary</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Key metrics for {selectedOption?.label}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Revenue per Order</p>
+              <p className="text-2xl font-bold">{formatCurrency(summary.averageOrderValue)}</p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Cash vs Digital</p>
+              <p className="text-2xl font-bold">
+                {summary.totalRevenue > 0
+                  ? `${((summary.cashRevenue / summary.totalRevenue) * 100).toFixed(0)}% Cash`
+                  : "0% Cash"}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Data Points</p>
+              <p className="text-2xl font-bold">{charts.revenue.length}</p>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Time Period</p>
+              <p className="text-2xl font-bold capitalize">{charts.granularity}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Empty State Handling */}
+      {summary.totalRevenue === 0 && (
+        <div className="rounded-xl border border-border bg-card p-8 text-center">
+          <div className="mx-auto max-w-md">
+            <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-lg font-semibold text-foreground">No Financial Data Available</h3>
+            <p className="mt-2 text-muted-foreground">
+              {selectedOption?.label} shows no revenue or orders. Data will appear here as transactions occur.
+            </p>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Try selecting a different time range to view historical data.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

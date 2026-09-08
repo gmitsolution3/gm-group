@@ -19,5 +19,9 @@ export const API_ENDPOINTS = {
   gmFoodPoint: {
     dashboard:
       "https://gm-food-point-backend.vercel.app/api/v1/dashboard/statistics",
+    finance: {
+      base: "https://gm-food-point-backend.vercel.app/api/v1/dashboard/finance",
+      ranges: ["today", "7days", "15days", "1month", "3months", "6months", "1year"] as const,
+    },
   },
 };
