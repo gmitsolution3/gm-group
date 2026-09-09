@@ -13,6 +13,8 @@ import type {
   PortfoliosAnalytics,
 } from "@/types/dashboard/gm-it-solution.type";
 
+import { formatDateMonthDay } from "../../utils";
+
 import {
   AnalyticsAreaChart,
   AnalyticsDonutChart,
@@ -174,7 +176,7 @@ export default function PortfoliosTab({
                     <div className="mt-4 border-t border-border/60 pt-3">
                       <p className="text-xs text-muted-foreground">
                         Added{" "}
-                        {formatDate(
+                        {formatDateMonthDay(
                           portfolio.createdAt,
                         )}
                       </p>
@@ -195,17 +197,3 @@ export default function PortfoliosTab({
 /* ========================================================================== */
 /* HELPERS                                                                    */
 /* ========================================================================== */
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}

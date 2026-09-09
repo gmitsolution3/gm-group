@@ -30,21 +30,13 @@ import { AccountAnalysisDashboardLoader } from "./AccountAnalysisDashboardLoader
 import { Badge } from "@/components/ui/badge";
 import { AccountDashboardResponse } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils";
+import { formatMonth } from "../../utils";
 
 import { API_ENDPOINTS } from "@/config/api/api";
 import CountCard from "./CountCard";
 import MiniMetric from "./MiniMetric";
 import StatCard from "./StatCard";
 import TrendBar from "./TrendBar";
-
-function formatMonth(value: string) {
-  const [year, month] = value.split("-").map(Number);
-
-  return new Intl.DateTimeFormat("en", {
-    month: "long",
-    year: "numeric",
-  }).format(new Date(year, month - 1));
-}
 
 function serviceIcon(service: string) {
   switch (service) {

@@ -4,7 +4,14 @@ import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useFetch } from "@/hooks/api/useFetch";
 import { API_ENDPOINTS } from "@/config/api/api";
-import { GMFoodPointFinanceResponse, FinanceDateRange, ChartGranularity } from "@/types";
+import { GMFoodPointFinanceResponse, FinanceDateRange } from "@/types";
+import {
+  formatCurrency,
+  formatNumber,
+  formatAverageOrder,
+  getGranularityDisplay,
+  financeDateRangeOptions,
+} from "../utils";
 import {
   DollarSign,
   BarChart3,
@@ -19,36 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Helper function to format currency
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
 
-// Helper function to format number
-function formatNumber(value: number): string {
-  return value.toLocaleString();
-}
-
-// Helper function to format average order value
-function formatAverageOrder(value: number): string {
-  return formatCurrency(value);
-}
-
-// Date range options
-const dateRangeOptions = [
-  { value: "today", label: "Today", granularity: "hourly" },
-  { value: "7days", label: "Last 7 Days", granularity: "daily" },
-  { value: "15days", label: "Last 15 Days", granularity: "daily" },
-  { value: "1month", label: "Last Month", granularity: "daily" },
-  { value: "3months", label: "Last 3 Months", granularity: "weekly" },
-  { value: "6months", label: "Last 6 Months", granularity: "monthly" },
-  { value: "1year", label: "Last Year", granularity: "monthly" },
-] as const;
 
 // Financial metric card component
 interface FinancialMetricCardProps {
@@ -230,23 +208,6 @@ function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: P
   );
 }
 
-// Granularity display helper
-function getGranularityDisplay(granularity: ChartGranularity, range: FinanceDateRange): string {
-  const rangeLabel = dateRangeOptions.find(opt => opt.value === range)?.label || range;
-
-  switch (granularity) {
-    case "hourly":
-      return `Hourly breakdown for ${rangeLabel}`;
-    case "daily":
-      return `Daily breakdown for ${rangeLabel}`;
-    case "weekly":
-      return `Weekly breakdown for ${rangeLabel}`;
-    case "monthly":
-      return `Monthly breakdown for ${rangeLabel}`;
-    default:
-      return `${rangeLabel} overview`;
-  }
-}
 
 interface FinanceTabProps {
   onRetry?: () => void;
@@ -371,7 +332,7 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
 
   const financeData = data.data;
   const { summary, charts } = financeData;
-  const selectedOption = dateRangeOptions.find(opt => opt.value === selectedRange);
+  const selectedOption = financeDateRangeOptions.find(opt => opt.value === selectedRange);
 
   return (
     <div className="space-y-8">
@@ -391,7 +352,7 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
               <SelectValue placeholder="Select range" />
             </SelectTrigger>
             <SelectContent>
-              {dateRangeOptions.map((option) => (
+              {financeDateRangeOptions.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
                   {option.label}
                 </SelectItem>

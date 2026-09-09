@@ -28,6 +28,7 @@ import { GMFoodPointDashboardResponse } from "@/types";
 import { GMFoodPointDashboardLoader } from "./GMFoodPointDashboardLoader";
 import { GMFoodPointDashboardError } from "./GMFoodPointDashboardError";
 import { FinanceTab } from "./FinanceTab";
+import { formatNumber } from "../utils";
 
 const tabs = [
   {
@@ -46,11 +47,6 @@ type TabValue = (typeof tabs)[number]["value"];
 
 function isValidTab(value: string | null): value is TabValue {
   return tabs.some((tab) => tab.value === value);
-}
-
-// Helper function to format numbers
-function formatNumber(value: number): string {
-  return value.toLocaleString();
 }
 
 // Component for statistic cards

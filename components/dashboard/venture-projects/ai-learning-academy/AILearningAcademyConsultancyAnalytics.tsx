@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 
 import type { AILearningDashboardData } from "@/types";
+import { formatMonth, formatPercentage } from "../utils";
 
 interface AILearningAcademyConsultancyAnalyticsProps {
   consultancy: AILearningDashboardData["consultancy"];
@@ -340,21 +341,4 @@ function EmptyAnalytics({ text }: { text: string }) {
       {text}
     </div>
   );
-}
-
-function formatMonth(value: string) {
-  const date = new Date(`${value}-01T00:00:00`);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
-
-function formatPercentage(value: number) {
-  return `${Number.isInteger(value) ? value : value.toFixed(2)}%`;
 }

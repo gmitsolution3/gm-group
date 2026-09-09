@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import type { AILearningDashboardData } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { formatCurrency, formatLabel, formatPercentage } from "../utils";
 
 interface AILearningAcademyCourseAnalyticsProps {
   courses: AILearningDashboardData["courses"];
@@ -142,6 +143,7 @@ export default function AILearningAcademyCourseAnalytics({
                 label="Avg. regular price"
                 value={formatCurrency(
                   pricingAnalytics.averageRegularPrice,
+                  "BDT",
                 )}
                 icon={DollarSign}
                 className="border-emerald-100 bg-emerald-50/40 text-emerald-700"
@@ -152,6 +154,7 @@ export default function AILearningAcademyCourseAnalytics({
                 label="Avg. discount price"
                 value={formatCurrency(
                   pricingAnalytics.averageDiscountPrice,
+                  "BDT",
                 )}
                 icon={BadgePercent}
                 className="border-violet-100 bg-violet-50/40 text-violet-700"
@@ -316,22 +319,4 @@ function EmptyAnalytics({ text }: { text: string }) {
       {text}
     </div>
   );
-}
-
-function formatLabel(value: string) {
-  return value
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
-function formatPercentage(value: number) {
-  return `${Number.isInteger(value) ? value : value.toFixed(2)}%`;
-}
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(value);
 }

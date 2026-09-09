@@ -10,6 +10,8 @@ import {
 
 import type { CaseStudiesAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
+import { formatDateMonthDay } from "../../utils";
+
 import {
   Bar,
   BarChart,
@@ -405,7 +407,7 @@ export default function CaseStudiesTab({
                 key={`${item._id}-date`}
                 className="whitespace-nowrap text-sm text-muted-foreground"
               >
-                {formatDate(item.createdAt)}
+                {formatDateMonthDay(item.createdAt)}
               </span>,
             ])}
           />
@@ -469,17 +471,6 @@ function shortId(id: string) {
   return `${id.slice(0, 6)}...${id.slice(-4)}`;
 }
 
-function formatDate(value: string) {
-  if (!value) {
-    return "—";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
-}
 
 function getCaseStudyTitle(
   item: CaseStudiesAnalytics["recent"]["caseStudies"][number],

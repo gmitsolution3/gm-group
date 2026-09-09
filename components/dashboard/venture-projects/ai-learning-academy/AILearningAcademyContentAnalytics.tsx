@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 
 import type { AILearningDashboardData } from "@/types";
+import { formatLabel, formatNumber, formatPercentage } from "../utils";
 
 interface AILearningAcademyContentAnalyticsProps {
   content: AILearningDashboardData["content"];
@@ -284,20 +285,4 @@ function getContentTypeIcon(type: string) {
     default:
       return FileText;
   }
-}
-
-function formatLabel(value: string) {
-  return value
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
-function formatPercentage(value: number) {
-  return `${Number.isInteger(value) ? value : value.toFixed(2)}%`;
-}
-
-function formatNumber(value: number) {
-  return Number.isInteger(value)
-    ? value.toLocaleString()
-    : value.toFixed(2);
 }

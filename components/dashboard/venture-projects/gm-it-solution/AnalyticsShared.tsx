@@ -34,6 +34,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { formatDateTime, formatPeriod } from "../utils";
+
 type IconComponent = ComponentType<{
   className?: string;
 }>;
@@ -865,33 +867,6 @@ export function EmptyState({
 /* ========================================================================== */
 /* HELPERS                                                                    */
 /* ========================================================================== */
-
-function formatPeriod(period: string) {
-  const date = new Date(`${period}-01`);
-
-  if (Number.isNaN(date.getTime())) {
-    return period;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
-function formatDateTime(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
-}
 
 function getActivityIcon(type: string) {
   switch (type) {

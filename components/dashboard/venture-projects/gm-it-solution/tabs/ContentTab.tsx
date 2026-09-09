@@ -37,6 +37,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { formatDate, formatLabelCamel } from "../../utils";
+
 /* ========================================================================== */
 /* CONSTANTS                                                                  */
 /* ========================================================================== */
@@ -285,7 +287,7 @@ export default function ContentTab({
                     (item, index) => (
                       <LegendItem
                         key={item.type}
-                        label={formatLabel(item.type)}
+                        label={formatLabelCamel(item.type)}
                         value={item.count}
                         dotStyle={{
                           backgroundColor:
@@ -744,25 +746,3 @@ const tooltipStyle = {
 /* ========================================================================== */
 /* HELPERS                                                                    */
 /* ========================================================================== */
-
-function formatLabel(value: string) {
-  return value
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (character) =>
-      character.toUpperCase(),
-    );
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-BD", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}

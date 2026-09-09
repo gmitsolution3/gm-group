@@ -32,6 +32,8 @@ import type {
   BlogAnalytics,
 } from "@/types/dashboard/gm-it-solution.type";
 
+import { formatDate } from "../../utils";
+
 import {
   Card,
   CardContent,
@@ -759,17 +761,3 @@ function EmptyState({
 /* ========================================================================== */
 /* DATE FORMAT                                                                */
 /* ========================================================================== */
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-BD", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}

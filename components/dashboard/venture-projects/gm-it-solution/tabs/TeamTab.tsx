@@ -35,6 +35,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { formatDate } from "../../utils";
+
 /* ========================================================================== */
 /* COLORS                                                                     */
 /* ========================================================================== */
@@ -786,17 +788,3 @@ function EmptyChartState({
 /* ========================================================================== */
 /* DATE FORMAT                                                                */
 /* ========================================================================== */
-
-function formatDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-BD", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 
 import type { AILearningDashboardData } from "@/types";
+import { formatLabel, formatPercentage } from "../utils";
 
 interface AILearningAcademyBatchAnalyticsProps {
   batches: AILearningDashboardData["batches"];
@@ -324,16 +325,6 @@ function EmptyAnalytics({ text }: { text: string }) {
       {text}
     </div>
   );
-}
-
-function formatLabel(value: string) {
-  return value
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
-}
-
-function formatPercentage(value: number) {
-  return `${Number.isInteger(value) ? value : value.toFixed(2)}%`;
 }
 
 function getStatusColor(status: string) {

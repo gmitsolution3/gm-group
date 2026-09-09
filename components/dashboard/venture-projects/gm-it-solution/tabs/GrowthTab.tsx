@@ -36,6 +36,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { formatChange, formatPeriodLabel } from "../../utils";
+
 /* ========================================================================== */
 /* CONSTANTS                                                                  */
 /* ========================================================================== */
@@ -164,7 +166,7 @@ export default function GrowthTab({
                 <p className="mt-1 text-sm text-muted-foreground">
                   Analytics are currently grouped by{" "}
                   <span className="font-medium text-foreground">
-                    {formatPeriod(data.period)}
+                    {formatPeriodLabel(data.period)}
                   </span>
                   .
                 </p>
@@ -497,7 +499,7 @@ function GrowthChart({
             <div className="mt-5 flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground">
               <span>
                 Grouped by{" "}
-                {formatPeriod(period)}
+                {formatPeriodLabel(period)}
               </span>
 
               <span>
@@ -571,7 +573,7 @@ function MetricCard({
           </span>
 
           <span className="text-xs text-muted-foreground">
-            {formatPeriod(period)}
+            {formatPeriodLabel(period)}
           </span>
         </div>
       </CardContent>
@@ -655,24 +657,6 @@ function getPreviousValue(
   return series[series.length - 2]?.count ?? 0;
 }
 
-function formatChange(change: number) {
-  if (change > 0) {
-    return `+${change}`;
-  }
-
-  return String(change);
-}
-
-function formatPeriod(period: string) {
-  if (!period) {
-    return "Monthly";
-  }
-
-  return (
-    period.charAt(0).toUpperCase() +
-    period.slice(1)
-  );
-}
 
 /* ========================================================================== */
 /* COMBINE SERIES                                                             */
