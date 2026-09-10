@@ -217,112 +217,71 @@ export default function GraphicsMultimediaDashboard() {
             {/* Breakdown Section */}
             <div className="grid gap-6">
               {/* Bookings Breakdown */}
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-4 text-lg font-semibold text-foreground">
-                  Bookings Breakdown
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Regular</p>
-                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.regular}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Standard bookings</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Custom</p>
-                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.custom}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Tailored packages</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Influencer</p>
-                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.influencer}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Influencer collaborations</p>
-                    </div>
-                  </div>
+              <div className="rounded-2xl border bg-gradient-to-br from-blue-50/40 to-card p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center"><ShoppingBag className="h-4 w-4" /></div>
+                  <h2 className="text-lg font-semibold tracking-tight">Bookings Breakdown</h2>
                 </div>
-
-                {/* Jobs Breakdown */}
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <h2 className="mb-4 text-lg font-semibold text-foreground">
-                    Job Postings Status
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between">
+                <div className="grid gap-3">
+                  {[
+                    { label: "Regular", val: dashboardData.breakdown.bookings.regular, sub: "Standard bookings", color: "blue" },
+                    { label: "Custom", val: dashboardData.breakdown.bookings.custom, sub: "Tailored packages", color: "amber" },
+                    { label: "Influencer", val: dashboardData.breakdown.bookings.influencer, sub: "Influencer collaborations", color: "purple" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center justify-between rounded-xl bg-card border px-4 py-3 hover:shadow-sm transition">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Active</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.jobs.active}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{item.label}</p>
+                        <p className={`text-2xl font-extrabold ${item.color === 'blue' ? 'text-blue-600' : item.color === 'amber' ? 'text-amber-600' : 'text-purple-600'}`}>{item.val}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Currently open</p>
-                      </div>
+                      <span className="text-xs text-muted-foreground">{item.sub}</span>
                     </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Inactive</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.jobs.inactive}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Closed/Draft</p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* Catalog Breakdown */}
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <h2 className="mb-4 text-lg font-semibold text-foreground">
-                    Service Catalog
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between">
+              {/* Jobs Breakdown */}
+              <div className="rounded-2xl border bg-gradient-to-br from-emerald-50/40 to-card p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center"><BarChart3 className="h-4 w-4" /></div>
+                  <h2 className="text-lg font-semibold tracking-tight">Job Postings Status</h2>
+                </div>
+                <div className="grid gap-3">
+                  {[
+                    { label: "Active", val: dashboardData.breakdown.jobs.active, sub: "Currently open", color: "emerald" },
+                    { label: "Inactive", val: dashboardData.breakdown.jobs.inactive, sub: "Closed/Draft", color: "rose" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center justify-between rounded-xl bg-card border px-4 py-3 hover:shadow-sm transition">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Services</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.services}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{item.label}</p>
+                        <p className={`text-2xl font-extrabold ${item.color === 'emerald' ? 'text-emerald-600' : 'text-rose-600'}`}>{item.val}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Individual offerings</p>
-                      </div>
+                      <span className="text-xs text-muted-foreground">{item.sub}</span>
                     </div>
-                    <div className="flex items-start justify-between">
+                  ))}
+                </div>
+              </div>
+
+              {/* Catalog Breakdown */}
+              <div className="rounded-2xl border bg-gradient-to-br from-violet-50/40 to-card p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="h-8 w-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center"><Layers className="h-4 w-4" /></div>
+                  <h2 className="text-lg font-semibold tracking-tight">Service Catalog</h2>
+                </div>
+                <div className="grid gap-3">
+                  {[
+                    { label: "Services", val: dashboardData.breakdown.catalog.services, sub: "Individual offerings", color: "violet" },
+                    { label: "Packages", val: dashboardData.breakdown.catalog.packages, sub: "Bundled services", color: "indigo" },
+                    { label: "Custom Packages", val: dashboardData.breakdown.catalog.customPackages, sub: "Client-specific", color: "fuchsia" },
+                    { label: "Influencers", val: dashboardData.breakdown.catalog.influencers, sub: "Available for collaboration", color: "pink" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center justify-between rounded-xl bg-card border px-4 py-3 hover:shadow-sm transition">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Packages</p>
-                        {dashboardData.breakdown.catalog.packages}
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.packages}</p>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{item.label}</p>
+                        <p className={`text-2xl font-extrabold ${item.color === 'violet' ? 'text-violet-600' : item.color === 'indigo' ? 'text-indigo-600' : item.color === 'fuchsia' ? 'text-fuchsia-600' : 'text-pink-600'}`}>{item.val}</p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Bundled services</p>
-                      </div>
+                      <span className="text-xs text-muted-foreground">{item.sub}</span>
                     </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Custom Packages</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.customPackages}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Client-specific</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Influencers</p>
-                        {dashboardData.breakdown.catalog.influencers}
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.influencers}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Available for collaboration</p>
-                      </div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
