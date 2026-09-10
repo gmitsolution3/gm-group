@@ -120,4 +120,18 @@ export const dashboardVentures: DashboardVenture[] = [
       },
     ],
   },
+  {
+    name: "GM Logistic",
+    description: "Logistics and supply chain operations.",
+    logo: "/images/ventures/gm-logistic.webp",
+
+    dashboards: [
+      {
+        name: "GM Logistic Dashboard",
+        description: "Overview of logistics and fleet operations.",
+        href: "/dashboard/venture-dashboards/gm-logistic",
+        icon: Truck,
+      },
+    ],
+  },
 ];
