@@ -1,6 +1,7 @@
 import {
   ChartNoAxesCombined,
   GraduationCap,
+  Image,
   LayoutDashboard,
   LayoutGrid,
   Mosque,
@@ -100,6 +101,21 @@ export const dashboardVentures: DashboardVenture[] = [
           "Overview of courses, batches, students, content, and consultancy.",
         href: "/dashboard/venture-dashboards/ai-learning-academy",
         icon: GraduationCap,
+      },
+    ],
+  },
+
+  {
+    name: "Graphics Multimedia",
+    description: "Graphics design and multimedia services.",
+    logo: "/images/ventures/graphics-multimedia.webp",
+
+    dashboards: [
+      {
+        name: "Graphics Multimedia Dashboard",
+        description: "Overview of graphics and multimedia projects.",
+        href: "/dashboard/venture-dashboards/graphics-multimedia",
+        icon: Image,
       },
     ],
   },

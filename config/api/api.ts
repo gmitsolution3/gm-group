@@ -24,4 +24,12 @@ export const API_ENDPOINTS = {
       ranges: ["today", "7days", "15days", "1month", "3months", "6months", "1year"] as const,
     },
   },
+
+  graphicsMultimedia: {
+    dashboard: `${process.env.NEXT_PUBLIC_API_BASE_URL}/graphics-multimedia/dashboard`,
+    finance: {
+      base: `${process.env.NEXT_PUBLIC_API_BASE_URL}/graphics-multimedia/dashboard/finance`,
+      ranges: ["today", "7days", "15days", "1month", "3months", "6months", "1year"] as const,
+    },
+  },
 };
