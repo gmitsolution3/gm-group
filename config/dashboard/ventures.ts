@@ -6,6 +6,7 @@ import {
   LayoutGrid,
   Mosque,
   WalletCards,
+  Truck,
   type LucideIcon,
 } from "lucide-react";
 
