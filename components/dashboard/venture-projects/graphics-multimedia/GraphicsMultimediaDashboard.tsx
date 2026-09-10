@@ -3,24 +3,14 @@
 import { cn } from "@/lib/utils";
 import {
   BarChart3,
-  WalletCards,
-  Clock,
   Image,
   DollarSign,
   ShoppingBag,
   CreditCard,
   Package,
   UserCircle,
-  Menu,
   Layers,
-  CheckCircle,
 } from "lucide-react";
-import {
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-
 import { useFetch } from "@/hooks/api/useFetch";
 import { API_ENDPOINTS } from "@/config/api/api";
 import { GraphicsMultimediaDashboardResponse } from "@/types/dashboard/graphics-multimedia.type";
@@ -28,25 +18,6 @@ import { GraphicsMultimediaDashboardResponse } from "@/types/dashboard/graphics-
 import GraphicsMultimediaDashboardLoader from "./GraphicsMultimediaDashboardLoader";
 import GraphicsMultimediaDashboardError from "./GraphicsMultimediaDashboardError";
 import { formatNumber } from "../utils";
-
-const tabs = [
-  {
-    value: "overview",
-    label: "Overview",
-    icon: BarChart3,
-  },
-  {
-    value: "finance",
-    label: "Finance",
-    icon: WalletCards,
-  },
-] as const;
-
-type TabValue = (typeof tabs)[number]["value"];
-
-function isValidTab(value: string | null): value is TabValue {
-  return tabs.some((tab) => tab.value === value);
-}
 
 // Component for statistic cards
 interface StatCardProps {
@@ -107,82 +78,11 @@ function StatCard({
   );
 }
 
-// Recent item component
-interface RecentItemProps {
-  title: string;
-  subtitle: string;
-  avatar?: string;
-  icon?: React.ReactNode;
-  color?: string;
-}
-
-function RecentItem({
-  title,
-  subtitle,
-  avatar,
-  icon,
-  color = "gray",
-}: RecentItemProps) {
-  const colorClasses = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    orange: "bg-orange-100 text-orange-600",
-    red: "bg-red-100 text-red-600",
-    purple: "bg-purple-100 text-purple-600",
-    cyan: "bg-cyan-100 text-cyan-600",
-    gray: "bg-muted text-muted-foreground",
-  };
-
-  return (
-    <div className="flex items-start gap-3">
-      {avatar ? (
-        <img
-          src={avatar}
-          alt={title}
-          className="flex-shrink-0 h-8 w-8 rounded-full object-cover border border-border/50"
-        />
-      ) : (
-        <div className={cn("flex-shrink-0 h-8 w-8 rounded-full", colorClasses[color])}>
-          {icon}
-        </div>
-      )}
-      <div className="space-y-1">
-        <p className="font-medium text-foreground">{title}</p>
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
-      </div>
-    </div>
-  );
-}
-
 export default function GraphicsMultimediaDashboard() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const currentTab = searchParams.get("tab");
-  const activeTab: TabValue = isValidTab(currentTab)
-    ? currentTab
-    : "overview";
-
   // Fetch dashboard statistics
   const { data, isLoading, isError, refetch } = useFetch<GraphicsMultimediaDashboardResponse>(
     API_ENDPOINTS.graphicsMultimedia.dashboard,
   );
-
-  const handleTabChange = (tab: TabValue) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    if (tab === "overview") {
-      params.delete("tab");
-    } else {
-      params.set("tab", tab);
-    }
-
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, {
-      scroll: false,
-    });
-  };
 
   // Show loading state
   if (isLoading) {
@@ -214,171 +114,139 @@ export default function GraphicsMultimediaDashboard() {
           </p>
         </div>
 
-        {/* Tabs */}
-        <section>
-          <div className="rounded-2xl border border-border/70 bg-card p-2">
-            <div className="grid grid-cols-2 gap-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.value;
-
-                return (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => handleTabChange(tab.value)}
-                    className={cn(
-                      "flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                      isActive
-                        ? "bg-indigo text-primary-foreground shadow-sm"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
-                  >
-                    <Icon className="h-4 w-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Tab Content */}
+        {/* Dashboard Content */}
         <div className="pt-8">
-          {activeTab === "overview" && (
-            <div className="space-y-8">
-              {/* Key Statistics */}
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-8">
+            {/* Key Statistics */}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                title="Total Users"
+                value={dashboardData.stats.totalUsers}
+                icon={<UserCircle className="h-5 w-5" />}
+                color="blue"
+                description="Registered users in system"
+              />
+              <StatCard
+                title="Total Bookings"
+                value={dashboardData.stats.totalBookings}
+                icon={<ShoppingBag className="h-5 w-5" />}
+                color="green"
+                description="Total service bookings"
+              />
+              <StatCard
+                title="Total Revenue"
+                value={dashboardData.stats.totalRevenue}
+                icon={<DollarSign className="h-5 w-5" />}
+                color="purple"
+                description="Total income generated"
+              />
+              <StatCard
+                title="Total Services"
+                value={dashboardData.stats.totalServices}
+                icon={<Layers className="h-5 w-5" />}
+                color="orange"
+                description="Available services"
+              />
+              <StatCard
+                title="Total Packages"
+                value={dashboardData.stats.totalPackages}
+                icon={<Package className="h-5 w-5" />}
+                color="cyan"
+                description="Service packages offered"
+              />
+              <StatCard
+                title="Total Influencers"
+                value={dashboardData.stats.totalInfluencers}
+                icon={<Image className="h-5 w-5" />}
+                color="blue"
+                description="Registered influencers"
+              />
+              <StatCard
+                title="Job Postings"
+                value={dashboardData.stats.totalJobPostings}
+                icon={<BarChart3 className="h-5 w-5" />}
+                color="green"
+                description="Active job listings"
+              />
+              <StatCard
+                title="Job Applications"
+                value={dashboardData.stats.totalJobApplications}
+                icon={<CreditCard className="h-5 w-5" />}
+                color="orange"
+                description="Received applications"
+              />
+            </div>
+
+            {/* Today's Activity */}
+            <div className="rounded-xl border border-border bg-card p-6">
+              <h2 className="mb-4 text-lg font-semibold text-foreground">
+                Today's Activity
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2">
                 <StatCard
-                  title="Total Users"
-                  value={dashboardData.stats.totalUsers}
-                  icon={<UserCircle className="h-5 w-5" />}
-                  color="blue"
-                  description="Registered users in system"
-                />
-                <StatCard
-                  title="Total Bookings"
-                  value={dashboardData.stats.totalBookings}
+                  title="Bookings Today"
+                  value={dashboardData.today.bookings}
                   icon={<ShoppingBag className="h-5 w-5" />}
-                  color="green"
-                  description="Total service bookings"
-                />
-                <StatCard
-                  title="Total Revenue"
-                  value={dashboardData.stats.totalRevenue}
-                  icon={<DollarSign className="h-5 w-5" />}
-                  color="purple"
-                  description="Total income generated"
-                />
-                <StatCard
-                  title="Total Services"
-                  value={dashboardData.stats.totalServices}
-                  icon={<Layers className="h-5 w-5" />}
-                  color="orange"
-                  description="Available services"
-                />
-                <StatCard
-                  title="Total Packages"
-                  value={dashboardData.stats.totalPackages}
-                  icon={<Package className="h-5 w-5" />}
-                  color="cyan"
-                  description="Service packages offered"
-                />
-                <StatCard
-                  title="Total Influencers"
-                  value={dashboardData.stats.totalInfluencers}
-                  icon={<Image className="h-5 w-5" />}
                   color="blue"
-                  description="Registered influencers"
+                  description="New bookings today"
                 />
                 <StatCard
-                  title="Job Postings"
-                  value={dashboardData.stats.totalJobPostings}
-                  icon={<BarChart3 className="h-5 w-5" />}
-                  color="green"
-                  description="Active job listings"
+                  title="Influencer Bookings"
+                  value={dashboardData.today.influencerBookings}
+                  icon={<Image className="h-5 w-5" />}
+                  color="purple"
+                  description="Influencer collaborations today"
                 />
                 <StatCard
-                  title="Job Applications"
-                  value={dashboardData.stats.totalJobApplications}
+                  title="Applications Today"
+                  value={dashboardData.today.applications}
                   icon={<CreditCard className="h-5 w-5" />}
+                  color="green"
+                  description="Job applications received today"
+                />
+                <StatCard
+                  title="Total Activity"
+                  value={dashboardData.today.totalBookings}
+                  icon={<BarChart3 className="h-5 w-5" />}
                   color="orange"
-                  description="Received applications"
+                  description="Combined today's activity"
                 />
               </div>
+            </div>
 
-              {/* Today's Activity */}
+            {/* Breakdown Section */}
+            <div className="grid gap-6">
+              {/* Bookings Breakdown */}
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="mb-4 text-lg font-semibold text-foreground">
-                  Today's Activity
+                  Bookings Breakdown
                 </h2>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <StatCard
-                    title="Bookings Today"
-                    value={dashboardData.today.bookings}
-                    icon={<ShoppingBag className="h-5 w-5" />}
-                    color="blue"
-                    description="New bookings today"
-                  />
-                  <StatCard
-                    title="Influencer Bookings"
-                    value={dashboardData.today.influencerBookings}
-                    icon={<Image className="h-5 w-5" />}
-                    color="purple"
-                    description="Influencer collaborations today"
-                  />
-                  <StatCard
-                    title="Applications Today"
-                    value={dashboardData.today.applications}
-                    icon={<CreditCard className="h-5 w-5" />}
-                    color="green"
-                    description="Job applications received today"
-                  />
-                  <StatCard
-                    title="Total Activity"
-                    value={dashboardData.today.totalBookings}
-                    icon={<BarChart3 className="h-5 w-5" />}
-                    color="orange"
-                    description="Combined today's activity"
-                  />
-                </div>
-              </div>
-
-              {/* Breakdown Section */}
-              <div className="grid gap-6">
-                {/* Bookings Breakdown */}
-                <div className="rounded-xl border border-border bg-card p-6">
-                  <h2 className="mb-4 text-lg font-semibold text-foreground">
-                    Bookings Breakdown
-                  </h2>
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Regular</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.regular}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Standard bookings</p>
-                      </div>
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Regular</p>
+                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.regular}</p>
                     </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Custom</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.custom}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Tailored packages</p>
-                      </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Standard bookings</p>
                     </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Influencer</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.influencer}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">Influencer collaborations</p>
-                      </div>
+                  </div>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Custom</p>
+                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.custom}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Tailored packages</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">Influencer</p>
+                      <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.bookings.influencer}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Influencer collaborations</p>
                     </div>
                   </div>
                 </div>
@@ -407,15 +275,6 @@ export default function GraphicsMultimediaDashboard() {
                         <p className="text-xs text-muted-foreground">Closed/Draft</p>
                       </div>
                     </div>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Total</p>
-                        <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.jobs.total}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">All postings</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
 
@@ -437,6 +296,7 @@ export default function GraphicsMultimediaDashboard() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Packages</p>
+                        {dashboardData.breakdown.catalog.packages}
                         <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.packages}</p>
                       </div>
                       <div className="text-right">
@@ -455,6 +315,7 @@ export default function GraphicsMultimediaDashboard() {
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Influencers</p>
+                        {dashboardData.breakdown.catalog.influencers}
                         <p className="text-2xl font-bold text-foreground">{dashboardData.breakdown.catalog.influencers}</p>
                       </div>
                       <div className="text-right">
@@ -556,9 +417,7 @@ export default function GraphicsMultimediaDashboard() {
                         </div>
                         <div className="space-y-1">
                           <p className="font-medium text-foreground">{user.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {user.role === "admin" ? "(Admin)" : "(User)"}
-                          </p>
+                          <p className="text-sm text-muted-foreground">{user.role === "admin" ? "(Admin)" : "(User)"}</p>
                         </div>
                       </div>
                     ))}
@@ -600,11 +459,7 @@ export default function GraphicsMultimediaDashboard() {
                 </div>
               </div>
             </div>
-          )}
-
-          {activeTab === "finance" && (
-            <GraphicsMultimediaFinanceTab onRetry={() => refetch()} />
-          )}
+          </div>
         </div>
       </div>
     </div>

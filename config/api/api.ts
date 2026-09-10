@@ -26,10 +26,6 @@ export const API_ENDPOINTS = {
   },
 
   graphicsMultimedia: {
-    dashboard: `${process.env.NEXT_PUBLIC_API_BASE_URL}/graphics-multimedia/dashboard`,
-    finance: {
-      base: `${process.env.NEXT_PUBLIC_API_BASE_URL}/graphics-multimedia/dashboard/finance`,
-      ranges: ["today", "7days", "15days", "1month", "3months", "6months", "1year"] as const,
-    },
+    dashboard: "https://www.graphicsmultimedia.net/api/admin-dashboard-analytics",
   },
 };

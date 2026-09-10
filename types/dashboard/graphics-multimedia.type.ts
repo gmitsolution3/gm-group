@@ -152,6 +152,7 @@ export interface RecentApplication {
 // Complete dashboard response
 export interface GraphicsMultimediaDashboardResponse {
   success: boolean;
+  message?: string;
   data: {
     stats: GraphicsMultimediaDashboardStatistics['stats'];
     today: GraphicsMultimediaDashboardStatistics['today'];
