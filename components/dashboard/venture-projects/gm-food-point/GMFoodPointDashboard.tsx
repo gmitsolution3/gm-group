@@ -1,6 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 import {
   BarChart3,
   WalletCards,
@@ -90,6 +92,11 @@ function StatCard({
         colorClasses[color],
       )}
     >
+      {dashboardVentures.find((v) => v.name === "GM Food Point") && (
+        <VentureHeader
+          selectedVenture={dashboardVentures.find((v) => v.name === "GM Food Point")!}
+        />
+      )}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">{title}</p>

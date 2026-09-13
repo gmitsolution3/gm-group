@@ -6,6 +6,8 @@ import {
   Layers3,
   Users,
 } from "lucide-react";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 import { useState } from "react";
 
 import { API_ENDPOINTS } from "@/config/api/api";
@@ -48,7 +50,12 @@ export default function AILearningAcademyDashboard() {
   const { overview } = dashboard;
 
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
+      {dashboardVentures.find((v) => v.name === "AI Learning Academy") && (
+        <VentureHeader
+          selectedVenture={dashboardVentures.find((v) => v.name === "AI Learning Academy")!}
+        />
+      )}
       {/* Header */}
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>

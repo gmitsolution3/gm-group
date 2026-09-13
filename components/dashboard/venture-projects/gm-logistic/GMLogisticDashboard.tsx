@@ -1,8 +1,15 @@
 "use client";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 
 export default function GMLogisticDashboard() {
   return (
     <div className="mx-auto max-w-[1400px] px-5 py-8">
+      {dashboardVentures.find((v) => v.name === "GM Logistic") && (
+        <VentureHeader
+          selectedVenture={dashboardVentures.find((v) => v.name === "GM Logistic")!}
+        />
+      )}
       <div className="flex items-center gap-4 mb-8">
         <img src="/images/ventures/gm-logistic.webp" alt="GM Logistic" className="h-16 w-16 rounded-2xl object-cover shadow-md" />
         <div>

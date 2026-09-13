@@ -1,6 +1,8 @@
 "use client";
 
 import { ChevronDown, RefreshCw } from "lucide-react";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -146,6 +148,11 @@ function AnalyticsTabs({
 }) {
   return (
     <div className="border-b border-border">
+      {dashboardVentures.find((v) => v.name === "GM IT Solution") && (
+        <VentureHeader
+          selectedVenture={dashboardVentures.find((v) => v.name === "GM IT Solution")!}
+        />
+      )}
       <div className="flex w-full overflow-x-auto">
         {analyticsTabs.map((tab) => {
           const isActive = activeTab === tab.key;
@@ -341,7 +348,7 @@ export default function GMITSolutionDashboard() {
   /* ================================================================== */
 
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
       <div className="mx-auto w-full max-w-[1440px] space-y-8">
 
         {/* ============================================================ */}
