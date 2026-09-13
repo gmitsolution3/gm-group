@@ -70,17 +70,17 @@ export default function GMLogisticDashboard() {
       {gmLogistic && <VentureHeader selectedVenture={gmLogistic} />}
 
       {/* Gradient hero banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-violet-600 to-rose-500 p-8 sm:p-10 shadow-2xl shadow-indigo-900/20">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-50/80 via-white/60 to-rose-50/80 border border-border/40 p-8 sm:p-10 shadow-xl shadow-indigo-100/30">
         <div className="absolute -top-10 -right-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -bottom-10 -left-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         <div className="relative z-10">
-          <h2 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+          <h2 className="font-display text-3xl font-extrabold tracking-tight text-indigo-900 sm:text-4xl">
             Logistics Overview
           </h2>
-          <p className="mt-2 max-w-xl text-indigo-100">Real-time metrics and analytics across your global supply chain.</p>
+          <p className="mt-2 max-w-xl text-indigo-700/80">Real-time metrics and analytics across your global supply chain.</p>
           <div className="mt-6 flex gap-3">
-            <Badge className="bg-white/20 text-white hover:bg-white/30 border-none">Active</Badge>
-            <Badge className="bg-white/20 text-white hover:bg-white/30 border-none">{stats.users?.totalUsers ?? 0} Users</Badge>
+            <Badge className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 border-none">Active</Badge>
+            <Badge className="bg-rose-100 text-rose-700 hover:bg-rose-200 border-none">{stats.users?.totalUsers ?? 0} Users</Badge>
           </div>
         </div>
       </div>
@@ -93,7 +93,7 @@ export default function GMLogisticDashboard() {
           { title: "Countries", value: String(stats.countries?.totalCountries ?? 0), sub: "Active countries", icon: "🌍" },
           { title: "Categories", value: String(stats.categories?.totalCategories ?? 0), sub: "Active categories", icon: "📦" },
         ].map((s) => (
-          <Card key={s.title} className="group overflow-hidden rounded-3xl border-none bg-gradient-to-b from-card to-slate-50/60 shadow-lg shadow-black/5 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-900/10">
+          <Card key={s.title} className="group overflow-hidden rounded-3xl border-none bg-gradient-to-b from-white to-indigo-50/40 shadow-lg shadow-indigo-100/20 transition hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-indigo-200/30 hover:-rotate-[0.5deg]">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div>
@@ -101,7 +101,7 @@ export default function GMLogisticDashboard() {
                   <p className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">{s.value}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{s.sub}</p>
                 </div>
-                <span className="text-3xl opacity-80 group-hover:scale-110 transition">{s.icon}</span>
+                <span className="text-3xl opacity-90 group-hover:scale-125 group-hover:rotate-6 transition duration-300">{s.icon}</span>
               </div>
             </CardContent>
           </Card>
