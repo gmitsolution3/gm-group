@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 
 import { useMemo } from "react";
 
@@ -135,8 +137,18 @@ export default function AccountIndivisualSummaryDashboard({
     | VisaAccount
   >(serviceResponse);
 
+  const gmInternational = dashboardVentures.find(
+      (v) => v.name === "GM International",
+    );
+
   return (
     <div className="space-y-8 p-6 lg:p-8">
+      {gmInternational && (
+        <VentureHeader
+          selectedVenture={gmInternational}
+        />
+      )}
+
       <div className="mx-auto w-full max-w-[1440px] space-y-8">
         {/* Header */}
 

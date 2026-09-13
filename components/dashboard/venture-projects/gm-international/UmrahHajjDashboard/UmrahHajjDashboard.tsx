@@ -29,6 +29,8 @@ import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
 
 import { API_ENDPOINTS } from "@/config/api/api";
 import StatusRow from "./StatusRow";
+import { dashboardVentures } from "@/config/dashboard/ventures";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
 
 function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
@@ -73,8 +75,18 @@ export default function UmrahHajjDashboard() {
   const applications = data.documentCount.applications;
   const payment = data.documentCount.payment;
 
+  const gmInternational = dashboardVentures.find(
+    (v) => v.name === "GM International",
+  );
+
   return (
     <div className="space-y-8 p-6 lg:p-8">
+      {gmInternational && (
+        <VentureHeader
+          selectedVenture={gmInternational}
+        />
+      )}
+
       {/* Header */}
       <div>
         <p className="text-sm font-medium text-muted-foreground">

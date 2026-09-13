@@ -28,6 +28,8 @@ import { AccountAnalysisDashboardError } from "./AccountAnalysisDashboardError";
 import { AccountAnalysisDashboardLoader } from "./AccountAnalysisDashboardLoader";
 
 import { Badge } from "@/components/ui/badge";
+import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { dashboardVentures } from "@/config/dashboard/ventures";
 import { AccountDashboardResponse } from "@/types";
 import { formatCurrency, formatNumber } from "@/utils";
 import { formatMonth } from "../../utils";
@@ -152,8 +154,18 @@ export default function AccountAnalysisDashboard({
 
   const totalAmount = overview.totalAmount || 0;
 
+  const gmInternational = dashboardVentures.find(
+    (v) => v.name === "GM International",
+  );
+
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
+      {gmInternational && (
+        <VentureHeader
+          selectedVenture={gmInternational}
+        />
+      )}
+      <div className="space-y-8 p-6 lg:p-8">
       {/* Header */}
       <div>
         <p className="text-sm font-medium text-muted-foreground">
@@ -695,6 +707,7 @@ export default function AccountAnalysisDashboard({
           )}
         </CardContent>
       </Card>
+    </div>
     </div>
   );
 }
