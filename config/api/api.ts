@@ -25,6 +25,10 @@ export const API_ENDPOINTS = {
     },
   },
 
+  gmLogistic: {
+    dashboard: "https://gm-logistic-backend.vercel.app/api/v1/admin-dashboard",
+  },
+
   graphicsMultimedia: {
     dashboard: "https://www.graphicsmultimedia.net/api/admin-dashboard-analytics",
   },

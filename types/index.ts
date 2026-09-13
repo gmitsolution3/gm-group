@@ -9,3 +9,4 @@ export * from "./venture.type";
 export * from "./dashboard/ai-learning-academy.type";
 export * from "./dashboard/gm-it-solution.type";
 export * from "./dashboard/gm-food-point.type";
+export * from "./gm-logistic.type";
