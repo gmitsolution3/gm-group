@@ -60,7 +60,7 @@ export default function VentureHeader({
             </h1>
 
             <p className="mt-2 text-sm text-muted-foreground sm:text-base">
-              Select a dashboard to continue.
+              {selectedVenture.description}
             </p>
           </div>
         </div>

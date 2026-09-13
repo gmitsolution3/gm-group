@@ -1,21 +1,21 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
 import { dashboardVentures } from "@/config/dashboard/ventures";
+import { cn } from "@/lib/utils";
 import {
   BarChart3,
-  WalletCards,
-  Clock,
-  ChefHat,
   CheckCircle,
-  DollarSign,
-  ShoppingBag,
+  ChefHat,
+  Clock,
   CreditCard,
-  Package,
-  UserCircle,
-  Menu,
+  DollarSign,
   Layers,
+  Menu,
+  Package,
+  ShoppingBag,
+  UserCircle,
+  WalletCards,
 } from "lucide-react";
 import {
   usePathname,
@@ -23,14 +23,14 @@ import {
   useSearchParams,
 } from "next/navigation";
 
-import { useFetch } from "@/hooks/api/useFetch";
 import { API_ENDPOINTS } from "@/config/api/api";
+import { useFetch } from "@/hooks/api/useFetch";
 import { GMFoodPointDashboardResponse } from "@/types";
 
-import { GMFoodPointDashboardLoader } from "./GMFoodPointDashboardLoader";
-import { GMFoodPointDashboardError } from "./GMFoodPointDashboardError";
-import { FinanceTab } from "./FinanceTab";
 import { formatNumber } from "../utils";
+import { FinanceTab } from "./FinanceTab";
+import { GMFoodPointDashboardError } from "./GMFoodPointDashboardError";
+import { GMFoodPointDashboardLoader } from "./GMFoodPointDashboardLoader";
 
 const tabs = [
   {
@@ -92,15 +92,12 @@ function StatCard({
         colorClasses[color],
       )}
     >
-      {dashboardVentures.find((v) => v.name === "GM Food Point") && (
-        <VentureHeader
-          selectedVenture={dashboardVentures.find((v) => v.name === "GM Food Point")!}
-        />
-      )}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">{title}</p>
-          <p className="mt-1 text-2xl font-bold">{formatNumber(value)}</p>
+          <p className="mt-1 text-2xl font-bold">
+            {formatNumber(value)}
+          </p>
           {description && (
             <p className="mt-1 text-xs text-muted-foreground">
               {description}
@@ -126,9 +123,10 @@ export default function GMFoodPointDashboard() {
     : "statistics";
 
   // Fetch dashboard statistics
-  const { data, isLoading, isError, refetch } = useFetch<GMFoodPointDashboardResponse>(
-    API_ENDPOINTS.gmFoodPoint.dashboard,
-  );
+  const { data, isLoading, isError, refetch } =
+    useFetch<GMFoodPointDashboardResponse>(
+      API_ENDPOINTS.gmFoodPoint.dashboard,
+    );
 
   const handleTabChange = (tab: TabValue) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -162,9 +160,23 @@ export default function GMFoodPointDashboard() {
 
   const statistics = data.data;
 
+  const gmFoodPointVenture = dashboardVentures.find(
+    (v) => v.name === "GM Food Point",
+  );
+
   return (
     <div className="w-full">
       <div className="mx-auto !max-w-[1400px] px-5 py-6 sm:px-8 lg:px-12">
+        {gmFoodPointVenture && (
+          <VentureHeader
+            selectedVenture={
+              dashboardVentures.find(
+                (v) => v.name === "GM Food Point",
+              )!
+            }
+          />
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">

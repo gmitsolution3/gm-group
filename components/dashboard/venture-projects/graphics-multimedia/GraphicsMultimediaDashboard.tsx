@@ -1,7 +1,7 @@
 "use client";
 
-import { API_ENDPOINTS } from "@/config/api/api";
 import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { API_ENDPOINTS } from "@/config/api/api";
 import { dashboardVentures } from "@/config/dashboard/ventures";
 import { useFetch } from "@/hooks/api/useFetch";
 import { cn } from "@/lib/utils";
@@ -62,11 +62,6 @@ function StatCard({
         colorClasses[color],
       )}
     >
-      {dashboardVentures.find((v) => v.name === "Graphics Multimedia") && (
-        <VentureHeader
-          selectedVenture={dashboardVentures.find((v) => v.name === "Graphics Multimedia")!}
-        />
-      )}
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium">{title}</p>
@@ -111,9 +106,23 @@ export default function GraphicsMultimediaDashboard() {
 
   const dashboardData = data.data;
 
+  const graphicsMultimediaVenture = dashboardVentures.find(
+    (v) => v.name === "Graphics Multimedia",
+  );
+
   return (
     <div className="w-full">
       <div className="mx-auto !max-w-[1400px] px-5 py-6 sm:px-8 lg:px-12">
+        {graphicsMultimediaVenture && (
+          <VentureHeader
+            selectedVenture={
+              dashboardVentures.find(
+                (v) => v.name === "Graphics Multimedia",
+              )!
+            }
+          />
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
