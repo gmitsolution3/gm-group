@@ -80,7 +80,7 @@ export default function UmrahHajjDashboard() {
   );
 
   return (
-    <div className="space-y-8 p-6 lg:p-8">
+    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
       {gmInternational && (
         <VentureHeader
           selectedVenture={gmInternational}
