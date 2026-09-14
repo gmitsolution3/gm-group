@@ -26,6 +26,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  Users,
+  Globe,
+  Tag,
+  Database,
+  ShieldCheck,
+} from "lucide-react";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
 import { formatNumber, formatPercentage } from "../utils";
@@ -97,26 +104,26 @@ export default function GMLogisticDashboard() {
           {
             title: "Total Users",
             value: formatNumber(stats.users?.totalUsers ?? 0),
-            sub: "Registered users",
-            icon: "👥",
-          },
-          {
-            title: "Admin Users",
-            value: formatNumber(stats.users?.totalAdmins ?? 0),
-            sub: "Admin accounts",
-            icon: "🛡️",
+            sub: `${stats.users?.totalAdmins ?? 0} Admins · ${stats.users?.totalBannedUsers ?? 0} Banned`,
+            icon: <Users className="h-5 w-5 text-indigo" />,
           },
           {
             title: "Countries",
             value: formatNumber(stats.countries?.totalCountries ?? 0),
-            sub: "Active countries",
-            icon: "🌍",
+            sub: `${stats.countries?.activeCountries ?? 0} Active`,
+            icon: <Globe className="h-5 w-5 text-teal" />,
           },
           {
             title: "Categories",
             value: formatNumber(stats.categories?.totalCategories ?? 0),
-            sub: "Active categories",
-            icon: "📦",
+            sub: `${stats.categories?.activeCategories ?? 0} Active`,
+            icon: <Tag className="h-5 w-5 text-yellow-500" />,
+          },
+          {
+            title: "Pricing Records",
+            value: formatNumber(stats.pricing?.totalPricingRecords ?? 0),
+            sub: `${stats.pricing?.configuredPricingRecords ?? 0} Configured · ${stats.pricing?.pendingPricingRecords ?? 0} Pending`,
+            icon: <Database className="h-5 w-5 text-coral" />,
           },
         ].map((s) => (
           <Card
