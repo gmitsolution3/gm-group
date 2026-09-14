@@ -7,40 +7,97 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { API_ENDPOINTS } from "@/config/api/api";
 import { dashboardVentures } from "@/config/dashboard/ventures";
 import { useFetch } from "@/hooks/api/useFetch";
-import { GMLogisticDashboardResponse } from "@/types";
+import { cn } from "@/lib/utils";
 import {
-  CheckCircle,
+  GMLogisticDashboardResponse,
+  GMLogisticRecentUser,
+} from "@/types";
+import {
+  CheckCircle2,
+  CircleDollarSign,
   Clock,
-  Database,
-  FileText,
   Globe,
+  ShieldCheck,
   Tag,
-  TrendingUp,
   Users,
 } from "lucide-react";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { formatNumber, formatPercentage } from "../utils";
+  calculatePercentage,
+  formatDate,
+  formatNumber,
+  formatPercentage,
+} from "../utils";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
 
-const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e"];
+const BRAND = "#29B372";
+
+function initials(name?: string) {
+  if (!name) return "U";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+}
+
+function EmptyUsersState() {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 px-4 py-10 text-center">
+      <div className="mb-2.5 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <Users className="h-5 w-5" />
+      </div>
+      <p className="text-sm font-medium text-muted-foreground">
+        No recent users to display
+      </p>
+    </div>
+  );
+}
+
+function ProgressTrack({
+  value,
+  className,
+  barClassName,
+}: {
+  value: number;
+  className?: string;
+  barClassName?: string;
+}) {
+  const width = Math.min(100, Math.max(0, value));
+
+  return (
+    <div
+      className={cn(
+        "h-2 w-full overflow-hidden rounded-full bg-muted",
+        className,
+      )}
+      role="progressbar"
+      aria-valuenow={Math.round(width)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <div
+        className={cn("h-full rounded-full transition-all", barClassName)}
+        style={{
+          width: `${width}%`,
+          backgroundColor: barClassName ? undefined : BRAND,
+        }}
+      />
+    </div>
+  );
+}
 
 export default function GMLogisticDashboard() {
   const { data, isLoading, isError, refetch } =
@@ -53,346 +110,514 @@ export default function GMLogisticDashboard() {
   );
 
   if (isLoading) return <GMLogisticDashboardLoader />;
-  if (isError || !data?.success || !data.data)
+
+  if (isError || !data?.success || !data.data) {
     return (
       <GMLogisticDashboardError
         message={data?.message}
         onRetry={refetch}
       />
     );
+  }
 
   const stats = data.data;
+  const users = stats.users;
+  const countries = stats.countries;
+  const categories = stats.categories;
+  const pricing = stats.pricing;
+  const recentUsers: GMLogisticRecentUser[] = stats.recentUsers ?? [];
 
-  const barData = [
-    { label: "Users", value: stats.users?.totalUsers ?? 0 },
-    { label: "Admins", value: stats.users?.totalAdmins ?? 0 },
-    {
-      label: "Countries",
-      value: stats.countries?.totalCountries ?? 0,
-    },
-    {
-      label: "Categories",
-      value: stats.categories?.totalCategories ?? 0,
-    },
-  ];
+  const totalUsers = users?.totalUsers ?? 0;
+  const totalAdmins = users?.totalAdmins ?? 0;
+  const totalBannedUsers = users?.totalBannedUsers ?? 0;
 
-  const pieData = [
-    {
-      name: "Configured",
-      value: stats.pricing?.configuredPricingRecords ?? 0,
-    },
-    {
-      name: "Pending",
-      value: stats.pricing?.pendingPricingRecords ?? 0,
-    },
-    { name: "Total", value: stats.pricing?.totalPricingRecords ?? 0 },
-  ];
+  const totalCountries = countries?.totalCountries ?? 0;
+  const activeCountries = countries?.activeCountries ?? 0;
+  const inactiveCountries = Math.max(0, totalCountries - activeCountries);
 
-  const trendData = [
-    { month: "Jan", value: 1200 },
-    { month: "Feb", value: 1450 },
-    { month: "Mar", value: 1100 },
-    { month: "Apr", value: 1800 },
-    { month: "May", value: 2100 },
-    { month: "Jun", value: 1950 },
-  ];
+  const totalCategories = categories?.totalCategories ?? 0;
+  const activeCategories = categories?.activeCategories ?? 0;
+  const inactiveCategories = Math.max(0, totalCategories - activeCategories);
 
-  const statsCards = [
+  const totalPricingRecords = pricing?.totalPricingRecords ?? 0;
+  const configuredPricingRecords = pricing?.configuredPricingRecords ?? 0;
+  const pendingPricingRecords = pricing?.pendingPricingRecords ?? 0;
+  const apiCompletion = pricing?.pricingCompletionPercentage ?? 0;
+  const actualCompletion = calculatePercentage(
+    configuredPricingRecords,
+    totalPricingRecords,
+  );
+  const configuredShare = calculatePercentage(
+    configuredPricingRecords,
+    totalPricingRecords,
+  );
+  const pendingShare = calculatePercentage(
+    pendingPricingRecords,
+    totalPricingRecords,
+  );
+  const countryActiveShare = calculatePercentage(
+    activeCountries,
+    totalCountries,
+  );
+  const categoryActiveShare = calculatePercentage(
+    activeCategories,
+    totalCategories,
+  );
+  const adminShare = calculatePercentage(totalAdmins, totalUsers);
+
+  const kpiCards = [
     {
       title: "Total Users",
-      value: formatNumber(stats.users?.totalUsers ?? 0),
-      sub: `${stats.users?.totalAdmins ?? 0} Admins · ${stats.users?.totalBannedUsers ?? 0} Banned`,
-      icon: <Users className="h-5 w-5 text-indigo" />,
+      value: formatNumber(totalUsers),
+      description: "Registered accounts on the platform",
+      detail: `${formatNumber(totalAdmins)} admins · ${formatNumber(totalBannedUsers)} banned`,
+      icon: Users,
     },
     {
-      title: "Countries",
-      value: formatNumber(stats.countries?.totalCountries ?? 0),
-      sub: `${stats.countries?.activeCountries ?? 0} Active`,
-      icon: <Globe className="h-5 w-5 text-teal" />,
+      title: "Active Countries",
+      value: formatNumber(activeCountries),
+      description: "Currently supported destinations",
+      detail: `${formatNumber(totalCountries)} countries in catalog`,
+      icon: Globe,
     },
     {
-      title: "Categories",
-      value: formatNumber(stats.categories?.totalCategories ?? 0),
-      sub: `${stats.categories?.activeCategories ?? 0} Active`,
-      icon: <Tag className="h-5 w-5 text-yellow-500" />,
+      title: "Total Categories",
+      value: formatNumber(totalCategories),
+      description: "Available product categories",
+      detail: `${formatNumber(activeCategories)} currently active`,
+      icon: Tag,
     },
     {
-      title: "Pricing Records",
-      value: formatNumber(stats.pricing?.totalPricingRecords ?? 0),
-      sub: `${stats.pricing?.configuredPricingRecords ?? 0} Configured · ${stats.pricing?.pendingPricingRecords ?? 0} Pending`,
-      icon: <Database className="h-5 w-5 text-coral" />,
-    },
-  ];
-
-  const pricingBreakdown = [
-    {
-      label: "Total Records",
-      value: stats.pricing?.totalPricingRecords ?? 0,
-      icon: <Database className="h-5 w-5 text-indigo" />,
-      bg: "bg-gradient-to-br from-indigo-50 to-white",
-    },
-    {
-      label: "Configured",
-      value: stats.pricing?.configuredPricingRecords ?? 0,
-      icon: <CheckCircle className="h-5 w-5 text-emerald" />,
-      bg: "bg-gradient-to-br from-emerald-50 to-white",
-    },
-    {
-      label: "Pending",
-      value: stats.pricing?.pendingPricingRecords ?? 0,
-      icon: <Clock className="h-5 w-5 text-amber" />,
-      bg: "bg-gradient-to-br from-amber-50 to-white",
-    },
-    {
-      label: "Completion %",
-      value: formatPercentage(
-        stats.pricing?.pricingCompletionPercentage ?? 0,
-      ),
-      icon: <TrendingUp className="h-5 w-5 text-rose-500" />,
-      bg: "bg-gradient-to-br from-rose-50 to-white",
-      progress: stats.pricing?.pricingCompletionPercentage ?? 0,
+      title: "Pricing Completion",
+      value: formatPercentage(apiCompletion),
+      description: "Pricing configuration progress",
+      detail: `${formatNumber(configuredPricingRecords)} of ${formatNumber(totalPricingRecords)} configured`,
+      icon: CircleDollarSign,
     },
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
+    <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
       {gmLogistic && <VentureHeader selectedVenture={gmLogistic} />}
 
-      {/* Stats cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {statsCards.map((s) => (
-          <Card
-            key={s.title}
-            className="group overflow-hidden rounded-3xl border-none bg-gradient-to-b from-white to-indigo-50/40 shadow-lg shadow-indigo-100/20 transition hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-indigo-200/30 hover:-rotate-[0.5deg]"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {s.title}
-                  </p>
-                  <p className="mt-2 text-4xl font-extrabold tracking-tight text-foreground">
-                    {s.value}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {s.sub}
-                  </p>
+      <div>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          GM Logistic Dashboard
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Overview of users, coverage, catalog, and pricing configuration.
+        </p>
+      </div>
+
+      {/* KPI row */}
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {kpiCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Card
+              key={card.title}
+              className="rounded-2xl border-border/70 shadow-xs"
+            >
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {card.title}
+                    </p>
+                    <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">
+                      {card.value}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {card.description}
+                    </p>
+                    <p className="mt-2 truncate text-xs font-medium text-foreground/80">
+                      {card.detail}
+                    </p>
+                  </div>
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: `${BRAND}14`, color: BRAND }}
+                  >
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </div>
                 </div>
-                <span className="text-3xl opacity-90 group-hover:scale-125 group-hover:rotate-6 transition duration-300">
-                  {s.icon}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {/* Pricing + system overview */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        <Card className="rounded-2xl border-border/70 shadow-xs lg:col-span-8">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+              <CircleDollarSign
+                className="h-5 w-5"
+                style={{ color: BRAND }}
+              />
+              Pricing Configuration
+            </CardTitle>
+            <CardDescription>
+              Current coverage of logistics pricing records. Most records
+              still need configuration.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6 p-6">
+            <div className="grid gap-3 sm:grid-cols-4">
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Total records
+                </p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">
+                  {formatNumber(totalPricingRecords)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <CheckCircle2 className="h-3.5 w-3.5" style={{ color: BRAND }} />
+                  Configured
+                </p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">
+                  {formatNumber(configuredPricingRecords)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                  Pending
+                </p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">
+                  {formatNumber(pendingPricingRecords)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Complete
+                </p>
+                <p className="mt-2 text-2xl font-bold tracking-tight">
+                  {formatPercentage(apiCompletion)}
+                </p>
+                {apiCompletion === 0 && actualCompletion > 0 && (
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {actualCompletion.toFixed(2)}% by record count
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-muted-foreground">
+                  Configuration status
+                </span>
+                <span className="font-semibold text-foreground">
+                  {formatNumber(configuredPricingRecords)} configured ·{" "}
+                  {formatNumber(pendingPricingRecords)} pending
                 </span>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Charts row */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="rounded-3xl border-none bg-card shadow-xl shadow-black/5">
-          <CardContent className="p-6">
-            <h3 className="font-display text-lg font-bold">
-              Stats Comparison
-            </h3>
-            <div className="h-64 mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={barData} barSize={32}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#e2e8f0"
-                  />
-                  <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "none",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                  <Bar
-                    dataKey="value"
-                    fill="#6366f1"
-                    radius={[8, 8, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none bg-card shadow-xl shadow-black/5">
-          <CardContent className="p-6">
-            <h3 className="font-display text-lg font-bold">
-              Distribution
-            </h3>
-            <div className="h-64 mt-4 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={90}
-                    paddingAngle={3}
-                    dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}`}
-                  >
-                    {pieData.map((_, i) => (
-                      <Cell
-                        key={`cell-${i}`}
-                        fill={COLORS[i % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none bg-card shadow-xl shadow-black/5">
-          <CardContent className="p-6">
-            <h3 className="font-display text-lg font-bold">
-              Trend Line
-            </h3>
-            <div className="h-64 mt-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trendData}>
-                  <defs>
-                    <linearGradient
-                      id="trendGrad"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="5%"
-                        stopColor="#6366f1"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="#6366f1"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="#e2e8f0"
-                  />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{
-                      borderRadius: 12,
-                      border: "none",
-                      boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#6366f1"
-                    strokeWidth={3}
-                    fill="url(#trendGrad)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Pricing + Users */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="rounded-3xl border-none bg-gradient-to-br from-slate-50 to-card shadow-lg shadow-black/5">
-          <CardContent className="p-6">
-            <h3 className="font-display text-xl font-bold flex items-center gap-2">
-              <FileText className="h-6 w-6 text-rose-500" />
-              Pricing Breakdown
-            </h3>
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              {pricingBreakdown.map((item) => (
+              <div
+                className="flex h-3 w-full overflow-hidden rounded-full bg-muted"
+                role="img"
+                aria-label={`Pricing configuration: ${formatNumber(configuredPricingRecords)} configured, ${formatNumber(pendingPricingRecords)} pending`}
+              >
                 <div
-                  key={item.label}
-                  className={`group relative overflow-hidden rounded-3xl ${item.bg} p-5 shadow-md shadow-black/5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 border border-white/60`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="rounded-xl bg-white/70 p-2 shadow-sm ring-1 ring-black/5 group-hover:scale-110 transition">
-                      {item.icon}
-                    </div>
-                    <span className="text-xs font-semibold text-muted-foreground">
-                      {item.label}
-                    </span>
-                  </div>
-                  <div className="mt-3">
-                    <p className="text-3xl font-extrabold tracking-tight text-foreground">
-                      {item.value}
-                    </p>
-                  </div>
-                  {item.progress !== undefined && (
-                    <div className="mt-3 h-2 w-full rounded-full bg-white/70 overflow-hidden shadow-inner">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-rose-400 to-rose-600 transition-all duration-700"
-                        style={{
-                          width: `${Math.min(100, Math.max(0, item.progress))}%`,
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
+                  className="h-full"
+                  style={{
+                    width: `${configuredShare}%`,
+                    backgroundColor: BRAND,
+                    minWidth: configuredPricingRecords > 0 ? "2px" : 0,
+                  }}
+                />
+                <div
+                  className="h-full bg-border"
+                  style={{ width: `${pendingShare}%` }}
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: BRAND }}
+                  />
+                  Configured {configuredShare.toFixed(1)}%
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-border" />
+                  Pending {pendingShare.toFixed(1)}%
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-none bg-card shadow-lg shadow-black/5">
-          <CardContent className="p-6">
-            <h3 className="font-display text-xl font-bold">
-              Recent Users
-            </h3>
-            <div className="mt-4 space-y-3">
-              {(stats.recentUsers || []).map((user: any) => (
-                <div
-                  key={user._id}
-                  className="flex items-center gap-4 rounded-2xl bg-muted/30 p-4 transition hover:bg-muted/60"
-                >
-                  <Avatar className="h-12 w-12 ring-2 ring-white shadow-md">
-                    <AvatarImage
-                      src={
-                        user.image ||
-                        "https://i.pravatar.cc/150?img=3"
-                      }
-                    />
-                    <AvatarFallback className="bg-indigo-100 text-indigo-700 font-bold">
-                      {user.name?.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold truncate">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {user.email}
-                    </p>
-                  </div>
-                  <Badge
-                    variant="secondary"
-                    className="rounded-full px-2.5 py-0.5 text-xs font-semibold text-indigo-700 bg-indigo-50 border-none"
-                  >
-                    {user.role}
-                  </Badge>
-                </div>
-              ))}
+        <Card className="rounded-2xl border-border/70 shadow-xs lg:col-span-4">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">
+              System Overview
+            </CardTitle>
+            <CardDescription>
+              Configuration snapshot across the logistics platform
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 p-5">
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Users</span>
+                <span className="font-semibold">
+                  {formatNumber(totalUsers)}
+                </span>
+              </div>
+              <ProgressTrack value={adminShare} />
+              <p className="text-[11px] text-muted-foreground">
+                {formatNumber(totalAdmins)} of {formatNumber(totalUsers)} are
+                admins
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Countries</span>
+                <span className="font-semibold">
+                  {formatNumber(activeCountries)} / {formatNumber(totalCountries)}
+                </span>
+              </div>
+              <ProgressTrack value={countryActiveShare} />
+              <p className="text-[11px] text-muted-foreground">
+                {formatNumber(inactiveCountries)} inactive
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Categories</span>
+                <span className="font-semibold">
+                  {formatNumber(activeCategories)} / {formatNumber(totalCategories)}
+                </span>
+              </div>
+              <ProgressTrack value={categoryActiveShare} />
+              <p className="text-[11px] text-muted-foreground">
+                {formatNumber(inactiveCategories)} inactive
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Pricing</span>
+                <span className="font-semibold">
+                  {formatPercentage(apiCompletion)}
+                </span>
+              </div>
+              <ProgressTrack value={actualCompletion} />
+              <p className="text-[11px] text-muted-foreground">
+                {formatNumber(pendingPricingRecords)} records still pending
+              </p>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Coverage overviews */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <Globe className="h-4 w-4" style={{ color: BRAND }} />
+              Country Coverage
+            </CardTitle>
+            <CardDescription>
+              Active versus total destination coverage
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 p-5">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-3xl font-bold tracking-tight">
+                  {formatNumber(activeCountries)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Active of {formatNumber(totalCountries)} total
+                </p>
+              </div>
+              <Badge variant="outline" className="font-semibold">
+                {countryActiveShare.toFixed(0)}% active
+              </Badge>
+            </div>
+            <ProgressTrack value={countryActiveShare} />
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="mt-1 font-semibold">
+                  {formatNumber(totalCountries)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                <p className="text-xs text-muted-foreground">Inactive</p>
+                <p className="mt-1 font-semibold">
+                  {formatNumber(inactiveCountries)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <Tag className="h-4 w-4" style={{ color: BRAND }} />
+              Category Catalog
+            </CardTitle>
+            <CardDescription>
+              Aggregate product category configuration
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 p-5">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-3xl font-bold tracking-tight">
+                  {formatNumber(totalCategories)}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Total catalog entries
+                </p>
+              </div>
+              <Badge variant="outline" className="font-semibold">
+                {formatNumber(activeCategories)} active
+              </Badge>
+            </div>
+            <ProgressTrack value={categoryActiveShare} />
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                <p className="text-xs text-muted-foreground">Active</p>
+                <p className="mt-1 font-semibold">
+                  {formatNumber(activeCategories)}
+                </p>
+              </div>
+              <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                <p className="text-xs text-muted-foreground">Inactive</p>
+                <p className="mt-1 font-semibold">
+                  {formatNumber(inactiveCategories)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <Users className="h-4 w-4" style={{ color: BRAND }} />
+              User Overview
+            </CardTitle>
+            <CardDescription>
+              Registered accounts, admins, and banned users
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 p-5">
+            <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
+              <span className="text-sm text-muted-foreground">Total users</span>
+              <span className="text-base font-semibold">
+                {formatNumber(totalUsers)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
+              <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Admins
+              </span>
+              <span className="text-base font-semibold">
+                {formatNumber(totalAdmins)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
+              <span className="text-sm text-muted-foreground">Banned users</span>
+              <span className="text-base font-semibold">
+                {formatNumber(totalBannedUsers)}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent users */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg font-bold">Recent Users</CardTitle>
+              <CardDescription>
+                Latest accounts registered on the logistics platform
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="font-semibold">
+              {formatNumber(recentUsers.length)} shown
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-5">
+          {recentUsers.length === 0 ? (
+            <EmptyUsersState />
+          ) : (
+            <ul className="divide-y divide-border/50">
+              {recentUsers.map((user) => {
+                const role = (user.role || "user").toLowerCase();
+                const isAdmin = role === "admin";
+
+                return (
+                  <li
+                    key={user._id}
+                    className="flex flex-col gap-3 py-3.5 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar className="h-10 w-10 border border-border/60">
+                        {user.image ? (
+                          <AvatarImage src={user.image} alt={user.name} />
+                        ) : null}
+                        <AvatarFallback
+                          className="text-xs font-bold"
+                          style={{
+                            backgroundColor: `${BRAND}14`,
+                            color: BRAND,
+                          }}
+                        >
+                          {initials(user.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-foreground">
+                          {user.name}
+                        </p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 items-center justify-between gap-3 sm:justify-end">
+                      <Badge
+                        variant={isAdmin ? "default" : "secondary"}
+                        className={cn(
+                          "capitalize",
+                          isAdmin && "border-transparent text-white",
+                        )}
+                        style={
+                          isAdmin
+                            ? { backgroundColor: BRAND }
+                            : undefined
+                        }
+                      >
+                        {role}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(user.createdAt)}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
