@@ -1,9 +1,9 @@
-import { calculatePercentage, formatNumber } from "@/utils";
+import { formatNumber } from "@/utils";
 
 function percentage(value: number, total: number) {
   if (!total) return 0;
 
-  return Math.round(calculatePercentage(value, total));
+  return Math.round((value / total) * 100);
 }
 
 export default function StatusRow({
