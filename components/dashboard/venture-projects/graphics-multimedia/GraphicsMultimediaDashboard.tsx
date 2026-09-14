@@ -110,6 +110,13 @@ export default function GraphicsMultimediaDashboard() {
     (v) => v.name === "Graphics Multimedia",
   );
 
+  const statCardsData = [
+    { title: "Total Users", value: dashboardData.stats?.totalUsers ?? 0, icon: <UserCircle className="h-5 w-5" />, color: "blue" as const, desc: "Registered users" },
+    { title: "Total Bookings", value: dashboardData.stats?.totalBookings ?? 0, icon: <ShoppingBag className="h-5 w-5" />, color: "green" as const, desc: "Active bookings" },
+    { title: "Total Revenue", value: dashboardData.stats?.totalRevenue ?? 0, icon: <DollarSign className="h-5 w-5" />, color: "purple" as const, desc: "Revenue generated" },
+    { title: "Total Services", value: dashboardData.stats?.totalServices ?? 0, icon: <Layers className="h-5 w-5" />, color: "orange" as const, desc: "Services offered" },
+  ];
+
   return (
     <div className="w-full">
       <div className="mx-auto !max-w-[1400px] px-5 py-6 sm:px-8 lg:px-12">
