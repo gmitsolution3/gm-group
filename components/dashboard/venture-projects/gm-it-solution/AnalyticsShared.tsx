@@ -34,7 +34,12 @@ import {
   YAxis,
 } from "recharts";
 
-import { formatDateTime, formatPeriod } from "../utils";
+import {
+  calculatePercentage,
+  formatDateTime,
+  formatNumber,
+  formatPeriod,
+} from "../utils";
 
 type IconComponent = ComponentType<{
   className?: string;
@@ -103,7 +108,7 @@ export function KpiCard({
             </p>
 
             <p className="mt-2 text-3xl font-bold tracking-tight">
-              {value.toLocaleString()}
+              {formatNumber(value)}
             </p>
 
             {description && (
@@ -148,8 +153,7 @@ export function TrendList({
   return (
     <div className="space-y-4">
       {items.map((item) => {
-        const percentage =
-          (item.count / maxCount) * 100;
+        const percentage = calculatePercentage(item.count, maxCount);
 
         return (
           <div
@@ -162,7 +166,7 @@ export function TrendList({
               </span>
 
               <span className="text-sm font-semibold">
-                {item.count.toLocaleString()}
+                {formatNumber(item.count)}
               </span>
             </div>
 
@@ -216,8 +220,7 @@ export function BreakdownList<
           item[labelKey] ?? "Unknown",
         );
 
-        const percentage =
-          (item.count / maxCount) * 100;
+        const percentage = calculatePercentage(item.count, maxCount);
 
         return (
           <div
@@ -230,7 +233,7 @@ export function BreakdownList<
               </span>
 
               <span className="shrink-0 text-sm font-semibold">
-                {item.count.toLocaleString()}
+                {formatNumber(item.count)}
               </span>
             </div>
 
@@ -572,7 +575,7 @@ export function AnalyticsDonutChart<
             </div>
 
             <span className="shrink-0 text-sm font-semibold">
-              {item.value.toLocaleString()}
+              {formatNumber(item.value)}
             </span>
           </div>
         ))}

@@ -28,6 +28,11 @@ import AILearningAcademyCourseAnalytics from "./AILearningAcademyCourseAnalytics
 import AILearningAcademyDashboardError from "./AILearningAcademyDashboardError";
 import AILearningAcademyDashboardLoader from "./AILearningAcademyDashboardLoader";
 import AILearningAcademyInstructorAnalytics from "./AILearningAcademyInstructorAnalytics";
+import {
+  formatDateMonthDay,
+  formatDateTime,
+  formatNumber,
+} from "../utils";
 
 export default function AILearningAcademyDashboard() {
   const [period, setPeriod] =
@@ -158,20 +163,12 @@ export default function AILearningAcademyDashboard() {
       <div className="flex flex-col gap-1 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <span>
           Data generated{" "}
-          {new Intl.DateTimeFormat("en", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          }).format(new Date(dashboard.generatedAt))}
+          {formatDateTime(dashboard.generatedAt, true)}
         </span>
 
         <span>
-          {new Intl.DateTimeFormat("en", {
-            dateStyle: "medium",
-          }).format(new Date(dashboard.timeRange.startDate))}{" "}
-          –{" "}
-          {new Intl.DateTimeFormat("en", {
-            dateStyle: "medium",
-          }).format(new Date(dashboard.timeRange.endDate))}
+          {formatDateMonthDay(dashboard.timeRange.startDate)} –{" "}
+          {formatDateMonthDay(dashboard.timeRange.endDate)}
         </span>
       </div>
     </div>
@@ -223,7 +220,7 @@ function OverviewCard({
             </p>
 
             <p className="mt-2 text-3xl font-bold tracking-tight">
-              {value.toLocaleString()}
+              {formatNumber(value)}
             </p>
 
             <p className="mt-1 text-xs text-muted-foreground">

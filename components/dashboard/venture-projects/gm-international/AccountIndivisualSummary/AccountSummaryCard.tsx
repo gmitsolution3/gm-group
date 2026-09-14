@@ -1,5 +1,7 @@
 "use client";
 
+import { formatNumber } from "../../utils";
+
 interface AccountSummaryCardProps {
   title: string;
   count: number;
@@ -43,14 +45,14 @@ export default function AccountSummaryCard({
         <div>
           <p className="text-muted-foreground">Total</p>
           <p className="mt-1 font-semibold">
-            ৳{totalAmount.toLocaleString()}
+            ৳{formatNumber(totalAmount)}
           </p>
         </div>
 
         <div className="text-right">
           <p className="text-muted-foreground">Due</p>
           <p className="mt-1 font-semibold text-amber-600">
-            ৳{totalDue.toLocaleString()}
+            ৳{formatNumber(totalDue)}
           </p>
         </div>
       </div>

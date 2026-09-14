@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
+import { formatNumber, formatPercentage } from "../utils";
 
 const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e"];
 
@@ -95,25 +96,25 @@ export default function GMLogisticDashboard() {
         {[
           {
             title: "Total Users",
-            value: String(stats.users?.totalUsers ?? 0),
+            value: formatNumber(stats.users?.totalUsers ?? 0),
             sub: "Registered users",
             icon: "👥",
           },
           {
             title: "Admin Users",
-            value: String(stats.users?.totalAdmins ?? 0),
+            value: formatNumber(stats.users?.totalAdmins ?? 0),
             sub: "Admin accounts",
             icon: "🛡️",
           },
           {
             title: "Countries",
-            value: String(stats.countries?.totalCountries ?? 0),
+            value: formatNumber(stats.countries?.totalCountries ?? 0),
             sub: "Active countries",
             icon: "🌍",
           },
           {
             title: "Categories",
-            value: String(stats.categories?.totalCategories ?? 0),
+            value: formatNumber(stats.categories?.totalCategories ?? 0),
             sub: "Active categories",
             icon: "📦",
           },
@@ -288,7 +289,7 @@ export default function GMLogisticDashboard() {
                 },
                 {
                   label: "Completion %",
-                  value: `${stats.pricing?.pricingCompletionPercentage ?? 0}%`,
+                  value: formatPercentage(stats.pricing?.pricingCompletionPercentage ?? 0),
                 },
               ].map((item) => (
                 <div

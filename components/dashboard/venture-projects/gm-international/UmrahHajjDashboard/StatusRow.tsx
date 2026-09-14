@@ -1,3 +1,5 @@
+import { calculatePercentage, formatNumber } from "../../utils";
+
 export default function StatusRow({
   label,
   value,
@@ -13,8 +15,7 @@ export default function StatusRow({
   iconClassName: string;
   barClassName: string;
 }) {
-  const percentage =
-    total > 0 ? Math.round((value / total) * 100) : 0;
+  const percent = calculatePercentage(value, total);
 
   return (
     <div>
@@ -30,10 +31,10 @@ export default function StatusRow({
         </div>
 
         <div className="text-right">
-          <span className="text-sm font-semibold">{value}</span>
+          <span className="text-sm font-semibold">{formatNumber(value)}</span>
 
           <span className="ml-1 text-xs text-muted-foreground">
-            ({percentage}%)
+            ({percent}%)
           </span>
         </div>
       </div>
@@ -42,7 +43,7 @@ export default function StatusRow({
         <div
           className={`h-full rounded-full transition-all ${barClassName}`}
           style={{
-            width: `${percentage}%`,
+            width: `${percent}%`,
           }}
         />
       </div>

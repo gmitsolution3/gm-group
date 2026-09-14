@@ -24,6 +24,7 @@ import {
 
 import { DashboardSummary } from "@/types";
 import { formatCurrency, formatDate } from "@/utils";
+import { calculatePercentage, formatMonth, formatNumber } from "../../utils";
 import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
 import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
 
@@ -374,18 +375,13 @@ export default function UmrahHajjDashboard() {
                   ...data.monthlyTrend.map((trend) => trend.count),
                 ) || 1;
 
-              const width = (item.count / max) * 100;
+              const width = calculatePercentage(item.count, max);
 
               return (
                 <div key={`${item._id.year}-${item._id.month}`}>
                   <div className="mb-2 flex items-center justify-between text-sm">
                     <span className="font-medium text-muted-foreground">
-                      {new Intl.DateTimeFormat("en", {
-                        month: "long",
-                        year: "numeric",
-                      }).format(
-                        new Date(item._id.year, item._id.month - 1),
-                      )}
+                      {formatMonth({ year: item._id.year, month: item._id.month })}
                     </span>
 
                     <span className="font-semibold text-indigo-700">

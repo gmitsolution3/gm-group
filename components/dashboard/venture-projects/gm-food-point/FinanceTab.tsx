@@ -9,6 +9,8 @@ import {
   formatCurrency,
   formatNumber,
   formatAverageOrder,
+  formatPercentage,
+  calculatePercentage,
   getGranularityDisplay,
   financeDateRangeOptions,
 } from "../utils";
@@ -107,7 +109,7 @@ function SimpleBarChart({ data, title, color = "bg-blue-500", format = "currency
       <h3 className="font-medium text-foreground">{title}</h3>
       <div className="space-y-3">
         {data.map((item, index) => {
-          const percentage = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+          const percentage = calculatePercentage(item.value, maxValue);
 
           return (
             <div key={index} className="space-y-1">
@@ -139,8 +141,8 @@ interface PaymentMethodsBreakdownProps {
 }
 
 function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: PaymentMethodsBreakdownProps) {
-  const cashPercentage = totalRevenue > 0 ? (cashRevenue / totalRevenue) * 100 : 0;
-  const wechatPercentage = totalRevenue > 0 ? (wechatRevenue / totalRevenue) * 100 : 0;
+  const cashPercentage = calculatePercentage(cashRevenue, totalRevenue);
+  const wechatPercentage = calculatePercentage(wechatRevenue, totalRevenue);
 
   return (
     <Card>
@@ -162,7 +164,7 @@ function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: P
             </div>
             <div className="text-right">
               <p className="font-semibold">{formatCurrency(cashRevenue)}</p>
-              <p className="text-sm text-muted-foreground">{cashPercentage.toFixed(1)}% of total</p>
+              <p className="text-sm text-muted-foreground">{formatPercentage(cashPercentage, 1)} of total</p>
             </div>
           </div>
 
@@ -179,7 +181,7 @@ function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: P
             </div>
             <div className="text-right">
               <p className="font-semibold">{formatCurrency(wechatRevenue)}</p>
-              <p className="text-sm text-muted-foreground">{wechatPercentage.toFixed(1)}% of total</p>
+              <p className="text-sm text-muted-foreground">{formatPercentage(wechatPercentage, 1)} of total</p>
             </div>
           </div>
         </div>
@@ -476,9 +478,10 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
             <div className="space-y-2">
               <p className="text-sm font-medium text-muted-foreground">Cash vs Digital</p>
               <p className="text-2xl font-bold">
-                {summary.totalRevenue > 0
-                  ? `${((summary.cashRevenue / summary.totalRevenue) * 100).toFixed(0)}% Cash`
-                  : "0% Cash"}
+                {formatPercentage(
+                  calculatePercentage(summary.cashRevenue, summary.totalRevenue),
+                  0,
+                )} Cash
               </p>
             </div>
 

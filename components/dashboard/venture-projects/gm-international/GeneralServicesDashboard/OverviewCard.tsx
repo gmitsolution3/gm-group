@@ -2,6 +2,7 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
+import { formatNumber } from "../../utils";
 
 type OverviewCardProps = {
   title: string;
@@ -30,7 +31,7 @@ export default function OverviewCard({
             </p>
 
             <p className="mt-4 text-3xl font-bold tracking-tight">
-              {value.toLocaleString()}
+              {formatNumber(value)}
             </p>
 
             <p className="mt-1 text-xs text-muted-foreground">

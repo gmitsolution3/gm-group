@@ -10,7 +10,7 @@ import {
 
 import type { CaseStudiesAnalytics } from "@/types/dashboard/gm-it-solution.type";
 
-import { formatDateMonthDay } from "../../utils";
+import { formatDateMonthDay, formatNumber } from "../../utils";
 
 import {
   Bar,
@@ -442,7 +442,7 @@ function KpiCard({
             </p>
 
             <p className="mt-3 text-3xl font-bold tracking-tight">
-              {value.toLocaleString()}
+              {formatNumber(value)}
             </p>
 
             <p className="mt-2 text-xs text-muted-foreground">

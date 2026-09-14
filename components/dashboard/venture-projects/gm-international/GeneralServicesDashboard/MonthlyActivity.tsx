@@ -10,20 +10,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { TrendItem } from "@/types";
+import { calculatePercentage, formatMonth, formatNumber } from "../../utils";
 
 import EmptyState from "./EmptyState";
-
-function formatMonth(item: TrendItem) {
-  return new Intl.DateTimeFormat("en", {
-    month: "long",
-    year: "numeric",
-  }).format(
-    new Date(
-      item._id.year,
-      item._id.month - 1,
-    ),
-  );
-}
 
 export default function MonthlyActivity({
   items,
@@ -75,9 +64,7 @@ export default function MonthlyActivity({
         ) : (
           <div className="space-y-5">
             {sortedItems.map((item, index) => {
-              const width =
-                (item.count / maxActivity) *
-                100;
+              const width = calculatePercentage(item.count, maxActivity);
 
               return (
                 <div
@@ -86,7 +73,7 @@ export default function MonthlyActivity({
                   <div className="mb-2 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">
-                        {formatMonth(item)}
+                        {formatMonth(item._id)}
                       </span>
 
                       <Badge
@@ -98,7 +85,7 @@ export default function MonthlyActivity({
                     </div>
 
                     <span className="text-sm font-bold text-indigo-700">
-                      {item.count}
+                      {formatNumber(item.count)}
                     </span>
                   </div>
 

@@ -31,10 +31,14 @@ import { Badge } from "@/components/ui/badge";
 import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
 import { dashboardVentures } from "@/config/dashboard/ventures";
 import { AccountDashboardResponse } from "@/types";
-import { formatCurrency, formatNumber } from "@/utils";
-import { formatMonth } from "../../utils";
-
+import { formatCurrency } from "@/utils";
 import { API_ENDPOINTS } from "@/config/api/api";
+import {
+  calculatePercentage,
+  formatMonth,
+  formatNumber,
+  formatPercentage,
+} from "../../utils";
 import CountCard from "./CountCard";
 import MiniMetric from "./MiniMetric";
 import StatCard from "./StatCard";
@@ -265,7 +269,7 @@ export default function AccountAnalysisDashboard({
                 <span className="text-sm font-medium">Due ratio</span>
 
                 <span className="text-lg font-bold text-amber-700">
-                  {dueAnalysis.dueRatio.toFixed(1)}%
+                  {formatPercentage(dueAnalysis.dueRatio, 1)}
                 </span>
               </div>
 
@@ -310,10 +314,7 @@ export default function AccountAnalysisDashboard({
               const Icon = serviceIcon(service);
               const colors = serviceColors(service);
 
-              const percentage =
-                totalAmount > 0
-                  ? (stats.total / totalAmount) * 100
-                  : 0;
+              const percentage = calculatePercentage(stats.total, totalAmount);
 
               return (
                 <div
@@ -330,7 +331,7 @@ export default function AccountAnalysisDashboard({
                     <span
                       className={`text-xs font-semibold ${colors.value}`}
                     >
-                      {percentage.toFixed(1)}%
+                      {formatPercentage(percentage, 1)}
                     </span>
                   </div>
 
@@ -401,11 +402,11 @@ export default function AccountAnalysisDashboard({
                   ...monthlyTrend.map((trend) => trend.total),
                 ) || 1;
 
-              const totalWidth = (item.total / max) * 100;
+              const totalWidth = calculatePercentage(item.total, max);
 
-              const advanceWidth = (item.advance / max) * 100;
+              const advanceWidth = calculatePercentage(item.advance, max);
 
-              const dueWidth = (item.due / max) * 100;
+              const dueWidth = calculatePercentage(item.due, max);
 
               return (
                 <div key={item.month}>

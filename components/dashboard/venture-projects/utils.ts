@@ -20,8 +20,15 @@ export function formatCurrency(value: number, currency: "USD" | "BDT" = "USD"): 
   }).format(value);
 }
 
-// Number formatting - keeps whole numbers clean, shows 2 decimals otherwise
-export function formatNumber(value: number): string {
+// Number formatting - keeps whole numbers clean, shows fixed decimals when requested
+export function formatNumber(value: number, fractionDigits?: number): string {
+  if (fractionDigits !== undefined) {
+    return value.toLocaleString("en-US", {
+      minimumFractionDigits: fractionDigits,
+      maximumFractionDigits: fractionDigits,
+    });
+  }
+
   return Number.isInteger(value)
     ? value.toLocaleString("en-US")
     : value.toFixed(2);
@@ -62,31 +69,47 @@ export function formatDateMonthDay(value: string): string {
 }
 
 // Date + time formatting (month day year, e.g. "Sep 9, 2026")
-export function formatDateTime(value: string): string {
+export function formatDateTime(value: Date | string, includeTime = false): string {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return value;
+    return typeof value === "string" ? value : "Unknown date";
   }
 
   return new Intl.DateTimeFormat("en", {
     month: "short",
     day: "numeric",
     year: "numeric",
+    ...(includeTime
+      ? {
+          hour: "numeric",
+          minute: "2-digit",
+        }
+      : {}),
   }).format(date);
 }
 
 // Percentage formatting - keeps whole numbers clean, shows 2 decimals otherwise
-export function formatPercentage(value: number): string {
-  return `${Number.isInteger(value) ? value : value.toFixed(2)}%`;
+export function formatPercentage(value: number, fractionDigits?: number): string {
+  const formattedValue =
+    fractionDigits !== undefined
+      ? value.toFixed(fractionDigits)
+      : Number.isInteger(value)
+        ? value.toString()
+        : value.toFixed(2);
+
+  return `${formattedValue}%`;
 }
 
 // Month formatting (long month, e.g. "September 2026")
-export function formatMonth(value: string): string {
-  const date = new Date(`${value}-01T00:00:00`);
+export function formatMonth(value: string | { year: number; month: number }): string {
+  const date =
+    typeof value === "string"
+      ? new Date(`${value}-01T00:00:00`)
+      : new Date(value.year, value.month - 1);
 
   if (Number.isNaN(date.getTime())) {
-    return value;
+    return typeof value === "string" ? value : "Unknown month";
   }
 
   return new Intl.DateTimeFormat("en", {

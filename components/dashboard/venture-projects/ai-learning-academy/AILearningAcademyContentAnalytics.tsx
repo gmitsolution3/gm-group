@@ -213,7 +213,7 @@ function ContentTypeRow({
             <p className="text-sm font-medium">{formatLabel(type)}</p>
 
             <p className="text-xs text-muted-foreground">
-              {count.toLocaleString()} items
+              {formatNumber(count)} items
             </p>
           </div>
         </div>

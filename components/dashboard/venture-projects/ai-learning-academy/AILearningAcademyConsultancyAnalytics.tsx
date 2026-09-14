@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/card";
 
 import type { AILearningDashboardData } from "@/types";
-import { formatMonth, formatPercentage } from "../utils";
+import {
+  calculatePercentage,
+  formatMonth,
+  formatNumber,
+  formatPercentage,
+} from "../utils";
 
 interface AILearningAcademyConsultancyAnalyticsProps {
   consultancy: AILearningDashboardData["consultancy"];
@@ -66,7 +71,7 @@ export default function AILearningAcademyConsultancyAnalytics({
                     ...monthlyTrend.map((trend) => trend.count),
                   ) || 1;
 
-                const percentage = (item.count / maxCount) * 100;
+                const percentage = calculatePercentage(item.count, maxCount);
 
                 return (
                   <div key={item.month}>
@@ -329,7 +334,7 @@ function EnrollmentMetric({
       <p className="text-sm text-muted-foreground">{label}</p>
 
       <p className="mt-1 text-2xl font-bold">
-        {typeof value === "number" ? value.toLocaleString() : value}
+        {typeof value === "number" ? formatNumber(value) : value}
       </p>
     </div>
   );
