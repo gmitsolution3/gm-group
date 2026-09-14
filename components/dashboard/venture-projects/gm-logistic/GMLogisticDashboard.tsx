@@ -13,6 +13,16 @@ import { dashboardVentures } from "@/config/dashboard/ventures";
 import { useFetch } from "@/hooks/api/useFetch";
 import { GMLogisticDashboardResponse } from "@/types";
 import {
+  CheckCircle,
+  Clock,
+  Database,
+  FileText,
+  Globe,
+  Tag,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import {
   Area,
   AreaChart,
   Bar,
@@ -26,16 +36,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-  Users,
-  Globe,
-  Tag,
-  Database,
-  ShieldCheck,
-} from "lucide-react";
+import { formatNumber, formatPercentage } from "../utils";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
-import { formatNumber, formatPercentage } from "../utils";
 
 const COLORS = ["#6366f1", "#8b5cf6", "#ec4899", "#f43f5e"];
 
@@ -94,38 +97,70 @@ export default function GMLogisticDashboard() {
     { month: "Jun", value: 1950 },
   ];
 
+  const statsCards = [
+    {
+      title: "Total Users",
+      value: formatNumber(stats.users?.totalUsers ?? 0),
+      sub: `${stats.users?.totalAdmins ?? 0} Admins · ${stats.users?.totalBannedUsers ?? 0} Banned`,
+      icon: <Users className="h-5 w-5 text-indigo" />,
+    },
+    {
+      title: "Countries",
+      value: formatNumber(stats.countries?.totalCountries ?? 0),
+      sub: `${stats.countries?.activeCountries ?? 0} Active`,
+      icon: <Globe className="h-5 w-5 text-teal" />,
+    },
+    {
+      title: "Categories",
+      value: formatNumber(stats.categories?.totalCategories ?? 0),
+      sub: `${stats.categories?.activeCategories ?? 0} Active`,
+      icon: <Tag className="h-5 w-5 text-yellow-500" />,
+    },
+    {
+      title: "Pricing Records",
+      value: formatNumber(stats.pricing?.totalPricingRecords ?? 0),
+      sub: `${stats.pricing?.configuredPricingRecords ?? 0} Configured · ${stats.pricing?.pendingPricingRecords ?? 0} Pending`,
+      icon: <Database className="h-5 w-5 text-coral" />,
+    },
+  ];
+
+  const pricingBreakdown = [
+    {
+      label: "Total Records",
+      value: stats.pricing?.totalPricingRecords ?? 0,
+      icon: <Database className="h-5 w-5 text-indigo" />,
+      bg: "bg-gradient-to-br from-indigo-50 to-white",
+    },
+    {
+      label: "Configured",
+      value: stats.pricing?.configuredPricingRecords ?? 0,
+      icon: <CheckCircle className="h-5 w-5 text-emerald" />,
+      bg: "bg-gradient-to-br from-emerald-50 to-white",
+    },
+    {
+      label: "Pending",
+      value: stats.pricing?.pendingPricingRecords ?? 0,
+      icon: <Clock className="h-5 w-5 text-amber" />,
+      bg: "bg-gradient-to-br from-amber-50 to-white",
+    },
+    {
+      label: "Completion %",
+      value: formatPercentage(
+        stats.pricing?.pricingCompletionPercentage ?? 0,
+      ),
+      icon: <TrendingUp className="h-5 w-5 text-rose-500" />,
+      bg: "bg-gradient-to-br from-rose-50 to-white",
+      progress: stats.pricing?.pricingCompletionPercentage ?? 0,
+    },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
       {gmLogistic && <VentureHeader selectedVenture={gmLogistic} />}
 
       {/* Stats cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          {
-            title: "Total Users",
-            value: formatNumber(stats.users?.totalUsers ?? 0),
-            sub: `${stats.users?.totalAdmins ?? 0} Admins · ${stats.users?.totalBannedUsers ?? 0} Banned`,
-            icon: <Users className="h-5 w-5 text-indigo" />,
-          },
-          {
-            title: "Countries",
-            value: formatNumber(stats.countries?.totalCountries ?? 0),
-            sub: `${stats.countries?.activeCountries ?? 0} Active`,
-            icon: <Globe className="h-5 w-5 text-teal" />,
-          },
-          {
-            title: "Categories",
-            value: formatNumber(stats.categories?.totalCategories ?? 0),
-            sub: `${stats.categories?.activeCategories ?? 0} Active`,
-            icon: <Tag className="h-5 w-5 text-yellow-500" />,
-          },
-          {
-            title: "Pricing Records",
-            value: formatNumber(stats.pricing?.totalPricingRecords ?? 0),
-            sub: `${stats.pricing?.configuredPricingRecords ?? 0} Configured · ${stats.pricing?.pendingPricingRecords ?? 0} Pending`,
-            icon: <Database className="h-5 w-5 text-coral" />,
-          },
-        ].map((s) => (
+        {statsCards.map((s) => (
           <Card
             key={s.title}
             className="group overflow-hidden rounded-3xl border-none bg-gradient-to-b from-white to-indigo-50/40 shadow-lg shadow-indigo-100/20 transition hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-indigo-200/30 hover:-rotate-[0.5deg]"
@@ -277,38 +312,39 @@ export default function GMLogisticDashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-3xl border-none bg-gradient-to-br from-slate-50 to-card shadow-lg shadow-black/5">
           <CardContent className="p-6">
-            <h3 className="font-display text-xl font-bold">
+            <h3 className="font-display text-xl font-bold flex items-center gap-2">
+              <FileText className="h-6 w-6 text-rose-500" />
               Pricing Breakdown
             </h3>
             <div className="mt-4 grid grid-cols-2 gap-4">
-              {[
-                {
-                  label: "Total Records",
-                  value: stats.pricing?.totalPricingRecords ?? 0,
-                },
-                {
-                  label: "Configured",
-                  value: stats.pricing?.configuredPricingRecords ?? 0,
-                },
-                {
-                  label: "Pending",
-                  value: stats.pricing?.pendingPricingRecords ?? 0,
-                },
-                {
-                  label: "Completion %",
-                  value: formatPercentage(stats.pricing?.pricingCompletionPercentage ?? 0),
-                },
-              ].map((item) => (
+              {pricingBreakdown.map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-2xl bg-white/70 p-4 shadow-sm border border-border/50"
+                  className={`group relative overflow-hidden rounded-3xl ${item.bg} p-5 shadow-md shadow-black/5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 border border-white/60`}
                 >
-                  <p className="text-xs font-medium text-muted-foreground">
-                    {item.label}
-                  </p>
-                  <p className="text-2xl font-extrabold text-foreground">
-                    {item.value}
-                  </p>
+                  <div className="flex items-start justify-between">
+                    <div className="rounded-xl bg-white/70 p-2 shadow-sm ring-1 ring-black/5 group-hover:scale-110 transition">
+                      {item.icon}
+                    </div>
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      {item.label}
+                    </span>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-3xl font-extrabold tracking-tight text-foreground">
+                      {item.value}
+                    </p>
+                  </div>
+                  {item.progress !== undefined && (
+                    <div className="mt-3 h-2 w-full rounded-full bg-white/70 overflow-hidden shadow-inner">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-rose-400 to-rose-600 transition-all duration-700"
+                        style={{
+                          width: `${Math.min(100, Math.max(0, item.progress))}%`,
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
