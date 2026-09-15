@@ -114,7 +114,7 @@ function OrderStatusCard({
   showArrow = false,
 }: OrderStatusCardProps) {
   return (
-    <>
+    <div className="relative">
       <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-card p-4 transition-all hover:bg-muted/30">
         <div className={cn("mb-3 flex h-12 w-12 items-center justify-center rounded-xl", iconClassName)}>
           <Icon className="h-6 w-6" />
@@ -123,11 +123,11 @@ function OrderStatusCard({
         <p className="mt-1 text-xs font-medium text-muted-foreground text-center">{title}</p>
       </div>
       {showArrow && (
-        <div className="hidden lg:flex items-center justify-center">
+        <div className="absolute top-[50%] -right-5 hidden lg:flex items-center justify-center">
           <ArrowRight className="h-5 w-5 text-muted-foreground/40" />
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -293,7 +293,7 @@ export default function GMFoodPointDashboard() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+                  <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
                     <OrderStatusCard
                       title="Awaiting Payment"
                       value={statistics.orders.awaitingPayment}
