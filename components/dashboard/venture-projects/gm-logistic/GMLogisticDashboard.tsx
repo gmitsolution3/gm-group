@@ -39,6 +39,8 @@ import {
 } from "../utils";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
+import EmptyUsersState from "./EmptyUsersState";
+import ProgressTrack from "./ProgressTrack";
 
 const BRAND = "#5b5fef";
 
@@ -51,52 +53,6 @@ function initials(name?: string) {
     .map((part) => part[0])
     .join("")
     .toUpperCase();
-}
-
-function EmptyUsersState() {
-  return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-muted/20 px-4 py-10 text-center">
-      <div className="mb-2.5 flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-        <Users className="h-5 w-5" />
-      </div>
-      <p className="text-sm font-medium text-muted-foreground">
-        No recent users to display
-      </p>
-    </div>
-  );
-}
-
-function ProgressTrack({
-  value,
-  className,
-  barClassName,
-}: {
-  value: number;
-  className?: string;
-  barClassName?: string;
-}) {
-  const width = Math.min(100, Math.max(0, value));
-
-  return (
-    <div
-      className={cn(
-        "h-2 w-full overflow-hidden rounded-full bg-muted",
-        className,
-      )}
-      role="progressbar"
-      aria-valuenow={Math.round(width)}
-      aria-valuemin={0}
-      aria-valuemax={100}
-    >
-      <div
-        className={cn("h-full rounded-full transition-all", barClassName)}
-        style={{
-          width: `${width}%`,
-          backgroundColor: barClassName ? undefined : BRAND,
-        }}
-      />
-    </div>
-  );
 }
 
 export default function GMLogisticDashboard() {
@@ -133,14 +89,21 @@ export default function GMLogisticDashboard() {
 
   const totalCountries = countries?.totalCountries ?? 0;
   const activeCountries = countries?.activeCountries ?? 0;
-  const inactiveCountries = Math.max(0, totalCountries - activeCountries);
+  const inactiveCountries = Math.max(
+    0,
+    totalCountries - activeCountries,
+  );
 
   const totalCategories = categories?.totalCategories ?? 0;
   const activeCategories = categories?.activeCategories ?? 0;
-  const inactiveCategories = Math.max(0, totalCategories - activeCategories);
+  const inactiveCategories = Math.max(
+    0,
+    totalCategories - activeCategories,
+  );
 
   const totalPricingRecords = pricing?.totalPricingRecords ?? 0;
-  const configuredPricingRecords = pricing?.configuredPricingRecords ?? 0;
+  const configuredPricingRecords =
+    pricing?.configuredPricingRecords ?? 0;
   const pendingPricingRecords = pricing?.pendingPricingRecords ?? 0;
   const apiCompletion = pricing?.pricingCompletionPercentage ?? 0;
   const actualCompletion = calculatePercentage(
@@ -205,7 +168,8 @@ export default function GMLogisticDashboard() {
           GM Logistic Dashboard
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Overview of users, coverage, catalog, and pricing configuration.
+          Overview of users, coverage, catalog, and pricing
+          configuration.
         </p>
       </div>
 
@@ -236,7 +200,10 @@ export default function GMLogisticDashboard() {
                   </div>
                   <div
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: `${BRAND}14`, color: BRAND }}
+                    style={{
+                      backgroundColor: `${BRAND}14`,
+                      color: BRAND,
+                    }}
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
@@ -259,8 +226,8 @@ export default function GMLogisticDashboard() {
               Pricing Configuration
             </CardTitle>
             <CardDescription>
-              Current coverage of logistics pricing records. Most records
-              still need configuration.
+              Current coverage of logistics pricing records. Most
+              records still need configuration.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6 p-6">
@@ -275,7 +242,10 @@ export default function GMLogisticDashboard() {
               </div>
               <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                  <CheckCircle2 className="h-3.5 w-3.5" style={{ color: BRAND }} />
+                  <CheckCircle2
+                    className="h-3.5 w-3.5"
+                    style={{ color: BRAND }}
+                  />
                   Configured
                 </p>
                 <p className="mt-2 text-2xl font-bold tracking-tight">
@@ -312,8 +282,8 @@ export default function GMLogisticDashboard() {
                   Configuration status
                 </span>
                 <span className="font-semibold text-foreground">
-                  {formatNumber(configuredPricingRecords)} configured ·{" "}
-                  {formatNumber(pendingPricingRecords)} pending
+                  {formatNumber(configuredPricingRecords)} configured
+                  · {formatNumber(pendingPricingRecords)} pending
                 </span>
               </div>
               <div
@@ -326,7 +296,8 @@ export default function GMLogisticDashboard() {
                   style={{
                     width: `${configuredShare}%`,
                     backgroundColor: BRAND,
-                    minWidth: configuredPricingRecords > 0 ? "2px" : 0,
+                    minWidth:
+                      configuredPricingRecords > 0 ? "2px" : 0,
                   }}
                 />
                 <div
@@ -370,16 +341,19 @@ export default function GMLogisticDashboard() {
               </div>
               <ProgressTrack value={adminShare} />
               <p className="text-[11px] text-muted-foreground">
-                {formatNumber(totalAdmins)} of {formatNumber(totalUsers)} are
-                admins
+                {formatNumber(totalAdmins)} of{" "}
+                {formatNumber(totalUsers)} are admins
               </p>
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Countries</span>
+                <span className="text-muted-foreground">
+                  Countries
+                </span>
                 <span className="font-semibold">
-                  {formatNumber(activeCountries)} / {formatNumber(totalCountries)}
+                  {formatNumber(activeCountries)} /{" "}
+                  {formatNumber(totalCountries)}
                 </span>
               </div>
               <ProgressTrack value={countryActiveShare} />
@@ -390,9 +364,12 @@ export default function GMLogisticDashboard() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Categories</span>
+                <span className="text-muted-foreground">
+                  Categories
+                </span>
                 <span className="font-semibold">
-                  {formatNumber(activeCategories)} / {formatNumber(totalCategories)}
+                  {formatNumber(activeCategories)} /{" "}
+                  {formatNumber(totalCategories)}
                 </span>
               </div>
               <ProgressTrack value={categoryActiveShare} />
@@ -410,7 +387,8 @@ export default function GMLogisticDashboard() {
               </div>
               <ProgressTrack value={actualCompletion} />
               <p className="text-[11px] text-muted-foreground">
-                {formatNumber(pendingPricingRecords)} records still pending
+                {formatNumber(pendingPricingRecords)} records still
+                pending
               </p>
             </div>
           </CardContent>
@@ -452,7 +430,9 @@ export default function GMLogisticDashboard() {
                 </p>
               </div>
               <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-                <p className="text-xs text-muted-foreground">Inactive</p>
+                <p className="text-xs text-muted-foreground">
+                  Inactive
+                </p>
                 <p className="mt-1 font-semibold">
                   {formatNumber(inactiveCountries)}
                 </p>
@@ -488,13 +468,17 @@ export default function GMLogisticDashboard() {
             <ProgressTrack value={categoryActiveShare} />
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-                <p className="text-xs text-muted-foreground">Active</p>
+                <p className="text-xs text-muted-foreground">
+                  Active
+                </p>
                 <p className="mt-1 font-semibold">
                   {formatNumber(activeCategories)}
                 </p>
               </div>
               <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
-                <p className="text-xs text-muted-foreground">Inactive</p>
+                <p className="text-xs text-muted-foreground">
+                  Inactive
+                </p>
                 <p className="mt-1 font-semibold">
                   {formatNumber(inactiveCategories)}
                 </p>
@@ -515,7 +499,9 @@ export default function GMLogisticDashboard() {
           </CardHeader>
           <CardContent className="space-y-3 p-5">
             <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
-              <span className="text-sm text-muted-foreground">Total users</span>
+              <span className="text-sm text-muted-foreground">
+                Total users
+              </span>
               <span className="text-base font-semibold">
                 {formatNumber(totalUsers)}
               </span>
@@ -530,7 +516,9 @@ export default function GMLogisticDashboard() {
               </span>
             </div>
             <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 px-3 py-3">
-              <span className="text-sm text-muted-foreground">Banned users</span>
+              <span className="text-sm text-muted-foreground">
+                Banned users
+              </span>
               <span className="text-base font-semibold">
                 {formatNumber(totalBannedUsers)}
               </span>
@@ -544,7 +532,9 @@ export default function GMLogisticDashboard() {
         <CardHeader className="border-b border-border/60 pb-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <CardTitle className="text-lg font-bold">Recent Users</CardTitle>
+              <CardTitle className="text-lg font-bold">
+                Recent Users
+              </CardTitle>
               <CardDescription>
                 Latest accounts registered on the logistics platform
               </CardDescription>
@@ -571,7 +561,10 @@ export default function GMLogisticDashboard() {
                     <div className="flex min-w-0 items-center gap-3">
                       <Avatar className="h-10 w-10 border border-border/60">
                         {user.image ? (
-                          <AvatarImage src={user.image} alt={user.name} />
+                          <AvatarImage
+                            src={user.image}
+                            alt={user.name}
+                          />
                         ) : null}
                         <AvatarFallback
                           className="text-xs font-bold"
