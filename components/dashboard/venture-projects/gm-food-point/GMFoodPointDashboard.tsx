@@ -16,12 +16,14 @@ import {
   ShoppingBag,
   UserCircle,
   WalletCards,
+  ArrowRight,
 } from "lucide-react";
 import {
   usePathname,
   useRouter,
   useSearchParams,
 } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { API_ENDPOINTS } from "@/config/api/api";
 import { useFetch } from "@/hooks/api/useFetch";
@@ -55,60 +57,77 @@ function isValidTab(value: string | null): value is TabValue {
 interface StatCardProps {
   title: string;
   value: number;
-  icon: React.ReactNode;
+  icon: React.ElementType;
   description?: string;
-  color?: "blue" | "green" | "orange" | "red" | "purple" | "cyan";
+  iconClassName?: string;
+  gradientClass?: string;
 }
 
 function StatCard({
   title,
   value,
-  icon,
+  icon: Icon,
   description,
-  color = "blue",
+  iconClassName = "bg-blue/10 text-blue-600 dark:text-blue-400",
+  gradientClass = "from-blue-500/[0.04]",
 }: StatCardProps) {
-  const colorClasses = {
-    blue: "border-blue-100 bg-blue-50/50 text-blue-700",
-    green: "border-green-100 bg-green-50/50 text-green-700",
-    orange: "border-orange-100 bg-orange-50/50 text-orange-700",
-    red: "border-red-100 bg-red-50/50 text-red-700",
-    purple: "border-purple-100 bg-purple-50/50 text-purple-700",
-    cyan: "border-cyan-100 bg-cyan-50/50 text-cyan-700",
-  };
-
-  const iconClasses = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    orange: "bg-orange-100 text-orange-600",
-    red: "bg-red-100 text-red-600",
-    purple: "bg-purple-100 text-purple-600",
-    cyan: "bg-cyan-100 text-cyan-600",
-  };
-
   return (
-    <div
-      className={cn(
-        "rounded-xl border p-4 transition-all hover:shadow-sm",
-        colorClasses[color],
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium">{title}</p>
-          <p className="mt-1 text-2xl font-bold">
-            {formatNumber(value)}
-          </p>
-          {description && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              {description}
+    <Card className={`relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br ${gradientClass} via-card to-card shadow-xs transition-all hover:shadow-sm`}>
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5 min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {title}
             </p>
-          )}
+            <p className="text-3xl font-extrabold tracking-tight text-foreground">
+              {formatNumber(value)}
+            </p>
+            {description && (
+              <p className="text-xs text-muted-foreground truncate">
+                {description}
+              </p>
+            )}
+          </div>
+          <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", iconClassName)}>
+            <Icon className="h-5 w-5" />
+          </div>
         </div>
-        <div className={cn("rounded-lg p-2", iconClasses[color])}>
-          {icon}
+      </CardContent>
+    </Card>
+  );
+}
+
+// Order status pipeline component
+interface OrderStatusCardProps {
+  title: string;
+  value: number;
+  icon: React.ElementType;
+  iconClassName: string;
+  showArrow?: boolean;
+}
+
+function OrderStatusCard({
+  title,
+  value,
+  icon: Icon,
+  iconClassName,
+  showArrow = false,
+}: OrderStatusCardProps) {
+  return (
+    <>
+      <div className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-card p-4 transition-all hover:bg-muted/30">
+        <div className={cn("mb-3 flex h-12 w-12 items-center justify-center rounded-xl", iconClassName)}>
+          <Icon className="h-6 w-6" />
         </div>
+        <p className="text-2xl font-bold text-foreground">{formatNumber(value)}</p>
+        <p className="mt-1 text-xs font-medium text-muted-foreground text-center">{title}</p>
       </div>
-    </div>
+      {showArrow && (
+        <div className="hidden lg:flex items-center justify-center">
+          <ArrowRight className="h-5 w-5 text-muted-foreground/40" />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -166,7 +185,7 @@ export default function GMFoodPointDashboard() {
 
   return (
     <div className="w-full">
-      <div className="mx-auto !max-w-[1400px] px-5 py-6 sm:px-8 lg:px-12">
+      <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
         {gmFoodPointVenture && (
           <VentureHeader
             selectedVenture={
@@ -178,18 +197,18 @@ export default function GMFoodPointDashboard() {
         )}
 
         {/* Header */}
-        <div className="mb-8">
+        <div>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Food Dashboard
+            GM Food Point Dashboard
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            GM Food Point
+            Restaurant operations and analytics
           </p>
         </div>
 
         {/* Tabs */}
-        <section>
-          <div className="rounded-2xl border border-border/70 bg-card p-2">
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardContent className="p-2">
             <div className="grid grid-cols-2 gap-2">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -214,108 +233,174 @@ export default function GMFoodPointDashboard() {
                 );
               })}
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Tab Content */}
-        <div className="pt-8">
+        <div>
           {activeTab === "statistics" && (
             <div className="space-y-8">
-              {/* Orders Statistics */}
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">
-                  Orders Overview
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-                  <StatCard
-                    title="Total Today"
-                    value={statistics.orders.totalToday}
-                    icon={<ShoppingBag className="h-5 w-5" />}
-                    color="blue"
-                    description="Total orders placed today"
-                  />
-                  <StatCard
-                    title="Awaiting Payment"
-                    value={statistics.orders.awaitingPayment}
-                    icon={<CreditCard className="h-5 w-5" />}
-                    color="orange"
-                    description="Orders pending payment"
-                  />
-                  <StatCard
-                    title="Queued"
-                    value={statistics.orders.queued}
-                    icon={<Clock className="h-5 w-5" />}
-                    color="cyan"
-                    description="Orders in queue"
-                  />
-                  <StatCard
-                    title="Cooking"
-                    value={statistics.orders.cooking}
-                    icon={<ChefHat className="h-5 w-5" />}
-                    color="purple"
-                    description="Orders being prepared"
-                  />
-                  <StatCard
-                    title="Ready"
-                    value={statistics.orders.ready}
-                    icon={<Package className="h-5 w-5" />}
-                    color="green"
-                    description="Orders ready for pickup/delivery"
-                  />
-                  <StatCard
-                    title="Completed Today"
-                    value={statistics.orders.completedToday}
-                    icon={<CheckCircle className="h-5 w-5" />}
-                    color="green"
-                    description="Orders completed today"
-                  />
-                </div>
+              {/* Primary KPIs */}
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <StatCard
+                  title="Orders Today"
+                  value={statistics.orders.totalToday}
+                  icon={ShoppingBag}
+                  description="Total orders placed"
+                  iconClassName="bg-blue/10 text-blue-600 dark:text-blue-400"
+                  gradientClass="from-blue-500/[0.04]"
+                />
+                <StatCard
+                  title="Awaiting Payment"
+                  value={statistics.orders.awaitingPayment}
+                  icon={CreditCard}
+                  description="Pending payment"
+                  iconClassName="bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                  gradientClass="from-amber-500/[0.04]"
+                />
+                <StatCard
+                  title="In Kitchen"
+                  value={statistics.orders.queued + statistics.orders.cooking}
+                  icon={ChefHat}
+                  description="Queued + cooking"
+                  iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400"
+                  gradientClass="from-violet-500/[0.04]"
+                />
+                <StatCard
+                  title="Ready Orders"
+                  value={statistics.orders.ready}
+                  icon={Package}
+                  description="Ready for pickup"
+                  iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  gradientClass="from-emerald-500/[0.04]"
+                />
               </div>
 
-              {/* Payments Statistics */}
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">
-                  Payments
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  <StatCard
-                    title="Pending Payments"
-                    value={statistics.payments.pending}
-                    icon={<DollarSign className="h-5 w-5" />}
-                    color="red"
-                    description="Payments awaiting processing"
-                  />
-                </div>
-              </div>
+              {/* Order Pipeline */}
+              <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+                <CardContent className="p-6">
+                  <div className="mb-6 flex items-center gap-2.5">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo/10 text-indigo">
+                      <BarChart3 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold tracking-tight">
+                        Order Pipeline
+                      </h2>
+                      <p className="text-xs text-muted-foreground">
+                        Current order status flow
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Resources Statistics */}
-              <div className="rounded-xl border border-border bg-card p-6">
-                <h2 className="mb-6 text-lg font-semibold text-foreground">
-                  System Resources
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <StatCard
-                    title="Total Users"
-                    value={statistics.resources.users}
-                    icon={<UserCircle className="h-5 w-5" />}
-                    color="blue"
-                    description="Registered users in system"
-                  />
-                  <StatCard
-                    title="Active Menus"
-                    value={statistics.resources.menus}
-                    icon={<Menu className="h-5 w-5" />}
-                    color="green"
-                    description="Available food menus"
-                  />
-                  <StatCard
-                    title="Categories"
-                    value={statistics.resources.categories}
-                    icon={<Layers className="h-5 w-5" />}
-                    color="purple"
-                    description="Food categories"
-                  />
-                </div>
+                  <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+                    <OrderStatusCard
+                      title="Awaiting Payment"
+                      value={statistics.orders.awaitingPayment}
+                      icon={CreditCard}
+                      iconClassName="bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
+                      showArrow={true}
+                    />
+                    <OrderStatusCard
+                      title="Queued"
+                      value={statistics.orders.queued}
+                      icon={Clock}
+                      iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+                      showArrow={true}
+                    />
+                    <OrderStatusCard
+                      title="Cooking"
+                      value={statistics.orders.cooking}
+                      icon={ChefHat}
+                      iconClassName="bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400"
+                      showArrow={true}
+                    />
+                    <OrderStatusCard
+                      title="Ready"
+                      value={statistics.orders.ready}
+                      icon={Package}
+                      iconClassName="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
+                      showArrow={true}
+                    />
+                    <OrderStatusCard
+                      title="Completed Today"
+                      value={statistics.orders.completedToday}
+                      icon={CheckCircle}
+                      iconClassName="bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400"
+                      showArrow={false}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Secondary Metrics Grid */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Payments */}
+                <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+                  <CardContent className="p-6">
+                    <h2 className="mb-4 text-base font-bold">
+                      Payment Status
+                    </h2>
+                    <div className="rounded-xl border border-red-100 bg-red-50/40 dark:border-red-800/40 dark:bg-red-950/20 p-5">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400">
+                            <DollarSign className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">
+                              Pending Payments
+                            </p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
+                              Awaiting processing
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-3xl font-bold text-red-700 dark:text-red-400">
+                          {formatNumber(statistics.payments.pending)}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Resources */}
+                <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+                  <CardContent className="p-6">
+                    <h2 className="mb-4 text-base font-bold">
+                      System Resources
+                    </h2>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                            <UserCircle className="h-5 w-5" />
+                          </div>
+                          <span className="text-sm font-medium">Total Users</span>
+                        </div>
+                        <span className="text-lg font-bold">{formatNumber(statistics.resources.users)}</span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400">
+                            <Menu className="h-5 w-5" />
+                          </div>
+                          <span className="text-sm font-medium">Active Menus</span>
+                        </div>
+                        <span className="text-lg font-bold">{formatNumber(statistics.resources.menus)}</span>
+                      </div>
+                      <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-400">
+                            <Layers className="h-5 w-5" />
+                          </div>
+                          <span className="text-sm font-medium">Categories</span>
+                        </div>
+                        <span className="text-lg font-bold">{formatNumber(statistics.resources.categories)}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           )}
