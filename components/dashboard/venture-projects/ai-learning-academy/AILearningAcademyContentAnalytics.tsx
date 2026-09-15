@@ -34,26 +34,29 @@ export default function AILearningAcademyContentAnalytics({
   return (
     <div className="space-y-6">
       {/* Section heading */}
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">
-          Content analytics
-        </h2>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Learning content composition, lesson duration, and module
-          structure.
-        </p>
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal/10 text-teal-600 dark:text-teal-400">
+          <Layers3 className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">
+            Content Analytics
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Content composition, lesson duration, and module structure
+          </p>
+        </div>
       </div>
 
       {/* Content type + Duration overview */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Content type */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Content types</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Content types</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-5">
+          <CardContent className="p-5 space-y-5">
             {contentTypeDistribution.length === 0 ? (
               <EmptyAnalytics text="No content type data available." />
             ) : (
@@ -70,43 +73,43 @@ export default function AILearningAcademyContentAnalytics({
         </Card>
 
         {/* Duration overview */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lesson duration</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Lesson duration</CardTitle>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-5">
             <div className="grid grid-cols-2 gap-4">
               <MetricCard
                 label="Total duration"
                 value={`${durationAnalytics.totalDuration} min`}
                 icon={Clock3}
-                className="border-blue-100 bg-blue-50/40"
-                iconClassName="bg-blue-100 text-blue-600"
+                className="border-blue-100 bg-blue-50/40 dark:border-blue-800/40 dark:bg-blue-950/20"
+                iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
               />
 
               <MetricCard
                 label="Average lesson"
                 value={`${durationAnalytics.averageLessonDuration} min`}
                 icon={Timer}
-                className="border-violet-100 bg-violet-50/40"
-                iconClassName="bg-violet-100 text-violet-600"
+                className="border-violet-100 bg-violet-50/40 dark:border-violet-800/40 dark:bg-violet-950/20"
+                iconClassName="bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400"
               />
 
               <MetricCard
                 label="Longest lesson"
                 value={`${durationAnalytics.longestLesson} min`}
                 icon={PlayCircle}
-                className="border-emerald-100 bg-emerald-50/40"
-                iconClassName="bg-emerald-100 text-emerald-600"
+                className="border-emerald-100 bg-emerald-50/40 dark:border-emerald-800/40 dark:bg-emerald-950/20"
+                iconClassName="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
               />
 
               <MetricCard
                 label="Shortest lesson"
                 value={`${durationAnalytics.shortestLesson} min`}
                 icon={Clock3}
-                className="border-amber-100 bg-amber-50/40"
-                iconClassName="bg-amber-100 text-amber-600"
+                className="border-amber-100 bg-amber-50/40 dark:border-amber-800/40 dark:bg-amber-950/20"
+                iconClassName="bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
               />
             </div>
           </CardContent>
@@ -114,12 +117,12 @@ export default function AILearningAcademyContentAnalytics({
       </div>
 
       {/* Duration distribution */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lesson duration distribution</CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">Lesson duration distribution</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-5">
+        <CardContent className="p-5 space-y-5">
           {durationAnalytics.durationDistribution.length === 0 ? (
             <EmptyAnalytics text="No duration distribution data available." />
           ) : (
@@ -136,7 +139,7 @@ export default function AILearningAcademyContentAnalytics({
                     </span>
                   </div>
 
-                  <span className="text-sm font-semibold text-indigo-700">
+                  <span className="text-sm font-bold text-indigo-700 dark:text-indigo-400">
                     {formatPercentage(item.percentage)}
                   </span>
                 </div>
@@ -159,12 +162,12 @@ export default function AILearningAcademyContentAnalytics({
       </Card>
 
       {/* Module analytics */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Module analytics</CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">Module analytics</CardTitle>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <MetricCard
               label="Average lessons per module"
@@ -172,16 +175,16 @@ export default function AILearningAcademyContentAnalytics({
                 moduleAnalytics.averageLessonsPerModule,
               )}
               icon={Layers3}
-              className="border-teal-100 bg-teal-50/40"
-              iconClassName="bg-teal-100 text-teal-600"
+              className="border-teal-100 bg-teal-50/40 dark:border-teal-800/40 dark:bg-teal-950/20"
+              iconClassName="bg-teal-100 text-teal-600 dark:bg-teal-900/40 dark:text-teal-400"
             />
 
             <MetricCard
               label="Average duration per module"
               value={`${formatNumber(moduleAnalytics.averageDurationPerModule)} min`}
               icon={Clock3}
-              className="border-indigo-100 bg-indigo-50/40"
-              iconClassName="bg-indigo-100 text-indigo-600"
+              className="border-indigo-100 bg-indigo-50/40 dark:border-indigo-800/40 dark:bg-indigo-950/20"
+              iconClassName="bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400"
             />
           </div>
         </CardContent>

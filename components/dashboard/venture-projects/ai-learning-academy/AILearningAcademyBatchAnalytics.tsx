@@ -25,25 +25,29 @@ export default function AILearningAcademyBatchAnalytics({
   return (
     <div className="space-y-6">
       {/* Section heading */}
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">
-          Batch analytics
-        </h2>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Batch status, enrollment capacity, and learning progress.
-        </p>
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue/10 text-blue-600 dark:text-blue-400">
+          <GraduationCap className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">
+            Batch Analytics
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Status, enrollment capacity, and learning progress
+          </p>
+        </div>
       </div>
 
       {/* Status + Enrollment */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Batch status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Batch status</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Batch status</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="p-5 space-y-4">
             {statusDistribution.length === 0 ? (
               <EmptyAnalytics text="No batch status data available." />
             ) : (
@@ -61,20 +65,20 @@ export default function AILearningAcademyBatchAnalytics({
         </Card>
 
         {/* Enrollment */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Enrollment capacity</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Enrollment capacity</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-5">
+          <CardContent className="p-5 space-y-5">
             <EnrollmentCard
               label="Online"
               icon={Laptop}
               capacity={enrollmentAnalytics.online.totalCapacity}
               enrolled={enrollmentAnalytics.online.totalEnrolled}
               occupancyRate={enrollmentAnalytics.online.occupancyRate}
-              className="border-blue-100 bg-blue-50/40"
-              iconClassName="bg-blue-100 text-blue-600"
+              className="border-blue-100 bg-blue-50/40 dark:border-blue-800/40 dark:bg-blue-950/20"
+              iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
               barClassName="bg-blue-500"
             />
 
@@ -86,8 +90,8 @@ export default function AILearningAcademyBatchAnalytics({
               occupancyRate={
                 enrollmentAnalytics.offline.occupancyRate
               }
-              className="border-emerald-100 bg-emerald-50/40"
-              iconClassName="bg-emerald-100 text-emerald-600"
+              className="border-emerald-100 bg-emerald-50/40 dark:border-emerald-800/40 dark:bg-emerald-950/20"
+              iconClassName="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
               barClassName="bg-emerald-500"
             />
           </CardContent>
@@ -95,12 +99,12 @@ export default function AILearningAcademyBatchAnalytics({
       </div>
 
       {/* Overall enrollment */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Enrollment distribution</CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">Enrollment distribution</CardTitle>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <DistributionMetric
               label="Online enrollment"
@@ -108,8 +112,8 @@ export default function AILearningAcademyBatchAnalytics({
                 enrollmentAnalytics.overall.onlinePercentage
               }
               icon={Laptop}
-              className="border-blue-100 bg-blue-50/40"
-              iconClassName="bg-blue-100 text-blue-600"
+              className="border-blue-100 bg-blue-50/40 dark:border-blue-800/40 dark:bg-blue-950/20"
+              iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
             />
 
             <DistributionMetric
@@ -118,47 +122,47 @@ export default function AILearningAcademyBatchAnalytics({
                 enrollmentAnalytics.overall.offlinePercentage
               }
               icon={MapPin}
-              className="border-emerald-100 bg-emerald-50/40"
-              iconClassName="bg-emerald-100 text-emerald-600"
+              className="border-emerald-100 bg-emerald-50/40 dark:border-emerald-800/40 dark:bg-emerald-950/20"
+              iconClassName="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
             />
           </div>
         </CardContent>
       </Card>
 
       {/* Batch progress */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Batch progress</CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">Batch progress</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="p-5 space-y-4">
           {batchProgress.length === 0 ? (
             <EmptyAnalytics text="No batch progress data available." />
           ) : (
             batchProgress.map((batch) => (
               <div
                 key={batch.batchId}
-                className="rounded-2xl border p-4"
+                className="rounded-xl border border-border/60 p-4 transition-all hover:bg-muted/30"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400">
                       <GraduationCap className="h-5 w-5" />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="truncate font-medium">
+                      <p className="truncate font-semibold text-sm">
                         {batch.batchName}
                       </p>
 
-                      <p className="mt-1 truncate text-xs text-muted-foreground">
+                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
                         {batch.courseName}
                       </p>
                     </div>
                   </div>
 
                   <div className="shrink-0 text-left sm:text-right">
-                    <p className="font-semibold text-violet-700">
+                    <p className="font-bold text-violet-700 dark:text-violet-400">
                       {formatPercentage(batch.progressPercentage)}
                     </p>
 

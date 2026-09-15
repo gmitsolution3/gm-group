@@ -32,26 +32,29 @@ export default function AILearningAcademyCourseAnalytics({
   return (
     <div className="space-y-6">
       {/* Section heading */}
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight">
-          Course analytics
-        </h2>
-
-        <p className="mt-1 text-sm text-muted-foreground">
-          Course status, difficulty, categories, pricing, and
-          content structure.
-        </p>
+      <div className="flex items-center gap-2.5">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo/10 text-indigo">
+          <TrendingUp className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-xl font-bold tracking-tight">
+            Course Analytics
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Status, difficulty, categories, pricing, and content structure
+          </p>
+        </div>
       </div>
 
       {/* Status + Level */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Course status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Course status</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Course status</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="p-5 space-y-4">
             {statusDistribution.map((item) => (
               <DistributionRow
                 key={item._id}
@@ -64,12 +67,12 @@ export default function AILearningAcademyCourseAnalytics({
         </Card>
 
         {/* Course level */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Course level</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Course level</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="p-5 space-y-4">
             {levelDistribution.map((item) => (
               <DistributionRow
                 key={item._id}
@@ -85,45 +88,45 @@ export default function AILearningAcademyCourseAnalytics({
       {/* Categories + Pricing */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Categories */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Course categories</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Course categories</CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="p-5 space-y-4">
             {categoryDistribution.length === 0 ? (
               <EmptyAnalytics text="No category data available." />
             ) : (
               categoryDistribution.map((item) => (
                 <div
                   key={item._id}
-                  className="rounded-2xl border border-blue-100 bg-blue-50/40 p-4"
+                  className="rounded-xl border border-blue-100 bg-blue-50/40 dark:border-blue-800/40 dark:bg-blue-950/20 p-4 transition-all hover:bg-blue-50/60 dark:hover:bg-blue-950/30"
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
                         <BookOpen className="h-5 w-5" />
                       </div>
 
                       <div className="min-w-0">
-                        <p className="truncate font-medium">
+                        <p className="truncate font-semibold text-sm">
                           {item.categoryName}
                         </p>
 
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-0.5 text-xs text-muted-foreground">
                           {item.count} courses
                         </p>
                       </div>
                     </div>
 
-                    <p className="shrink-0 font-semibold text-blue-700">
+                    <p className="shrink-0 font-bold text-blue-700 dark:text-blue-400">
                       {formatPercentage(item.percentage)}
                     </p>
                   </div>
 
                   <ProgressBar
                     percentage={item.percentage}
-                    className="bg-blue-500"
+                    className="bg-blue-500 mt-3"
                   />
                 </div>
               ))
@@ -132,12 +135,12 @@ export default function AILearningAcademyCourseAnalytics({
         </Card>
 
         {/* Pricing */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Pricing analytics</CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">Pricing analytics</CardTitle>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-5">
             <div className="grid grid-cols-2 gap-4">
               <MetricCard
                 label="Avg. regular price"
@@ -146,8 +149,8 @@ export default function AILearningAcademyCourseAnalytics({
                   "BDT",
                 )}
                 icon={DollarSign}
-                className="border-emerald-100 bg-emerald-50/40 text-emerald-700"
-                iconClassName="bg-emerald-100 text-emerald-600"
+                className="border-emerald-100 bg-emerald-50/40 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-400"
+                iconClassName="bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
               />
 
               <MetricCard
@@ -157,24 +160,24 @@ export default function AILearningAcademyCourseAnalytics({
                   "BDT",
                 )}
                 icon={BadgePercent}
-                className="border-violet-100 bg-violet-50/40 text-violet-700"
-                iconClassName="bg-violet-100 text-violet-600"
+                className="border-violet-100 bg-violet-50/40 text-violet-700 dark:border-violet-800/40 dark:bg-violet-950/20 dark:text-violet-400"
+                iconClassName="bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400"
               />
 
               <MetricCard
                 label="Avg. discount"
                 value={`${pricingAnalytics.averageDiscountPercentage}%`}
                 icon={TrendingUp}
-                className="border-amber-100 bg-amber-50/40 text-amber-700"
-                iconClassName="bg-amber-100 text-amber-600"
+                className="border-amber-100 bg-amber-50/40 text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-400"
+                iconClassName="bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
               />
 
               <MetricCard
                 label="Courses with discount"
                 value={`${pricingAnalytics.coursesWithDiscount}/${pricingAnalytics.totalCourses}`}
                 icon={BookOpen}
-                className="border-blue-100 bg-blue-50/40 text-blue-700"
-                iconClassName="bg-blue-100 text-blue-600"
+                className="border-blue-100 bg-blue-50/40 text-blue-700 dark:border-blue-800/40 dark:bg-blue-950/20 dark:text-blue-400"
+                iconClassName="bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
               />
             </div>
           </CardContent>
@@ -182,36 +185,36 @@ export default function AILearningAcademyCourseAnalytics({
       </div>
 
       {/* Top courses */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top courses by content</CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">Top courses by content</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className="p-5 space-y-3">
           {topCoursesByModules.length === 0 ? (
             <EmptyAnalytics text="No course data available." />
           ) : (
             topCoursesByModules.map((course) => (
               <div
                 key={course.courseId}
-                className="flex flex-col gap-4 rounded-2xl border p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-4 rounded-xl border border-border/60 p-4 transition-all hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400">
                     <Layers3 className="h-5 w-5" />
                   </div>
 
                   <div className="min-w-0">
-                    <p className="truncate font-medium">
+                    <p className="truncate font-semibold text-sm">
                       {course.courseName}
                     </p>
 
-                    <div className="mt-1 flex flex-wrap items-center gap-2">
-                      <Badge variant="outline">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      <Badge variant="outline" className="text-xs font-medium">
                         {course.moduleCount} modules
                       </Badge>
 
-                      <Badge variant="outline">
+                      <Badge variant="outline" className="text-xs font-medium">
                         {course.lessonCount} lessons
                       </Badge>
                     </div>
@@ -219,7 +222,7 @@ export default function AILearningAcademyCourseAnalytics({
                 </div>
 
                 <div className="shrink-0 text-left sm:text-right">
-                  <p className="text-sm font-semibold">
+                  <p className="text-sm font-bold">
                     {course.totalDuration} min
                   </p>
 
