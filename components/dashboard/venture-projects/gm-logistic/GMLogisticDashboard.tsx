@@ -40,7 +40,7 @@ import {
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
 
-const BRAND = "#29B372";
+const BRAND = "#5b5fef";
 
 function initials(name?: string) {
   if (!name) return "U";
