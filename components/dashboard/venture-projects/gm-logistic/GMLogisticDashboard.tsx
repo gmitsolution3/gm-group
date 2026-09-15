@@ -42,7 +42,6 @@ import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
 import EmptyUsersState from "./EmptyUsersState";
 import ProgressTrack from "./ProgressTrack";
 
-const BRAND = "#5b5fef";
 
 function initials(name?: string) {
   if (!name) return "U";
@@ -199,11 +198,7 @@ export default function GMLogisticDashboard() {
                     </p>
                   </div>
                   <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{
-                      backgroundColor: `${BRAND}14`,
-                      color: BRAND,
-                    }}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo/[0.08] text-indigo"
                   >
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
@@ -220,8 +215,7 @@ export default function GMLogisticDashboard() {
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2 text-lg font-bold">
               <CircleDollarSign
-                className="h-5 w-5"
-                style={{ color: BRAND }}
+                className="h-5 w-5 text-indigo"
               />
               Pricing Configuration
             </CardTitle>
@@ -243,8 +237,7 @@ export default function GMLogisticDashboard() {
               <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                   <CheckCircle2
-                    className="h-3.5 w-3.5"
-                    style={{ color: BRAND }}
+                    className="h-3.5 w-3.5 text-indigo"
                   />
                   Configured
                 </p>
@@ -295,7 +288,7 @@ export default function GMLogisticDashboard() {
                   className="h-full"
                   style={{
                     width: `${configuredShare}%`,
-                    backgroundColor: BRAND,
+                    backgroundColor: "var(--color-indigo)",
                     minWidth:
                       configuredPricingRecords > 0 ? "2px" : 0,
                   }}
@@ -308,8 +301,7 @@ export default function GMLogisticDashboard() {
               <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
                   <span
-                    className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: BRAND }}
+                    className="h-2 w-2 rounded-full bg-indigo"
                   />
                   Configured {configuredShare.toFixed(1)}%
                 </span>
@@ -400,7 +392,7 @@ export default function GMLogisticDashboard() {
         <Card className="rounded-2xl border-border/70 shadow-xs">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2 text-base font-bold">
-              <Globe className="h-4 w-4" style={{ color: BRAND }} />
+              <Globe className="h-4 w-4 text-indigo" />
               Country Coverage
             </CardTitle>
             <CardDescription>
@@ -444,7 +436,7 @@ export default function GMLogisticDashboard() {
         <Card className="rounded-2xl border-border/70 shadow-xs">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2 text-base font-bold">
-              <Tag className="h-4 w-4" style={{ color: BRAND }} />
+              <Tag className="h-4 w-4 text-indigo" />
               Category Catalog
             </CardTitle>
             <CardDescription>
@@ -490,7 +482,7 @@ export default function GMLogisticDashboard() {
         <Card className="rounded-2xl border-border/70 shadow-xs">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2 text-base font-bold">
-              <Users className="h-4 w-4" style={{ color: BRAND }} />
+              <Users className="h-4 w-4 text-indigo" />
               User Overview
             </CardTitle>
             <CardDescription>
@@ -567,11 +559,7 @@ export default function GMLogisticDashboard() {
                           />
                         ) : null}
                         <AvatarFallback
-                          className="text-xs font-bold"
-                          style={{
-                            backgroundColor: `${BRAND}14`,
-                            color: BRAND,
-                          }}
+                          className="text-xs font-bold bg-indigo/[0.08] text-indigo"
                         >
                           {initials(user.name)}
                         </AvatarFallback>
@@ -590,13 +578,8 @@ export default function GMLogisticDashboard() {
                         variant={isAdmin ? "default" : "secondary"}
                         className={cn(
                           "capitalize",
-                          isAdmin && "border-transparent text-white",
+                          isAdmin ? "bg-indigo border-transparent text-white" : "",
                         )}
-                        style={
-                          isAdmin
-                            ? { backgroundColor: BRAND }
-                            : undefined
-                        }
                       >
                         {role}
                       </Badge>

@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { BRAND } from "zod/v3";
 
 export default function ProgressTrack({
   value,
@@ -25,12 +24,11 @@ export default function ProgressTrack({
     >
       <div
         className={cn(
-          "h-full rounded-full transition-all",
+          "h-full rounded-full bg-indigo transition-all",
           barClassName,
         )}
         style={{
           width: `${width}%`,
-          backgroundColor: barClassName ? undefined : BRAND,
         }}
       />
     </div>
