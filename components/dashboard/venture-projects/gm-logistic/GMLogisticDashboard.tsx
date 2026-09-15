@@ -7,6 +7,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,25 +24,27 @@ import {
   GMLogisticRecentUser,
 } from "@/types";
 import {
+  Calendar,
   CheckCircle2,
   CircleDollarSign,
   Clock,
   Globe,
+  RefreshCw,
   ShieldCheck,
   Tag,
   Users,
 } from "lucide-react";
+import { useState } from "react";
 import {
   calculatePercentage,
   formatDate,
   formatNumber,
   formatPercentage,
 } from "../utils";
+import EmptyUsersState from "./EmptyUsersState";
 import GMLogisticDashboardError from "./GMLogisticDashboardError";
 import GMLogisticDashboardLoader from "./GMLogisticDashboardLoader";
-import EmptyUsersState from "./EmptyUsersState";
 import ProgressTrack from "./ProgressTrack";
-
 
 function initials(name?: string) {
   if (!name) return "U";
@@ -55,10 +58,18 @@ function initials(name?: string) {
 }
 
 export default function GMLogisticDashboard() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const { data, isLoading, isError, refetch } =
     useFetch<GMLogisticDashboardResponse>(
       API_ENDPOINTS.gmLogistic.dashboard,
     );
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setTimeout(() => setIsRefreshing(false), 500);
+  };
 
   const gmLogistic = dashboardVentures.find(
     (v) => v.name === "GM Logistic",
@@ -74,6 +85,8 @@ export default function GMLogisticDashboard() {
       />
     );
   }
+
+  console.log(data);
 
   const stats = data.data;
   const users = stats.users;
@@ -162,14 +175,45 @@ export default function GMLogisticDashboard() {
     <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
       {gmLogistic && <VentureHeader selectedVenture={gmLogistic} />}
 
-      <div>
-        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          GM Logistic Dashboard
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overview of users, coverage, catalog, and pricing
-          configuration.
-        </p>
+      <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+        <div>
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl flex items-center gap-x-3">
+            <span> GM Logistic Dashboard</span>{" "}
+            <Badge
+              variant="outline"
+              className="hidden sm:inline-flex rounded-full border-indigo/30 bg-indigo/[0.06] text-indigo font-medium text-xs px-2.5 py-0.5"
+            >
+              Live Overview
+            </Badge>
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Overview of users, coverage, catalog, and pricing
+            configuration.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 sm:self-start">
+          <div className="hidden md:flex items-center gap-2 rounded-xl border border-border/70 bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground shadow-xs">
+            <Calendar className="h-3.5 w-3.5 text-indigo" />
+            <span>{formatDate(new Date())}</span>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="gap-2 rounded-xl border-border/70 bg-card hover:bg-muted/60 text-xs font-medium shadow-xs"
+          >
+            <RefreshCw
+              className={cn(
+                "h-3.5 w-3.5 text-muted-foreground",
+                isRefreshing && "animate-spin text-indigo",
+              )}
+            />
+            <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+          </Button>
+        </div>
       </div>
 
       {/* KPI row */}
@@ -197,9 +241,7 @@ export default function GMLogisticDashboard() {
                       {card.detail}
                     </p>
                   </div>
-                  <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo/[0.08] text-indigo"
-                  >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo/[0.08] text-indigo">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
                 </div>
@@ -214,9 +256,7 @@ export default function GMLogisticDashboard() {
         <Card className="rounded-2xl border-border/70 shadow-xs lg:col-span-8">
           <CardHeader className="border-b border-border/60 pb-4">
             <CardTitle className="flex items-center gap-2 text-lg font-bold">
-              <CircleDollarSign
-                className="h-5 w-5 text-indigo"
-              />
+              <CircleDollarSign className="h-5 w-5 text-indigo" />
               Pricing Configuration
             </CardTitle>
             <CardDescription>
@@ -236,9 +276,7 @@ export default function GMLogisticDashboard() {
               </div>
               <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                  <CheckCircle2
-                    className="h-3.5 w-3.5 text-indigo"
-                  />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-indigo" />
                   Configured
                 </p>
                 <p className="mt-2 text-2xl font-bold tracking-tight">
@@ -300,9 +338,7 @@ export default function GMLogisticDashboard() {
               </div>
               <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5">
-                  <span
-                    className="h-2 w-2 rounded-full bg-indigo"
-                  />
+                  <span className="h-2 w-2 rounded-full bg-indigo" />
                   Configured {configuredShare.toFixed(1)}%
                 </span>
                 <span className="inline-flex items-center gap-1.5">
@@ -558,9 +594,7 @@ export default function GMLogisticDashboard() {
                             alt={user.name}
                           />
                         ) : null}
-                        <AvatarFallback
-                          className="text-xs font-bold bg-indigo/[0.08] text-indigo"
-                        >
+                        <AvatarFallback className="text-xs font-bold bg-indigo/[0.08] text-indigo">
                           {initials(user.name)}
                         </AvatarFallback>
                       </Avatar>
@@ -578,7 +612,9 @@ export default function GMLogisticDashboard() {
                         variant={isAdmin ? "default" : "secondary"}
                         className={cn(
                           "capitalize",
-                          isAdmin ? "bg-indigo border-transparent text-white" : "",
+                          isAdmin
+                            ? "bg-indigo border-transparent text-white"
+                            : "",
                         )}
                       >
                         {role}
