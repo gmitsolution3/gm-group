@@ -9,29 +9,28 @@ import {
   UserRound,
   Users,
   XCircle,
+  ArrowUpRight,
+  TrendingUp,
 } from "lucide-react";
-
 import { useFetch } from "@/hooks/api/useFetch";
-
 import { Badge } from "@/components/ui/badge";
-
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { DashboardSummary } from "@/types";
 import { formatCurrency, formatDate } from "@/utils";
 import { calculatePercentage, formatMonth, formatNumber } from "../../utils";
 import { UmrahHajjDashboardError } from "./UmrahHajjDashboardError";
 import { UmrahHajjDashboardLoader } from "./UmrahHajjDashboardLoader";
-
 import { API_ENDPOINTS } from "@/config/api/api";
 import StatusRow from "./StatusRow";
 import { dashboardVentures } from "@/config/dashboard/ventures";
 import VentureHeader from "@/components/dashboard/venture-dashboard/VentureHeader";
+import { cn } from "@/lib/utils";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
 function formatStatus(status: string) {
   return status.charAt(0).toUpperCase() + status.slice(1);
@@ -40,20 +39,14 @@ function formatStatus(status: string) {
 function statusBadgeClass(status: string) {
   switch (status) {
     case "approved":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
-
-    case "rejected":
-      return "border-red-200 bg-red-50 text-red-700";
-
     case "paid":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
-
+      return "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800/30 dark:bg-emerald-950/30 dark:text-emerald-400";
+    case "rejected":
+      return "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800/30 dark:bg-rose-950/30 dark:text-rose-400";
     case "partial":
-      return "border-blue-200 bg-blue-50 text-blue-700";
-
+      return "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800/30 dark:bg-blue-950/30 dark:text-blue-400";
     case "pending":
-      return "border-amber-200 bg-amber-50 text-amber-700";
-
+      return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800/30 dark:bg-amber-950/30 dark:text-amber-400";
     default:
       return "border-muted bg-muted text-muted-foreground";
   }
@@ -80,8 +73,14 @@ export default function UmrahHajjDashboard() {
     (v) => v.name === "GM International",
   );
 
+  const trendData = data.monthlyTrend.map(item => ({
+    name: `${item._id.year}-${String(item._id.month).padStart(2, '0')}`,
+    month: formatMonth({ year: item._id.year, month: item._id.month }),
+    bookings: item.count
+  }));
+
   return (
-    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
+    <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
       {gmInternational && (
         <VentureHeader
           selectedVenture={gmInternational}
@@ -90,371 +89,134 @@ export default function UmrahHajjDashboard() {
 
       {/* Header */}
       <div>
-        <p className="text-sm font-medium text-muted-foreground">
-          GM Group
-        </p>
-
-        <h1 className="mt-1 font-display text-3xl font-bold tracking-tight">
-          Umrah & Hajj
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+          Umrah & Hajj Analytics
         </h1>
-
         <p className="mt-2 text-muted-foreground">
-          Overview of bookings, applications, payments, and package
-          performance.
+          Overview of bookings, applications, payments, and package performance.
         </p>
       </div>
 
       {/* Main stats */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {/* Total bookings */}
-        <Card className="border-blue-100 bg-gradient-to-br from-blue-50/80 to-background">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium text-blue-700">
-              Total bookings
-            </CardTitle>
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-              <Users className="h-5 w-5" />
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-3xl font-bold text-blue-950">
-              {data.documentCount.totalBookings}
-            </p>
-
-            <p className="mt-1 text-xs text-blue-700/70">
-              Total registered bookings
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Revenue */}
-        <Card className="border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-background">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium text-emerald-700">
-              Revenue
-            </CardTitle>
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
-              <DollarSign className="h-5 w-5" />
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-3xl font-bold text-emerald-950">
-              {formatCurrency(data.summary.totalRevenue)}
-            </p>
-
-            <p className="mt-1 text-xs text-emerald-700/70">
-              Total package revenue
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Pending */}
-        <Card className="border-amber-100 bg-gradient-to-br from-amber-50/80 to-background">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium text-amber-700">
-              Pending applications
-            </CardTitle>
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
-              <Clock3 className="h-5 w-5" />
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-3xl font-bold text-amber-950">
-              {applications.pending}
-            </p>
-
-            <p className="mt-1 text-xs text-amber-700/70">
-              Awaiting review
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Paid */}
-        <Card className="border-violet-100 bg-gradient-to-br from-violet-50/80 to-background">
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium text-violet-700">
-              Paid bookings
-            </CardTitle>
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
-              <CreditCard className="h-5 w-5" />
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <p className="text-3xl font-bold text-violet-950">
-              {payment.paid}
-            </p>
-
-            <p className="mt-1 text-xs text-violet-700/70">
-              Fully paid bookings
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Application + payment status */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Application status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Application status</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-5">
-            <StatusRow
-              label="Pending"
-              value={applications.pending}
-              total={data.documentCount.totalBookings}
-              icon={<Clock3 />}
-              iconClassName="bg-amber-100 text-amber-600"
-              barClassName="bg-amber-500"
-            />
-
-            <StatusRow
-              label="Approved"
-              value={applications.approved}
-              total={data.documentCount.totalBookings}
-              icon={<CheckCircle2 />}
-              iconClassName="bg-emerald-100 text-emerald-600"
-              barClassName="bg-emerald-500"
-            />
-
-            <StatusRow
-              label="Rejected"
-              value={applications.rejected}
-              total={data.documentCount.totalBookings}
-              icon={<XCircle />}
-              iconClassName="bg-red-100 text-red-600"
-              barClassName="bg-red-500"
-            />
-          </CardContent>
-        </Card>
-
-        {/* Payment status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment status</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-5">
-            <StatusRow
-              label="Pending"
-              value={payment.pending}
-              total={data.documentCount.totalBookings}
-              icon={<Clock3 />}
-              iconClassName="bg-amber-100 text-amber-600"
-              barClassName="bg-amber-500"
-            />
-
-            <StatusRow
-              label="Partial"
-              value={payment.partial}
-              total={data.documentCount.totalBookings}
-              icon={<CreditCard />}
-              iconClassName="bg-blue-100 text-blue-600"
-              barClassName="bg-blue-500"
-            />
-
-            <StatusRow
-              label="Paid"
-              value={payment.paid}
-              total={data.documentCount.totalBookings}
-              icon={<CheckCircle2 />}
-              iconClassName="bg-emerald-100 text-emerald-600"
-              barClassName="bg-emerald-500"
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Gender + packages */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Gender distribution */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Gender distribution</CardTitle>
-          </CardHeader>
-
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              {data.genderStats.map((item) => {
-                const isMale = item.gender.toLowerCase() === "male";
-
-                return (
-                  <div
-                    key={item.gender}
-                    className={
-                      isMale
-                        ? "rounded-2xl border border-blue-100 bg-blue-50/50 p-5"
-                        : "rounded-2xl border border-rose-100 bg-rose-50/50 p-5"
-                    }
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={
-                          isMale
-                            ? "flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600"
-                            : "flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600"
-                        }
-                      >
-                        <UserRound className="h-5 w-5" />
-                      </div>
-
-                      <div>
-                        <p className="text-sm capitalize text-muted-foreground">
-                          {item.gender}
-                        </p>
-
-                        <p className="text-2xl font-bold">
-                          {item.count}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Top packages */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top packages</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            {data.topPackages.map((packageItem) => (
-              <div
-                key={packageItem._id}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-teal-100 bg-teal-50/40 p-4"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-100 text-teal-600">
-                    <Package className="h-5 w-5" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="truncate font-medium">
-                      {packageItem._id}
-                    </p>
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {packageItem.count} bookings
-                    </p>
-                  </div>
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {[
+          { title: "Total Bookings", value: data.documentCount.totalBookings, icon: Users, color: "text-blue-600 bg-blue-50 border-blue-100" },
+          { title: "Total Revenue", value: formatCurrency(data.summary.totalRevenue), icon: DollarSign, color: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+          { title: "Pending Apps", value: applications.pending, icon: Clock3, color: "text-amber-600 bg-amber-50 border-amber-100" },
+          { title: "Paid Bookings", value: payment.paid, icon: CreditCard, color: "text-violet-600 bg-violet-50 border-violet-100" },
+        ].map((stat, i) => (
+          <Card key={i} className="rounded-2xl border-border/70 bg-card shadow-xs">
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stat.title}</p>
+                <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl", stat.color)}>
+                  <stat.icon className="h-5 w-5" />
                 </div>
+              </div>
+              <p className="mt-3 text-3xl font-extrabold tracking-tight">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
 
-                <p className="shrink-0 font-semibold text-teal-700">
-                  {formatCurrency(packageItem.totalRevenue)}
-                </p>
+      {/* Status Sections */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+          <CardHeader><CardTitle>Application status</CardTitle></CardHeader>
+          <CardContent className="space-y-6">
+            <StatusRow label="Pending" value={applications.pending} total={data.documentCount.totalBookings} icon={<Clock3 />} iconClassName="bg-amber-100 text-amber-600" barClassName="bg-amber-500" />
+            <StatusRow label="Approved" value={applications.approved} total={data.documentCount.totalBookings} icon={<CheckCircle2 />} iconClassName="bg-emerald-100 text-emerald-600" barClassName="bg-emerald-500" />
+            <StatusRow label="Rejected" value={applications.rejected} total={data.documentCount.totalBookings} icon={<XCircle />} iconClassName="bg-rose-100 text-rose-600" barClassName="bg-rose-500" />
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+          <CardHeader><CardTitle>Payment status</CardTitle></CardHeader>
+          <CardContent className="space-y-6">
+            <StatusRow label="Pending" value={payment.pending} total={data.documentCount.totalBookings} icon={<Clock3 />} iconClassName="bg-amber-100 text-amber-600" barClassName="bg-amber-500" />
+            <StatusRow label="Partial" value={payment.partial} total={data.documentCount.totalBookings} icon={<CreditCard />} iconClassName="bg-blue-100 text-blue-600" barClassName="bg-blue-500" />
+            <StatusRow label="Paid" value={payment.paid} total={data.documentCount.totalBookings} icon={<CheckCircle2 />} iconClassName="bg-emerald-100 text-emerald-600" barClassName="bg-emerald-500" />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Monthly trend & Gender/Packages */}
+      <div className="grid gap-6 xl:grid-cols-3">
+        {/* Monthly Trend */}
+        <Card className="xl:col-span-2 rounded-2xl border-border/70 shadow-xs">
+          <CardHeader><CardTitle>Monthly bookings trend</CardTitle></CardHeader>
+          <CardContent className="h-[300px]">
+             <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={trendData}>
+                <defs><linearGradient id="colorBookings" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/><stop offset="95%" stopColor="#6366f1" stopOpacity={0}/></linearGradient></defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                <Tooltip contentStyle={{borderRadius: 12}} />
+                <Area type="monotone" dataKey="bookings" stroke="#6366f1" strokeWidth={3} fill="url(#colorBookings)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Gender */}
+        <Card className="rounded-2xl border-border/70 shadow-xs">
+           <CardHeader><CardTitle>Gender distribution</CardTitle></CardHeader>
+           <CardContent className="space-y-4">
+            {data.genderStats.map((item) => (
+              <div key={item.gender} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-muted/20">
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-2 rounded-lg", item.gender === "male" ? "bg-blue-100 text-blue-600" : "bg-rose-100 text-rose-600")}>
+                    <UserRound className="h-5 w-5" />
+                  </div>
+                  <span className="font-medium capitalize">{item.gender}</span>
+                </div>
+                <span className="text-xl font-bold">{item.count}</span>
               </div>
             ))}
-          </CardContent>
+           </CardContent>
         </Card>
       </div>
 
-      {/* Monthly trend */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Monthly bookings</CardTitle>
-        </CardHeader>
-
+      {/* Package Rankings table */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
+        <CardHeader><CardTitle>Top packages</CardTitle></CardHeader>
         <CardContent>
-          <div className="space-y-5">
-            {data.monthlyTrend.map((item) => {
-              const max =
-                Math.max(
-                  ...data.monthlyTrend.map((trend) => trend.count),
-                ) || 1;
-
-              const width = calculatePercentage(item.count, max);
-
-              return (
-                <div key={`${item._id.year}-${item._id.month}`}>
-                  <div className="mb-2 flex items-center justify-between text-sm">
-                    <span className="font-medium text-muted-foreground">
-                      {formatMonth({ year: item._id.year, month: item._id.month })}
-                    </span>
-
-                    <span className="font-semibold text-indigo-700">
-                      {item.count} bookings
-                    </span>
-                  </div>
-
-                  <div className="h-3 overflow-hidden rounded-full bg-indigo-50">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-violet-500 transition-all"
-                      style={{
-                        width: `${width}%`,
-                      }}
-                    />
-                  </div>
+          <div className="space-y-3">
+            {data.topPackages.map((pkg, i) => (
+              <div key={pkg._id} className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-card hover:bg-muted/30 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="text-lg font-bold text-muted-foreground w-6">#{i+1}</div>
+                  <Package className="h-5 w-5 text-teal-600" />
+                  <span className="font-medium">{pkg._id}</span>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-6">
+                  <span className="text-sm font-medium">{pkg.count} bookings</span>
+                  <span className="font-bold text-teal-700 w-32 text-right">{formatCurrency(pkg.totalRevenue)}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
       {/* Recent bookings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent bookings</CardTitle>
-        </CardHeader>
-
+      <Card className="rounded-2xl border-border/70 shadow-xs">
+        <CardHeader><CardTitle>Recent bookings</CardTitle></CardHeader>
         <CardContent>
           <div className="space-y-3">
             {data.recentBookings.map((booking) => (
-              <div
-                key={booking._id}
-                className="flex flex-col gap-3 rounded-2xl border p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
-                    <UserRound className="h-5 w-5" />
-                  </div>
-
-                  <div className="min-w-0">
-                    <p className="font-medium">
-                      {booking.applicantInfo.fullName}
-                    </p>
-
-                    <p className="mt-1 truncate text-sm text-muted-foreground">
-                      {booking.pkgInfo.pkgName}
-                    </p>
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {formatDate(booking.createdAt)}
-                    </p>
+              <div key={booking._id} className="flex items-center justify-between p-4 rounded-xl border border-border/40 hover:bg-muted/30 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 font-bold">{booking.applicantInfo.fullName.charAt(0)}</div>
+                  <div>
+                    <p className="font-semibold">{booking.applicantInfo.fullName}</p>
+                    <p className="text-xs text-muted-foreground">{booking.pkgInfo.pkgName}</p>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className={statusBadgeClass(
-                      booking.applicationStatus,
-                    )}
-                  >
-                    {formatStatus(booking.applicationStatus)}
-                  </Badge>
-
-                  <Badge
-                    variant="outline"
-                    className={statusBadgeClass(
-                      booking.payment.paymentStatus,
-                    )}
-                  >
-                    {formatStatus(booking.payment.paymentStatus)}
-                  </Badge>
+                <div className="flex items-center gap-3">
+                  <Badge className={statusBadgeClass(booking.applicationStatus)}>{formatStatus(booking.applicationStatus)}</Badge>
+                  <Badge className={statusBadgeClass(booking.payment.paymentStatus)}>{formatStatus(booking.payment.paymentStatus)}</Badge>
+                  <span className="text-xs text-muted-foreground w-24 text-right">{formatDate(booking.createdAt)}</span>
                 </div>
               </div>
             ))}
