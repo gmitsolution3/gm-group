@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import { useFetch } from "@/hooks/api/useFetch";
-
 import {
   Card,
   CardContent,
@@ -42,25 +41,21 @@ import {
 import CountCard from "./CountCard";
 import MiniMetric from "./MiniMetric";
 import StatCard from "./StatCard";
-import TrendBar from "./TrendBar";
+import { cn } from "@/lib/utils";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 
 function serviceIcon(service: string) {
   switch (service) {
     case "student":
       return GraduationCap;
-
     case "medical":
       return HeartPulse;
-
     case "tourist":
       return Plane;
-
     case "business":
       return BriefcaseBusiness;
-
     case "visa":
       return FileText;
-
     default:
       return FileText;
   }
@@ -70,47 +65,42 @@ function serviceColors(service: string) {
   switch (service) {
     case "student":
       return {
-        card: "border-blue-100 bg-blue-50/50",
+        card: "border-blue-100 bg-gradient-to-br from-blue-50/50 to-card",
         icon: "bg-blue-100 text-blue-600",
         value: "text-blue-700",
         bar: "bg-blue-500",
       };
-
     case "medical":
       return {
-        card: "border-rose-100 bg-rose-50/50",
+        card: "border-rose-100 bg-gradient-to-br from-rose-50/50 to-card",
         icon: "bg-rose-100 text-rose-600",
         value: "text-rose-700",
         bar: "bg-rose-500",
       };
-
     case "tourist":
       return {
-        card: "border-cyan-100 bg-cyan-50/50",
+        card: "border-cyan-100 bg-gradient-to-br from-cyan-50/50 to-card",
         icon: "bg-cyan-100 text-cyan-600",
         value: "text-cyan-700",
         bar: "bg-cyan-500",
       };
-
     case "business":
       return {
-        card: "border-violet-100 bg-violet-50/50",
+        card: "border-violet-100 bg-gradient-to-br from-violet-50/50 to-card",
         icon: "bg-violet-100 text-violet-600",
         value: "text-violet-700",
         bar: "bg-violet-500",
       };
-
     case "visa":
       return {
-        card: "border-amber-100 bg-amber-50/50",
+        card: "border-amber-100 bg-gradient-to-br from-amber-50/50 to-card",
         icon: "bg-amber-100 text-amber-600",
         value: "text-amber-700",
         bar: "bg-amber-500",
       };
-
     default:
       return {
-        card: "border-slate-100 bg-slate-50/50",
+        card: "border-slate-100 bg-gradient-to-br from-slate-50/50 to-card",
         icon: "bg-slate-100 text-slate-600",
         value: "text-slate-700",
         bar: "bg-slate-500",
@@ -162,31 +152,32 @@ export default function AccountAnalysisDashboard({
     (v) => v.name === "GM International",
   );
 
+  // Transform monthly trend data for recharts
+  const chartData = monthlyTrend.map(item => ({
+    name: formatMonth(item.month),
+    month: item.month,
+    total: item.total,
+    advance: item.advance,
+    due: item.due,
+  }));
+
   return (
-    <div className="mx-auto w-full max-w-[1440px] space-y-10 p-6 sm:p-8 lg:p-10">
+    <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
       {gmInternational && (
         <VentureHeader
           selectedVenture={gmInternational}
         />
       )}
-      <div className="space-y-8 p-6 lg:p-8">
+
       {/* Header */}
-      <div>
-        <p className="text-sm font-medium text-muted-foreground">
-          GM Group
-        </p>
-
-        <div className="mt-1 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <h1 className="font-display text-3xl font-bold tracking-tight">
-              Account Analysis
-            </h1>
-
-            <p className="mt-2 text-muted-foreground">
-              Financial and operational overview for this account.
-            </p>
-          </div>
-
+      <div className="space-y-4">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+          Account Analysis
+        </h1>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-muted-foreground">
+            Financial and operational overview for this account.
+          </p>
           <Badge
             variant="outline"
             className="w-fit border-blue-200 bg-blue-50 px-3 py-1.5 text-blue-700"
@@ -197,115 +188,105 @@ export default function AccountAnalysisDashboard({
         </div>
       </div>
 
-      {/* Financial overview */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {/* Financial overview KPIs */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Total amount"
+          title="Total Amount"
           value={formatCurrency(overview.totalAmount)}
           description="Total transaction value"
           icon={<CreditCard className="h-5 w-5" />}
-          cardClassName="border-blue-100 bg-gradient-to-br from-blue-50/80 to-background"
+          cardClassName="rounded-2xl border-border/70 bg-card shadow-xs"
           iconClassName="bg-blue-100 text-blue-600"
-          valueClassName="text-blue-950"
-          descriptionClassName="text-blue-700/70"
+          valueClassName="text-foreground"
+          descriptionClassName="text-muted-foreground"
         />
 
         <StatCard
-          title="Total advance"
+          title="Total Advance"
           value={formatCurrency(overview.totalAdvance)}
           description="Amount received"
           icon={<CheckCircle2 className="h-5 w-5" />}
-          cardClassName="border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-background"
+          cardClassName="rounded-2xl border-border/70 bg-card shadow-xs"
           iconClassName="bg-emerald-100 text-emerald-600"
-          valueClassName="text-emerald-950"
-          descriptionClassName="text-emerald-700/70"
+          valueClassName="text-foreground"
+          descriptionClassName="text-muted-foreground"
         />
 
         <StatCard
-          title="Total due"
+          title="Total Due"
           value={formatCurrency(overview.totalDue)}
           description="Outstanding amount"
           icon={<TrendingDown className="h-5 w-5" />}
-          cardClassName="border-red-100 bg-gradient-to-br from-red-50/80 to-background"
+          cardClassName="rounded-2xl border-border/70 bg-card shadow-xs"
           iconClassName="bg-red-100 text-red-600"
-          valueClassName="text-red-950"
-          descriptionClassName="text-red-700/70"
+          valueClassName="text-foreground"
+          descriptionClassName="text-muted-foreground"
         />
 
         <StatCard
-          title="Total records"
+          title="Total Records"
           value={formatNumber(documentCount.totalCounts.totalRecords)}
           description="Total account records"
           icon={<FileText className="h-5 w-5" />}
-          cardClassName="border-violet-100 bg-gradient-to-br from-violet-50/80 to-background"
+          cardClassName="rounded-2xl border-border/70 bg-card shadow-xs"
           iconClassName="bg-violet-100 text-violet-600"
-          valueClassName="text-violet-950"
-          descriptionClassName="text-violet-700/70"
+          valueClassName="text-foreground"
+          descriptionClassName="text-muted-foreground"
         />
       </div>
 
-      {/* Due analysis */}
-      <Card className="overflow-hidden border-amber-100">
-        <CardHeader className="bg-gradient-to-r from-amber-50 to-background">
+      {/* Due Analysis */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <CardTitle>Due analysis</CardTitle>
-
-              <p className="mt-1 text-sm text-muted-foreground">
+              <CardTitle>Due Analysis</CardTitle>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Outstanding amount compared with total account value.
               </p>
             </div>
-
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
               <TrendingDown className="h-5 w-5" />
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="pt-6">
-          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
-            <div>
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium">Due ratio</span>
-
-                <span className="text-lg font-bold text-amber-700">
-                  {formatPercentage(dueAnalysis.dueRatio, 1)}
-                </span>
-              </div>
-
-              <div className="h-3 overflow-hidden rounded-full bg-amber-100">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500"
-                  style={{
-                    width: `${Math.min(dueAnalysis.dueRatio, 100)}%`,
-                  }}
-                />
-              </div>
+        <CardContent className="space-y-6">
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-medium">Due Ratio</span>
+              <span className="text-lg font-bold text-amber-700">
+                {formatPercentage(dueAnalysis.dueRatio, 1)}
+              </span>
             </div>
-
-            <div className="rounded-2xl border border-red-100 bg-red-50 px-5 py-4">
-              <p className="text-xs font-medium uppercase tracking-wide text-red-600">
-                Total due
-              </p>
-
-              <p className="mt-1 text-xl font-bold text-red-800">
-                {formatCurrency(dueAnalysis.totalDue)}
-              </p>
+            <div className="h-3 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-500 transition-all"
+                style={{
+                  width: `${Math.min(dueAnalysis.dueRatio, 100)}%`,
+                }}
+              />
             </div>
+          </div>
+
+          <div className="rounded-xl border border-red-100 bg-red-50/40 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-red-600">
+              Total Due
+            </p>
+            <p className="mt-2 text-2xl font-bold text-red-700">
+              {formatCurrency(dueAnalysis.totalDue)}
+            </p>
           </div>
         </CardContent>
       </Card>
 
-      {/* Service wise */}
-      <Card>
+      {/* Service Breakdown */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
         <CardHeader>
-          <div>
-            <CardTitle>Service breakdown</CardTitle>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Financial performance by service category.
-            </p>
-          </div>
+          <CardTitle>Service Breakdown</CardTitle>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Financial performance by service category.
+          </p>
         </CardHeader>
 
         <CardContent>
@@ -313,63 +294,52 @@ export default function AccountAnalysisDashboard({
             {Object.entries(serviceWise).map(([service, stats]) => {
               const Icon = serviceIcon(service);
               const colors = serviceColors(service);
-
               const percentage = calculatePercentage(stats.total, totalAmount);
 
               return (
                 <div
                   key={service}
-                  className={`rounded-2xl border p-5 ${colors.card}`}
+                  className={cn(
+                    "rounded-2xl border p-5 shadow-xs transition-all hover:shadow-sm",
+                    colors.card
+                  )}
                 >
                   <div className="flex items-center justify-between">
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors.icon}`}
+                      className={cn(
+                        "flex h-10 w-10 items-center justify-center rounded-xl",
+                        colors.icon
+                      )}
                     >
                       <Icon className="h-5 w-5" />
                     </div>
-
-                    <span
-                      className={`text-xs font-semibold ${colors.value}`}
-                    >
+                    <span className={cn("text-xs font-semibold", colors.value)}>
                       {formatPercentage(percentage, 1)}
                     </span>
                   </div>
 
-                  <p className="mt-4 text-sm font-medium capitalize text-muted-foreground">
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {service}
                   </p>
 
-                  <p
-                    className={`mt-1 text-xl font-bold ${colors.value}`}
-                  >
+                  <p className={cn("mt-2 text-xl font-bold", colors.value)}>
                     {formatCurrency(stats.total)}
                   </p>
 
                   <div className="mt-4 space-y-2 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Advance
-                      </span>
-
-                      <span className="font-medium">
-                        {formatCurrency(stats.advance)}
-                      </span>
+                      <span className="text-muted-foreground">Advance</span>
+                      <span className="font-medium">{formatCurrency(stats.advance)}</span>
                     </div>
-
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">
-                        Due
-                      </span>
-
-                      <span className="font-medium">
-                        {formatCurrency(stats.due)}
-                      </span>
+                      <span className="text-muted-foreground">Due</span>
+                      <span className="font-medium">{formatCurrency(stats.due)}</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/80">
+                  <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-muted">
                     <div
-                      className={`h-full rounded-full ${colors.bar}`}
+                      className={cn("h-full rounded-full", colors.bar)}
                       style={{
                         width: `${Math.min(percentage, 100)}%`,
                       }}
@@ -382,86 +352,52 @@ export default function AccountAnalysisDashboard({
         </CardContent>
       </Card>
 
-      {/* Monthly trend */}
-      <Card>
+      {/* Monthly Trend Chart */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
         <CardHeader>
-          <div>
-            <CardTitle>Monthly financial trend</CardTitle>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Monthly total, advance, and outstanding amounts.
-            </p>
-          </div>
+          <CardTitle>Monthly Financial Trend</CardTitle>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Monthly total, advance, and outstanding amounts.
+          </p>
         </CardHeader>
 
         <CardContent>
-          <div className="space-y-6">
-            {monthlyTrend.map((item) => {
-              const max =
-                Math.max(
-                  ...monthlyTrend.map((trend) => trend.total),
-                ) || 1;
-
-              const totalWidth = calculatePercentage(item.total, max);
-
-              const advanceWidth = calculatePercentage(item.advance, max);
-
-              const dueWidth = calculatePercentage(item.due, max);
-
-              return (
-                <div key={item.month}>
-                  <div className="mb-3 flex items-center justify-between">
-                    <span className="font-medium">
-                      {formatMonth(item.month)}
-                    </span>
-
-                    <span className="text-sm font-semibold text-blue-700">
-                      {formatCurrency(item.total)}
-                    </span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <TrendBar
-                      label="Total"
-                      value={item.total}
-                      width={totalWidth}
-                      color="bg-blue-500"
-                    />
-
-                    <TrendBar
-                      label="Advance"
-                      value={item.advance}
-                      width={advanceWidth}
-                      color="bg-emerald-500"
-                    />
-
-                    <TrendBar
-                      label="Due"
-                      value={item.due}
-                      width={dueWidth}
-                      color="bg-red-500"
-                    />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
+                <Tooltip
+                  formatter={(value) => formatCurrency(Number(value))}
+                  contentStyle={{
+                    borderRadius: 12,
+                    border: "1px solid #e5e7eb",
+                    backgroundColor: "white",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Legend wrapperStyle={{ paddingTop: 16 }} />
+                <Line type="monotone" dataKey="total" stroke="#3b82f6" strokeWidth={2} dot={{ r: 4 }} name="Total" />
+                <Line type="monotone" dataKey="advance" stroke="#10b981" strokeWidth={2} dot={{ r: 4 }} name="Advance" />
+                <Line type="monotone" dataKey="due" stroke="#ef4444" strokeWidth={2} dot={{ r: 4 }} name="Due" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
 
-      {/* Branch + account holders */}
+      {/* Branch + Account Holders */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Branch stats */}
-        <Card>
+        {/* Branch Stats */}
+        <Card className="rounded-2xl border-border/70 shadow-xs">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-100 text-cyan-600">
                 <Building2 className="h-5 w-5" />
               </div>
-
               <div>
-                <CardTitle>Branch performance</CardTitle>
-
+                <CardTitle>Branch Performance</CardTitle>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Financial breakdown by branch.
                 </p>
@@ -473,17 +409,13 @@ export default function AccountAnalysisDashboard({
             {branchStats.map((branch) => (
               <div
                 key={branch.branch}
-                className="rounded-2xl border border-cyan-100 bg-cyan-50/40 p-4"
+                className="rounded-xl border border-border/50 bg-muted/20 p-4 hover:bg-muted/30 transition-colors"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
                     <p className="font-medium">{branch.branch}</p>
-
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Total business
-                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">Total business</p>
                   </div>
-
                   <p className="font-bold text-cyan-700">
                     {formatCurrency(branch.total)}
                   </p>
@@ -495,7 +427,6 @@ export default function AccountAnalysisDashboard({
                     value={formatCurrency(branch.advance)}
                     className="bg-emerald-50 text-emerald-700"
                   />
-
                   <MiniMetric
                     label="Due"
                     value={formatCurrency(branch.due)}
@@ -507,17 +438,15 @@ export default function AccountAnalysisDashboard({
           </CardContent>
         </Card>
 
-        {/* Account holder stats */}
-        <Card>
+        {/* Account Holders */}
+        <Card className="rounded-2xl border-border/70 shadow-xs">
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
                 <Users className="h-5 w-5" />
               </div>
-
               <div>
-                <CardTitle>Account holders</CardTitle>
-
+                <CardTitle>Account Holders</CardTitle>
                 <p className="mt-1 text-sm text-muted-foreground">
                   Financial contribution by account.
                 </p>
@@ -529,9 +458,9 @@ export default function AccountAnalysisDashboard({
             {accountHolderStats.map((account) => (
               <div
                 key={account.email}
-                className="rounded-2xl border border-violet-100 bg-violet-50/40 p-4"
+                className="rounded-xl border border-border/50 bg-muted/20 p-4 hover:bg-muted/30 transition-colors"
               >
-                <p className="truncate text-sm font-medium">
+                <p className="truncate text-sm font-medium" title={account.email}>
                   {account.email}
                 </p>
 
@@ -541,13 +470,11 @@ export default function AccountAnalysisDashboard({
                     value={formatCurrency(account.total)}
                     className="bg-blue-50 text-blue-700"
                   />
-
                   <MiniMetric
                     label="Advance"
                     value={formatCurrency(account.advance)}
                     className="bg-emerald-50 text-emerald-700"
                   />
-
                   <MiniMetric
                     label="Due"
                     value={formatCurrency(account.due)}
@@ -560,12 +487,11 @@ export default function AccountAnalysisDashboard({
         </Card>
       </div>
 
-      {/* Record counts */}
-      <Card>
+      {/* Record Distribution */}
+      <Card className="rounded-2xl border-border/70 shadow-xs">
         <CardHeader>
-          <CardTitle>Record distribution</CardTitle>
-
-          <p className="text-sm text-muted-foreground">
+          <CardTitle>Record Distribution</CardTitle>
+          <p className="mt-2 text-sm text-muted-foreground">
             Number of records by service and branch.
           </p>
         </CardHeader>
@@ -573,39 +499,33 @@ export default function AccountAnalysisDashboard({
         <CardContent>
           <div className="grid gap-6 lg:grid-cols-2">
             <div>
-              <p className="mb-4 text-sm font-semibold">By service</p>
-
+              <p className="mb-4 text-sm font-semibold">By Service</p>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <CountCard
                   label="Student"
                   count={documentCount.totalCounts.student}
                   className="border-blue-100 bg-blue-50 text-blue-700"
                 />
-
                 <CountCard
                   label="Medical"
                   count={documentCount.totalCounts.medical}
                   className="border-rose-100 bg-rose-50 text-rose-700"
                 />
-
                 <CountCard
                   label="Tourist"
                   count={documentCount.totalCounts.tourist}
                   className="border-cyan-100 bg-cyan-50 text-cyan-700"
                 />
-
                 <CountCard
                   label="Business"
                   count={documentCount.totalCounts.business}
                   className="border-violet-100 bg-violet-50 text-violet-700"
                 />
-
                 <CountCard
                   label="Visa"
                   count={documentCount.totalCounts.visa}
                   className="border-amber-100 bg-amber-50 text-amber-700"
                 />
-
                 <CountCard
                   label="Total"
                   count={documentCount.totalCounts.totalRecords}
@@ -615,27 +535,20 @@ export default function AccountAnalysisDashboard({
             </div>
 
             <div>
-              <p className="mb-4 text-sm font-semibold">By branch</p>
-
+              <p className="mb-4 text-sm font-semibold">By Branch</p>
               <div className="space-y-3">
                 {documentCount.branchCounts.map((branch) => (
                   <div
                     key={branch.branch}
-                    className="flex items-center justify-between rounded-xl border bg-muted/20 px-4 py-3"
+                    className="flex items-center justify-between rounded-xl border border-border/50 bg-muted/20 px-4 py-3 hover:bg-muted/30 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-100 text-cyan-600">
                         <Building2 className="h-4 w-4" />
                       </div>
-
-                      <span className="text-sm font-medium">
-                        {branch.branch}
-                      </span>
+                      <span className="text-sm font-medium">{branch.branch}</span>
                     </div>
-
-                    <span className="font-bold text-cyan-700">
-                      {branch.count}
-                    </span>
+                    <span className="font-bold text-cyan-700">{branch.count}</span>
                   </div>
                 ))}
               </div>
@@ -644,23 +557,19 @@ export default function AccountAnalysisDashboard({
         </CardContent>
       </Card>
 
-      {/* Missing documents */}
-      <Card
-        className={
-          missingDocsAnalysis.totalMissingAccounts > 0
-            ? "border-red-100"
-            : "border-emerald-100"
-        }
-      >
+      {/* Missing Documents */}
+      <Card className={cn(
+        "rounded-2xl border-border/70 shadow-xs",
+        missingDocsAnalysis.totalMissingAccounts > 0 ? "border-red-100" : "border-emerald-100"
+      )}>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div
-              className={
-                missingDocsAnalysis.totalMissingAccounts > 0
-                  ? "flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-600"
-                  : "flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600"
-              }
-            >
+            <div className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-xl",
+              missingDocsAnalysis.totalMissingAccounts > 0
+                ? "bg-red-100 text-red-600"
+                : "bg-emerald-100 text-emerald-600"
+            )}>
               {missingDocsAnalysis.totalMissingAccounts > 0 ? (
                 <AlertCircle className="h-5 w-5" />
               ) : (
@@ -669,8 +578,7 @@ export default function AccountAnalysisDashboard({
             </div>
 
             <div>
-              <CardTitle>Missing documents</CardTitle>
-
+              <CardTitle>Missing Documents</CardTitle>
               <p className="mt-1 text-sm text-muted-foreground">
                 Document completeness status.
               </p>
@@ -680,11 +588,10 @@ export default function AccountAnalysisDashboard({
 
         <CardContent>
           {missingDocsAnalysis.totalMissingAccounts === 0 ? (
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+            <div className="rounded-xl border border-emerald-100 bg-emerald-50/40 p-4">
               <p className="font-medium text-emerald-800">
                 All documents are complete
               </p>
-
               <p className="mt-1 text-sm text-emerald-700/80">
                 No accounts currently have missing documents.
               </p>
@@ -692,10 +599,8 @@ export default function AccountAnalysisDashboard({
           ) : (
             <div className="space-y-3">
               <p className="text-sm font-medium text-red-700">
-                {missingDocsAnalysis.totalMissingAccounts} accounts
-                have missing documents.
+                {missingDocsAnalysis.totalMissingAccounts} accounts have missing documents.
               </p>
-
               {missingDocsAnalysis.documents.map((document) => (
                 <div
                   key={document}
@@ -708,7 +613,6 @@ export default function AccountAnalysisDashboard({
           )}
         </CardContent>
       </Card>
-    </div>
     </div>
   );
 }
