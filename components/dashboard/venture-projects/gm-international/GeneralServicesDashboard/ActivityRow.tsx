@@ -5,17 +5,17 @@ function statusClass(status: string) {
     case "approved":
     case "paid":
     case "delivered":
-      return "border-emerald-200 bg-emerald-50 text-emerald-700";
+      return "border-emerald-200/80 bg-emerald-50 text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/40 dark:text-emerald-400";
 
     case "rejected":
     case "failed":
-      return "border-red-200 bg-red-50 text-red-700";
+      return "border-rose-200/80 bg-rose-50 text-rose-700 dark:border-rose-800/40 dark:bg-rose-950/40 dark:text-rose-400";
 
     case "pending":
-      return "border-amber-200 bg-amber-50 text-amber-700";
+      return "border-amber-200/80 bg-amber-50 text-amber-700 dark:border-amber-800/40 dark:bg-amber-950/40 dark:text-amber-400";
 
     default:
-      return "border-slate-200 bg-slate-50 text-slate-700";
+      return "border-border/60 bg-muted/30 text-muted-foreground";
   }
 }
 
@@ -31,23 +31,27 @@ export default function ActivityRow({
   badges: string[];
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border p-4 transition-colors hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl border border-border/60 bg-card p-3.5 transition-all hover:bg-muted/30 sm:flex-row sm:items-center sm:justify-between">
       <div className="min-w-0">
-        <p className="font-medium">{name}</p>
+        <p className="text-sm font-semibold text-foreground">
+          {name}
+        </p>
 
-        <p className="mt-1 truncate text-sm text-muted-foreground">
+        <p className="mt-1 truncate text-xs text-muted-foreground">
           {description}
         </p>
 
-        <p className="mt-1 text-xs text-muted-foreground">{date}</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
+          {date}
+        </p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 shrink-0">
         {badges.filter(Boolean).map((badge, index) => (
           <Badge
             key={`${badge}-${index}`}
             variant="outline"
-            className={statusClass(badge)}
+            className={`text-[10px] font-semibold px-2 py-0 ${statusClass(badge)}`}
           >
             {badge}
           </Badge>

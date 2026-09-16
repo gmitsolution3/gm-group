@@ -55,8 +55,8 @@ export default function MedicalDashboard({
           value={totalApplications}
           description="Medical applications"
           icon={<HeartPulse />}
-          className="border-rose-100 bg-rose-50/40"
-          iconClassName="bg-rose-100 text-rose-600"
+          className="from-rose-[0.04]"
+          iconClassName="bg-rose-100/80 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400"
         />
 
         <OverviewCard
@@ -64,8 +64,8 @@ export default function MedicalDashboard({
           value={totalHospitals}
           description="Available hospitals"
           icon={<MapPin />}
-          className="border-blue-100 bg-blue-50/40"
-          iconClassName="bg-blue-100 text-blue-600"
+          className="from-blue-[0.04]"
+          iconClassName="bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
         />
 
         <OverviewCard
@@ -73,8 +73,8 @@ export default function MedicalDashboard({
           value={approved}
           description="Approved applications"
           icon={<CheckCircle2 />}
-          className="border-emerald-100 bg-emerald-50/40"
-          iconClassName="bg-emerald-100 text-emerald-600"
+          className="from-emerald-[0.04]"
+          iconClassName="bg-emerald-100/80 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
         />
 
         <OverviewCard
@@ -82,27 +82,27 @@ export default function MedicalDashboard({
           value={pending}
           description="Awaiting processing"
           icon={<Clock3 />}
-          className="border-amber-100 bg-amber-50/40"
-          iconClassName="bg-amber-100 text-amber-600"
+          className="from-amber-[0.04]"
+          iconClassName="bg-amber-100/80 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
         />
       </section>
 
       {/* Overview details */}
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100/80 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400">
                 <HeartPulse className="h-5 w-5" />
               </div>
 
               <div>
-                <CardTitle>
+                <CardTitle className="text-base font-bold">
                   Medical services
                 </CardTitle>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   Treatment applications and
                   payment activity.
                 </p>
@@ -110,7 +110,7 @@ export default function MedicalDashboard({
             </div>
           </CardHeader>
 
-          <CardContent>
+          <CardContent className="p-5">
             <div className="grid grid-cols-2 gap-3">
               <MiniStat
                 label="Applications"
@@ -165,37 +165,37 @@ export default function MedicalDashboard({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">
               Top hospitals
             </CardTitle>
 
-            <p className="text-sm text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Hospitals receiving the most
               applications.
             </p>
           </CardHeader>
 
-          <CardContent className="space-y-3">
+          <CardContent className="p-5 space-y-3">
             {(data.topHospitals ?? []).length >
             0 ? (
               data.topHospitals.map((hospital) => (
                 <div
                   key={hospital._id}
-                  className="flex items-center justify-between rounded-xl border border-rose-100 bg-rose-50/40 px-4 py-3"
+                  className="flex items-center justify-between rounded-xl border border-border/60 bg-rose-50/40 dark:bg-rose-950/20 px-3.5 py-3 transition-all hover:bg-rose-50/60 dark:hover:bg-rose-950/30"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-600">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-rose-100/80 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400">
                       <HeartPulse className="h-4 w-4" />
                     </div>
 
-                    <span className="truncate text-sm font-medium">
+                    <span className="truncate text-xs sm:text-sm font-semibold text-foreground">
                       {hospital._id}
                     </span>
                   </div>
 
-                  <span className="font-bold text-rose-700">
+                  <span className="text-sm font-bold text-rose-600 dark:text-rose-400">
                     {hospital.count}
                   </span>
                 </div>

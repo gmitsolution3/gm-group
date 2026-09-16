@@ -56,8 +56,8 @@ export default function StudentDashboard({
           value={totalApplications}
           description="Total student applications"
           icon={<GraduationCap />}
-          className="border-blue-100 bg-blue-50/40"
-          iconClassName="bg-blue-100 text-blue-600"
+          className="from-blue-[0.04]"
+          iconClassName="bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
         />
 
         <OverviewCard
@@ -65,8 +65,8 @@ export default function StudentDashboard({
           value={approved}
           description="Approved applications"
           icon={<CheckCircle2 />}
-          className="border-emerald-100 bg-emerald-50/40"
-          iconClassName="bg-emerald-100 text-emerald-600"
+          className="from-emerald-[0.04]"
+          iconClassName="bg-emerald-100/80 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
         />
 
         <OverviewCard
@@ -74,8 +74,8 @@ export default function StudentDashboard({
           value={pending}
           description="Awaiting processing"
           icon={<Clock3 />}
-          className="border-amber-100 bg-amber-50/40"
-          iconClassName="bg-amber-100 text-amber-600"
+          className="from-amber-[0.04]"
+          iconClassName="bg-amber-100/80 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
         />
 
         <OverviewCard
@@ -83,34 +83,34 @@ export default function StudentDashboard({
           value={rejected}
           description="Rejected applications"
           icon={<TrendingUp />}
-          className="border-red-100 bg-red-50/40"
-          iconClassName="bg-red-100 text-red-600"
+          className="from-red-[0.04]"
+          iconClassName="bg-red-100/80 text-red-600 dark:bg-red-900/40 dark:text-red-400"
         />
       </section>
 
       {/* Applications + Universities */}
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
                 <GraduationCap className="h-5 w-5" />
               </div>
 
               <div>
-                <CardTitle>
+                <CardTitle className="text-base font-bold">
                   Student applications
                 </CardTitle>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   Application and payment activity.
                 </p>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="p-5 space-y-5">
             <StatusRow
               label="Approved"
               value={approved}
@@ -157,37 +157,37 @@ export default function StudentDashboard({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">
               Top universities
             </CardTitle>
 
-            <p className="text-sm text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Universities receiving the most
               applications.
             </p>
           </CardHeader>
 
-          <CardContent className="space-y-3">
+          <CardContent className="p-5 space-y-3">
             {(data.topUniversities ?? []).length >
             0 ? (
               data.topUniversities.map((item) => (
                 <div
                   key={item._id}
-                  className="flex items-center justify-between rounded-xl border border-blue-100 bg-blue-50/40 px-4 py-3"
+                  className="flex items-center justify-between rounded-xl border border-border/60 bg-blue-50/40 dark:bg-blue-950/20 px-3.5 py-3 transition-all hover:bg-blue-50/60 dark:hover:bg-blue-950/30"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
                       <GraduationCap className="h-4 w-4" />
                     </div>
 
-                    <span className="truncate text-sm font-medium">
+                    <span className="truncate text-xs sm:text-sm font-semibold text-foreground">
                       {item._id}
                     </span>
                   </div>
 
-                  <span className="font-bold text-blue-700">
+                  <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
                     {item.count}
                   </span>
                 </div>

@@ -3,6 +3,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { formatNumber } from "../../utils";
+import { cn } from "@/lib/utils";
 
 type OverviewCardProps = {
   title: string;
@@ -22,28 +23,34 @@ export default function OverviewCard({
   iconClassName,
 }: OverviewCardProps) {
   return (
-    <Card className={className}>
-      <CardContent className="p-5">
+    <Card
+      className={cn(
+        "relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-card/[0.04] via-card to-card p-5 shadow-xs transition-all hover:border-border/90 hover:shadow-sm",
+        className,
+      )}
+    >
+      <CardContent className="p-0">
         <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
+          <div className="space-y-1.5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {title}
             </p>
 
-            <p className="mt-4 text-3xl font-bold tracking-tight">
+            <p className="text-3xl font-extrabold tracking-tight text-foreground">
               {formatNumber(value)}
             </p>
 
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {description}
             </p>
           </div>
 
           <div
-            className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+            className={cn(
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
               iconClassName ??
-              "bg-muted text-foreground"
-            }`}
+                "bg-muted/60 text-foreground"
+            )}
           >
             {icon}
           </div>

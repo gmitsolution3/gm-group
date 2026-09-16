@@ -20,11 +20,13 @@ export default function StatusRow({
   const percent = percentage(value, total);
 
   return (
-    <div>
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium">{label}</span>
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between">
+        <span className="text-xs sm:text-sm font-semibold text-muted-foreground">
+          {label}
+        </span>
 
-        <span className="text-sm font-semibold">
+        <span className="text-sm font-bold text-foreground">
           {formatNumber(value)}{" "}
           <span className="text-xs font-normal text-muted-foreground">
             ({percent}%)
@@ -32,9 +34,9 @@ export default function StatusRow({
         </span>
       </div>
 
-      <div className="h-2 overflow-hidden rounded-full bg-muted">
+      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
         <div
-          className={`h-full rounded-full ${color}`}
+          className={`h-full rounded-full ${color} transition-all duration-500`}
           style={{
             width: `${percent}%`,
           }}

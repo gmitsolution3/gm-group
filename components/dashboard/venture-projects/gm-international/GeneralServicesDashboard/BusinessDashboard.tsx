@@ -53,8 +53,8 @@ export default function BusinessDashboard({
           }
           description="Registered companies"
           icon={<BriefcaseBusiness />}
-          className="border-violet-100 bg-violet-50/40"
-          iconClassName="bg-violet-100 text-violet-600"
+          className="from-violet-[0.04]"
+          iconClassName="bg-violet-100/80 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400"
         />
 
         <OverviewCard
@@ -62,8 +62,8 @@ export default function BusinessDashboard({
           value={totalApplications}
           description="Business applications"
           icon={<BriefcaseBusiness />}
-          className="border-blue-100 bg-blue-50/40"
-          iconClassName="bg-blue-100 text-blue-600"
+          className="from-blue-[0.04]"
+          iconClassName="bg-blue-100/80 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
         />
 
         <OverviewCard
@@ -71,8 +71,8 @@ export default function BusinessDashboard({
           value={totalDeals}
           description="Business deals"
           icon={<TrendingUp />}
-          className="border-emerald-100 bg-emerald-50/40"
-          iconClassName="bg-emerald-100 text-emerald-600"
+          className="from-emerald-[0.04]"
+          iconClassName="bg-emerald-100/80 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400"
         />
 
         <OverviewCard
@@ -83,8 +83,8 @@ export default function BusinessDashboard({
           }
           description="Business packages"
           icon={<Package />}
-          className="border-amber-100 bg-amber-50/40"
-          iconClassName="bg-amber-100 text-amber-600"
+          className="from-amber-[0.04]"
+          iconClassName="bg-amber-100/80 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400"
         />
 
         <OverviewCard
@@ -95,34 +95,34 @@ export default function BusinessDashboard({
           }
           description="Total business activity"
           icon={<TrendingUp />}
-          className="border-cyan-100 bg-cyan-50/40"
-          iconClassName="bg-cyan-100 text-cyan-600"
+          className="from-cyan-[0.04]"
+          iconClassName="bg-cyan-100/80 text-cyan-600 dark:bg-cyan-900/40 dark:text-cyan-400"
         />
       </section>
 
       {/* Application + Deal status */}
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-100/80 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400">
                 <BriefcaseBusiness className="h-5 w-5" />
               </div>
 
               <div>
-                <CardTitle>
+                <CardTitle className="text-base font-bold">
                   Business applications
                 </CardTitle>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-0.5 text-xs text-muted-foreground">
                   Current application status.
                 </p>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-5">
+          <CardContent className="p-5 space-y-5">
             <StatusRow
               label="Pending"
               value={
@@ -155,18 +155,18 @@ export default function BusinessDashboard({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
+        <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+          <CardHeader className="border-b border-border/60 pb-4">
+            <CardTitle className="text-base font-bold">
               Business deals
             </CardTitle>
 
-            <p className="text-sm text-muted-foreground">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Current deal status.
             </p>
           </CardHeader>
 
-          <CardContent className="space-y-5">
+          <CardContent className="p-5 space-y-5">
             <StatusRow
               label="Pending"
               value={
@@ -192,37 +192,37 @@ export default function BusinessDashboard({
 
       {/* Top countries */}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
+      <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+        <CardHeader className="border-b border-border/60 pb-4">
+          <CardTitle className="text-base font-bold">
             Top business countries
           </CardTitle>
 
-          <p className="text-sm text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Countries generating the most business
             applications.
           </p>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className="p-5 space-y-3">
           {(data.topCountries ?? []).length >
           0 ? (
             data.topCountries.map((country) => (
               <div
                 key={country._id}
-                className="flex items-center justify-between rounded-xl border border-violet-100 bg-violet-50/40 px-4 py-3"
+                className="flex items-center justify-between rounded-xl border border-border/60 bg-violet-50/40 dark:bg-violet-950/20 px-3.5 py-3 transition-all hover:bg-violet-50/60 dark:hover:bg-violet-950/30"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-100 text-violet-600">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-violet-100/80 text-violet-600 dark:bg-violet-900/40 dark:text-violet-400">
                     <MapPin className="h-4 w-4" />
                   </div>
 
-                  <span className="text-sm font-medium">
+                  <span className="text-xs sm:text-sm font-semibold text-foreground">
                     {country._id}
                   </span>
                 </div>
 
-                <span className="font-bold text-violet-700">
+                <span className="text-sm font-bold text-violet-600 dark:text-violet-400">
                   {country.count}
                 </span>
               </div>
