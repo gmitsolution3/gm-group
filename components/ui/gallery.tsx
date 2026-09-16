@@ -40,7 +40,7 @@ function Gallery({
   onOpen: () => void;
 }) {
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-auto overflow-hidden">
       <div className="mx-auto flex w-fit max-w-full gap-1">
         {items.map((item, i) => {
           const active = index === i;

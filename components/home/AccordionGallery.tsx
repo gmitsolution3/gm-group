@@ -164,18 +164,47 @@ export default function AccordionGallery() {
 
         {/* Gallery */}
         <Reveal delay={0.15}>
-          <div className="mt-16 border-y border-black/[0.08] py-10 sm:mt-20 lg:mt-24 lg:py-14">
-            <Gallery
-              items={galleryItems}
-              index={index}
-              onSelect={setIndex}
-              onOpen={() => setOpen(true)}
-            />
+          <div className="mt-16 py-10 sm:mt-20 lg:mt-24 lg:py-14 space-y-8">
+            <div className="flex items-center justify-start">
+              <Gallery
+                items={galleryItems}
+                index={index}
+                onSelect={setIndex}
+                onOpen={() => setOpen(true)}
+              />
+            </div>
+
+            <div className="flex items-center justify-end">
+              <Gallery
+                items={galleryItems}
+                index={index}
+                onSelect={setIndex}
+                onOpen={() => setOpen(true)}
+              />
+            </div>
+
+            <div className="flex items-center justify-start">
+              <Gallery
+                items={galleryItems}
+                index={index}
+                onSelect={setIndex}
+                onOpen={() => setOpen(true)}
+              />
+            </div>
+
+            <div className="flex items-center justify-end">
+              <Gallery
+                items={galleryItems}
+                index={index}
+                onSelect={setIndex}
+                onOpen={() => setOpen(true)}
+              />
+            </div>
           </div>
         </Reveal>
 
         {/* Active item information */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        {/* <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <motion.div
             key={activeItem.id}
             initial={reduce ? { opacity: 0 } : { opacity: 0, y: 10 }}
@@ -198,7 +227,7 @@ export default function AccordionGallery() {
             {String(index + 1).padStart(2, "0")} /{" "}
             {String(galleryItems.length).padStart(2, "0")}
           </span>
-        </div>
+        </div> */}
       </div>
 
       {/* Modal */}
