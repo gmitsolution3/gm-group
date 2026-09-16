@@ -59,7 +59,6 @@ export function VentureDashboards() {
     return (
       <SelectedVenture
         selectedVenture={selectedVenture}
-        handleBack={handleBack}
       />
     );
   }
