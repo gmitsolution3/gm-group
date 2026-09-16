@@ -9,10 +9,8 @@ import {
   formatCurrency,
   formatNumber,
   formatAverageOrder,
-  formatPercentage,
-  calculatePercentage,
-  getGranularityDisplay,
   financeDateRangeOptions,
+  getGranularityDisplay,
 } from "../utils";
 import {
   DollarSign,
@@ -22,185 +20,363 @@ import {
   Calculator,
   Smartphone,
   Wallet,
+  TrendingUp,
+  TrendingDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  Users,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
+// Recharts import
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area } from "recharts";
 
-
-// Financial metric card component
-interface FinancialMetricCardProps {
+// Finance KPICard - premium design matching Statistics tab
+interface KPICardProps {
   title: string;
   value: number;
   icon: React.ReactNode;
   format: "currency" | "number" | "average";
-  description?: string;
-  color?: "blue" | "green" | "orange" | "purple" | "cyan" | "indigo";
+  description: string;
+  variant?: "primary" | "secondary" | "accent";
+  trend?: "up" | "down" | "neutral";
+  trendValue?: string;
 }
 
-function FinancialMetricCard({
+function KPICard({
   title,
   value,
   icon,
   format,
   description,
-  color = "blue",
-}: FinancialMetricCardProps) {
+  variant = "primary",
+  trend = "neutral",
+  trendValue,
+}: KPICardProps) {
   const formattedValue = format === "currency"
     ? formatCurrency(value)
     : format === "average"
     ? formatAverageOrder(value)
     : formatNumber(value);
 
-  const colorClasses = {
-    blue: "border-blue-100 bg-blue-50/50",
-    green: "border-green-100 bg-green-50/50",
-    orange: "border-orange-100 bg-orange-50/50",
-    purple: "border-purple-100 bg-purple-50/50",
-    cyan: "border-cyan-100 bg-cyan-50/50",
-    indigo: "border-indigo-100 bg-indigo-50/50",
+  const variantClasses = {
+    primary: "bg-gradient-to-br from-primary/5 via-card to-card border-primary/20",
+    secondary: "bg-gradient-to-br from-secondary/5 via-card to-card border-secondary/20",
+    accent: "bg-gradient-to-br from-accent/5 via-card to-card border-accent/20",
   };
 
   const iconClasses = {
-    blue: "bg-blue-100 text-blue-600",
-    green: "bg-green-100 text-green-600",
-    orange: "bg-orange-100 text-orange-600",
-    purple: "bg-purple-100 text-purple-600",
-    cyan: "bg-cyan-100 text-cyan-600",
-    indigo: "bg-indigo-100 text-indigo-600",
+    primary: "bg-primary/10 text-primary",
+    secondary: "bg-secondary/10 text-secondary",
+    accent: "bg-accent/10 text-accent",
+  };
+
+  const trendIcon = {
+    up: <ArrowUpRight className="h-4 w-4 text-emerald-600" />,
+    down: <ArrowDownRight className="h-4 w-4 text-red-600" />,
+    neutral: <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-50" />,
   };
 
   return (
-    <div className={cn(
-      "rounded-xl border p-4 transition-all hover:shadow-sm",
-      colorClasses[color]
+    <Card className={cn(
+      "relative overflow-hidden rounded-2xl border border-border/70 shadow-xs transition-all hover:shadow-sm",
+      variantClasses[variant]
     )}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-2 text-2xl font-bold text-foreground">{formattedValue}</p>
-          {description && (
-            <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-          )}
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5 min-w-0 flex-1">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {title}
+              </p>
+              {trend !== "neutral" && trendValue && (
+                <div className={cn(
+                  "flex items-center gap-1 rounded-full px-2 py-0.5 text-xs",
+                  trend === "up" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-700"
+                )}>
+                  {trendIcon[trend]}
+                  <span className="font-medium">{trendValue}</span>
+                </div>
+              )}
+            </div>
+            <p className="text-3xl font-extrabold tracking-tight text-foreground">
+              {formattedValue}
+            </p>
+            <p className="text-xs text-muted-foreground line-clamp-2">
+              {description}
+            </p>
+          </div>
+          <div className={cn(
+            "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl",
+            iconClasses[variant]
+          )}>
+            {icon}
+          </div>
         </div>
-        <div className={cn("rounded-lg p-2", iconClasses[color])}>
-          {icon}
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
-// Simple bar chart component for revenue/orders visualization
-interface SimpleBarChartProps {
+// RevenueLineChart - premium line chart
+interface RevenueLineChartProps {
   data: { label: string; value: number }[];
+  granularity: string;
   title: string;
-  color?: string;
-  format?: "currency" | "number";
 }
 
-function SimpleBarChart({ data, title, color = "bg-blue-500", format = "currency" }: SimpleBarChartProps) {
-  const maxValue = Math.max(...data.map(d => d.value), 1);
+function RevenueLineChart({ data, granularity, title }: RevenueLineChartProps) {
+  const chartData = useMemo(() => {
+    return data.map((item, index) => ({
+      ...item,
+      name: item.label,
+      revenue: item.value,
+      index,
+    }));
+  }, [data]);
 
   return (
-    <div className="space-y-4">
-      <h3 className="font-medium text-foreground">{title}</h3>
-      <div className="space-y-3">
-        {data.map((item, index) => {
-          const percentage = calculatePercentage(item.value, maxValue);
-
-          return (
-            <div key={index} className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{item.label}</span>
-                <span className="font-medium">
-                  {format === "currency" ? formatCurrency(item.value) : formatNumber(item.value)}
-                </span>
-              </div>
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className={cn("h-full rounded-full transition-all", color)}
-                  style={{ width: `${percentage}%` }}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold">Revenue Trend</CardTitle>
+            <CardDescription className="text-sm">
+              {granularity === "hourly" ? "Hourly revenue" :
+               granularity === "daily" ? "Daily revenue" :
+               granularity === "weekly" ? "Weekly revenue" : "Monthly revenue"}
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="font-medium">
+            {granularity}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tickMargin={8}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tickMargin={8}
+                tickFormatter={(value) => formatCurrency(value).replace(/[^0-9.]/g, "")}
+              />
+              <Tooltip
+                formatter={(value) => [formatCurrency(Number(value)), "Revenue"]}
+                labelFormatter={(label) => `Date: ${label}`}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="revenue"
+                stroke="#10b981"
+                strokeWidth={2}
+                fill="url(#colorRevenue)"
+                dot={{ stroke: "#10b981", strokeWidth: 2, r: 3 }}
+                activeDot={{ r: 6, strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
-// Payment methods breakdown
-interface PaymentMethodsBreakdownProps {
+// OrdersBarChart - premium bar chart
+interface OrdersBarChartProps {
+  data: { label: string; value: number }[];
+  granularity: string;
+  title: string;
+}
+
+function OrdersBarChart({ data, granularity, title }: OrdersBarChartProps) {
+  const chartData = useMemo(() => {
+    return data.map((item, index) => ({
+      ...item,
+      name: item.label,
+      orders: item.value,
+      index,
+    }));
+  }, [data]);
+
+  return (
+    <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg font-bold">Orders Trend</CardTitle>
+            <CardDescription className="text-sm">
+              {granularity === "hourly" ? "Hourly orders" :
+               granularity === "daily" ? "Daily orders" :
+               granularity === "weekly" ? "Weekly orders" : "Monthly orders"}
+            </CardDescription>
+          </div>
+          <Badge variant="outline" className="font-medium">
+            {granularity}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[280px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tickMargin={8}
+              />
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#6b7280", fontSize: 12 }}
+                tickMargin={8}
+              />
+              <Tooltip
+                formatter={(value) => [formatNumber(Number(value)), "Orders"]}
+                labelFormatter={(label) => `Date: ${label}`}
+                contentStyle={{
+                  backgroundColor: "white",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                }}
+              />
+              <Bar
+                dataKey="orders"
+                fill="#3b82f6"
+                radius={[4, 4, 0, 0]}
+                maxBarSize={40}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// PaymentMethodsCard - premium payment methods display
+interface PaymentMethodsCardProps {
   cashRevenue: number;
   wechatRevenue: number;
   totalRevenue: number;
 }
 
-function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: PaymentMethodsBreakdownProps) {
-  const cashPercentage = calculatePercentage(cashRevenue, totalRevenue);
-  const wechatPercentage = calculatePercentage(wechatRevenue, totalRevenue);
+function PaymentMethodsCard({ cashRevenue, wechatRevenue, totalRevenue }: PaymentMethodsCardProps) {
+  const cashPercentage = totalRevenue > 0 ? (cashRevenue / totalRevenue) * 100 : 0;
+  const wechatPercentage = totalRevenue > 0 ? (wechatRevenue / totalRevenue) * 100 : 0;
 
   return (
-    <Card>
+    <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
       <CardHeader>
-        <CardTitle className="text-lg">Payment Methods</CardTitle>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo/10 text-indigo">
+            <CreditCard className="h-5 w-5" />
+          </div>
+          <div>
+            <CardTitle className="text-lg font-bold">Payment Revenue</CardTitle>
+            <CardDescription className="text-sm">Revenue by payment method</CardDescription>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3">
-          {/* Cash */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <Wallet className="h-4 w-4 text-blue-600" />
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          {/* Cash Revenue */}
+          <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
+                <Wallet className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-medium">Cash</p>
-                <p className="text-sm text-muted-foreground">Physical cash payments</p>
+                <p className="text-sm font-medium">Cash Revenue</p>
+                <p className="text-xs text-muted-foreground">Physical cash payments</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-semibold">{formatCurrency(cashRevenue)}</p>
-              <p className="text-sm text-muted-foreground">{formatPercentage(cashPercentage, 1)} of total</p>
+              <p className="text-lg font-bold">{formatCurrency(cashRevenue)}</p>
+              <p className="text-xs text-muted-foreground">
+                {cashPercentage.toFixed(1)}% of total
+              </p>
             </div>
           </div>
 
-          {/* WeChat */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-green-100 p-2">
-                <Smartphone className="h-4 w-4 text-green-600" />
+          {/* WeChat Revenue */}
+          <div className="flex items-center justify-between rounded-xl border border-border/60 bg-muted/20 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400">
+                <Smartphone className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-medium">WeChat Pay</p>
-                <p className="text-sm text-muted-foreground">Mobile payments</p>
+                <p className="text-sm font-medium">WeChat Revenue</p>
+                <p className="text-xs text-muted-foreground">Mobile payments</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-semibold">{formatCurrency(wechatRevenue)}</p>
-              <p className="text-sm text-muted-foreground">{formatPercentage(wechatPercentage, 1)} of total</p>
+              <p className="text-lg font-bold">{formatCurrency(wechatRevenue)}</p>
+              <p className="text-xs text-muted-foreground">
+                {wechatPercentage.toFixed(1)}% of total
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="pt-4">
-          <div className="flex h-3 w-full overflow-hidden rounded-full">
-            <div
-              className="bg-blue-500 transition-all"
-              style={{ width: `${cashPercentage}%` }}
-              title={`Cash: ${formatCurrency(cashRevenue)}`}
-            />
-            <div
-              className="bg-green-500 transition-all"
-              style={{ width: `${wechatPercentage}%` }}
-              title={`WeChat Pay: ${formatCurrency(wechatRevenue)}`}
-            />
+        {/* Visual Progress Bar */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="font-medium">Payment Method Split</span>
+            <span className="text-muted-foreground">
+              {cashPercentage.toFixed(1)}% Cash • {wechatPercentage.toFixed(1)}% WeChat
+            </span>
           </div>
-          <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="flex h-full">
+              {cashPercentage > 0 && (
+                <div
+                  className="bg-blue-500 transition-all"
+                  style={{ width: `${cashPercentage}%` }}
+                  title={`Cash: ${formatCurrency(cashRevenue)}`}
+                />
+              )}
+              {wechatPercentage > 0 && (
+                <div
+                  className="bg-emerald-500 transition-all"
+                  style={{ width: `${wechatPercentage}%` }}
+                  title={`WeChat: ${formatCurrency(wechatRevenue)}`}
+                />
+              )}
+            </div>
+          </div>
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Cash</span>
             <span>WeChat Pay</span>
           </div>
@@ -210,6 +386,89 @@ function PaymentMethodsBreakdown({ cashRevenue, wechatRevenue, totalRevenue }: P
   );
 }
 
+// PerformanceSummaryCard - summary metrics
+interface PerformanceSummaryCardProps {
+  summary: {
+    totalRevenue: number;
+    totalOrders: number;
+    averageOrderValue: number;
+  };
+  charts: {
+    granularity: string;
+    revenue: any[];
+  };
+}
+
+function PerformanceSummaryCard({ summary, charts }: PerformanceSummaryCardProps) {
+  return (
+    <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+      <CardHeader>
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo/10 text-indigo">
+            <BarChart3 className="h-5 w-5" />
+          </div>
+          <div>
+            <CardTitle className="text-lg font-bold">Performance Summary</CardTitle>
+            <CardDescription className="text-sm">
+              Key financial metrics at a glance
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-2 rounded-xl border border-border/60 bg-muted/10 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Revenue per Order
+            </p>
+            <p className="text-2xl font-extrabold text-foreground">
+              {formatCurrency(summary.averageOrderValue)}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Average transaction value
+            </p>
+          </div>
+
+          <div className="space-y-2 rounded-xl border border-border/60 bg-muted/10 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Order Volume
+            </p>
+            <p className="text-2xl font-extrabold text-foreground">
+              {formatNumber(summary.totalOrders)}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Total transactions
+            </p>
+          </div>
+
+          <div className="space-y-2 rounded-xl border border-border/60 bg-muted/10 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Data Points
+            </p>
+            <p className="text-2xl font-extrabold text-foreground">
+              {charts.revenue.length}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {charts.granularity} data points
+            </p>
+          </div>
+
+          <div className="space-y-2 rounded-xl border border-border/60 bg-muted/10 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Time Granularity
+            </p>
+            <p className="text-2xl font-extrabold text-foreground capitalize">
+              {charts.granularity}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Data resolution
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 interface FinanceTabProps {
   onRetry?: () => void;
@@ -240,8 +499,9 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
     const ordersData = [...data.data.charts.orders];
 
     if (revenueData.length > maxDataPoints) {
-      revenueData.splice(maxDataPoints);
-      ordersData.splice(maxDataPoints);
+      // Take the most recent data points
+      revenueData.splice(0, revenueData.length - maxDataPoints);
+      ordersData.splice(0, ordersData.length - maxDataPoints);
     }
 
     return {
@@ -258,43 +518,53 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
         {/* Header with Range Selector */}
         <div className="flex items-center justify-between">
           <div>
-            <Skeleton className="h-7 w-48 rounded-lg" />
-            <Skeleton className="mt-1 h-4 w-64 rounded-md" />
+            <Skeleton className="h-8 w-48 rounded-lg" />
+            <Skeleton className="mt-2 h-4 w-64 rounded-md" />
           </div>
-          <Skeleton className="h-10 w-32 rounded-lg" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-4 rounded" />
+            <Skeleton className="h-10 w-40 rounded-lg" />
+          </div>
         </div>
 
-        {/* Financial Metrics Grid */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {/* KPI Cards Skeleton */}
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
           {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="rounded-xl border border-border bg-card p-4">
-              <div className="flex items-start justify-between">
-                <div>
+            <div key={index} className="rounded-2xl border border-border/70 bg-card p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-2 flex-1">
                   <Skeleton className="h-4 w-20 rounded-md" />
-                  <Skeleton className="mt-2 h-8 w-24 rounded-lg" />
+                  <Skeleton className="h-8 w-28 rounded-lg" />
+                  <Skeleton className="h-3 w-40 rounded" />
                 </div>
-                <Skeleton className="h-10 w-10 rounded-lg" />
+                <Skeleton className="h-12 w-12 rounded-xl" />
               </div>
             </div>
           ))}
         </div>
 
-        {/* Charts Placeholder */}
+        {/* Charts Skeleton */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-xl border border-border bg-card p-6">
-            <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
-            <Skeleton className="h-64 w-full rounded-lg" />
+          <div className="rounded-2xl border border-border/70 bg-card p-6">
+            <Skeleton className="mb-4 h-6 w-40 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+            <Skeleton className="mt-6 h-64 w-full rounded-lg" />
           </div>
-          <div className="rounded-xl border border-border bg-card p-6">
-            <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
-            <Skeleton className="h-64 w-full rounded-lg" />
+          <div className="rounded-2xl border border-border/70 bg-card p-6">
+            <Skeleton className="mb-4 h-6 w-40 rounded-lg" />
+            <Skeleton className="h-4 w-64 rounded-md" />
+            <Skeleton className="mt-6 h-64 w-full rounded-lg" />
           </div>
         </div>
 
-        {/* Payment Methods Placeholder */}
-        <div className="rounded-xl border border-border bg-card p-6">
-          <Skeleton className="mb-4 h-7 w-40 rounded-lg" />
-          <Skeleton className="h-32 w-full rounded-lg" />
+        {/* Payment Methods Skeleton */}
+        <div className="rounded-2xl border border-border/70 bg-card p-6">
+          <Skeleton className="mb-6 h-6 w-40 rounded-lg" />
+          <div className="space-y-4">
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-3 w-full rounded-full" />
+          </div>
         </div>
       </div>
     );
@@ -303,12 +573,12 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
   // Show error state
   if (isError || !data?.success || !data.data) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-4 rounded-xl border border-border bg-card p-12 text-center">
+      <div className="flex flex-col items-center justify-center space-y-6 rounded-2xl border border-border/70 bg-card p-12 text-center">
         <div className="rounded-full bg-destructive/10 p-4">
           <DollarSign className="h-12 w-12 text-destructive" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold text-foreground">
+          <h3 className="text-xl font-bold text-foreground">
             Unable to load financial data
           </h3>
           <p className="text-muted-foreground">
@@ -319,11 +589,12 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
           <Button
             onClick={() => refetch()}
             variant="outline"
+            size="lg"
           >
             Retry
           </Button>
           {onRetry && (
-            <Button onClick={onRetry}>
+            <Button onClick={onRetry} size="lg">
               Refresh Dashboard
             </Button>
           )}
@@ -339,23 +610,25 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
   return (
     <div className="space-y-8">
       {/* Header with Range Selector */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Financial Overview</h2>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Financial Overview
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {getGranularityDisplay(charts.granularity, selectedRange)}
+            Monitor revenue, orders, and payment performance
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-muted-foreground" />
           <Select value={selectedRange} onValueChange={handleRangeChange}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-40 rounded-xl border-border/70">
               <SelectValue placeholder="Select range" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-border/70">
               {financeDateRangeOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="rounded-lg">
                   {option.label}
                 </SelectItem>
               ))}
@@ -364,152 +637,100 @@ export function FinanceTab({ onRetry }: FinanceTabProps) {
         </div>
       </div>
 
-      {/* Financial Metrics Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <FinancialMetricCard
+      {/* Financial KPI Cards */}
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
+        <KPICard
           title="Total Revenue"
           value={summary.totalRevenue}
           icon={<DollarSign className="h-5 w-5" />}
           format="currency"
           description="Total income generated"
-          color="green"
+          variant="primary"
         />
 
-        <FinancialMetricCard
+        <KPICard
           title="Total Orders"
           value={summary.totalOrders}
           icon={<ShoppingBag className="h-5 w-5" />}
           format="number"
           description="Number of transactions"
-          color="blue"
+          variant="secondary"
         />
 
-        <FinancialMetricCard
+        <KPICard
           title="Avg Order Value"
           value={summary.averageOrderValue}
           icon={<Calculator className="h-5 w-5" />}
           format="average"
           description="Average revenue per order"
-          color="purple"
+          variant="accent"
         />
 
-        <FinancialMetricCard
+        <KPICard
           title="Cash Revenue"
           value={summary.cashRevenue}
           icon={<Wallet className="h-5 w-5" />}
           format="currency"
           description="Revenue from cash payments"
-          color="orange"
+          variant="primary"
         />
 
-        <FinancialMetricCard
+        <KPICard
           title="WeChat Revenue"
           value={summary.wechatRevenue}
           icon={<Smartphone className="h-5 w-5" />}
           format="currency"
           description="Revenue from WeChat Pay"
-          color="cyan"
+          variant="secondary"
         />
       </div>
 
       {/* Charts Section */}
       {chartData && (
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Revenue Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Revenue Trend</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {selectedOption?.label} • {charts.granularity} view
-              </p>
-            </CardHeader>
-            <CardContent>
-              <SimpleBarChart
-                data={chartData.revenue}
-                title="Revenue"
-                color="bg-green-500"
-                format="currency"
-              />
-            </CardContent>
-          </Card>
-
-          {/* Orders Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Orders Trend</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {selectedOption?.label} • {charts.granularity} view
-              </p>
-            </CardHeader>
-            <CardContent>
-              <SimpleBarChart
-                data={chartData.orders}
-                title="Orders"
-                color="bg-blue-500"
-                format="number"
-              />
-            </CardContent>
-          </Card>
+          <RevenueLineChart
+            data={chartData.revenue}
+            granularity={chartData.granularity}
+            title="Revenue Trend"
+          />
+          <OrdersBarChart
+            data={chartData.orders}
+            granularity={chartData.granularity}
+            title="Orders Trend"
+          />
         </div>
       )}
 
-      {/* Payment Methods Breakdown */}
-      <PaymentMethodsBreakdown
+      {/* Payment Methods */}
+      <PaymentMethodsCard
         cashRevenue={summary.cashRevenue}
         wechatRevenue={summary.wechatRevenue}
         totalRevenue={summary.totalRevenue}
       />
 
-      {/* Summary Stats */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Performance Summary</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Key metrics for {selectedOption?.label}
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Revenue per Order</p>
-              <p className="text-2xl font-bold">{formatCurrency(summary.averageOrderValue)}</p>
-            </div>
+      {/* Performance Summary */}
+      <PerformanceSummaryCard
+        summary={summary}
+        charts={charts}
+      />
 
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Cash vs Digital</p>
-              <p className="text-2xl font-bold">
-                {formatPercentage(
-                  calculatePercentage(summary.cashRevenue, summary.totalRevenue),
-                  0,
-                )} Cash
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Data Points</p>
-              <p className="text-2xl font-bold">{charts.revenue.length}</p>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Time Period</p>
-              <p className="text-2xl font-bold capitalize">{charts.granularity}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Empty State Handling */}
+      {/* Zero Data State */}
       {summary.totalRevenue === 0 && (
-        <div className="rounded-xl border border-border bg-card p-8 text-center">
+        <div className="rounded-2xl border border-border/70 bg-card p-8 text-center">
           <div className="mx-auto max-w-md">
-            <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-semibold text-foreground">No Financial Data Available</h3>
+            <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground/60" />
+            <h3 className="mt-4 text-lg font-bold text-foreground">No Financial Data Available</h3>
             <p className="mt-2 text-muted-foreground">
               {selectedOption?.label} shows no revenue or orders. Data will appear here as transactions occur.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Try selecting a different time range to view historical data.
-            </p>
+            <div className="mt-6 flex justify-center gap-3">
+              <Button variant="outline" onClick={() => setSelectedRange("1month")}>
+                View Last Month
+              </Button>
+              <Button variant="outline" onClick={() => setSelectedRange("3months")}>
+                View Last 3 Months
+              </Button>
+            </div>
           </div>
         </div>
       )}
