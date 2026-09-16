@@ -9,6 +9,7 @@ import Values from "@/components/home/Values";
 import Ventures from "@/components/home/Ventures/Ventures";
 import VissionMission from "@/components/home/VisionMission";
 import GlobalPresence from "@/components/home/GlobalPresence";
+import AccordionGallery from "@/components/home/AccordionGallery";
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
       <GroupIdentity />
       <Ventures />
       <Growth />
+       <AccordionGallery />
       <VissionMission />
       <Values />
       <Story />
