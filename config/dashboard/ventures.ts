@@ -7,6 +7,7 @@ import {
   Mosque,
   WalletCards,
   Truck,
+  Plane,
   type LucideIcon,
 } from "lucide-react";
 
@@ -131,6 +132,21 @@ export const dashboardVentures: DashboardVenture[] = [
         description: "Overview of logistics and fleet operations.",
         href: "/dashboard/venture-dashboards/gm-logistic",
         icon: Truck,
+      },
+    ],
+  },
+
+  {
+    name: "GM Aviation",
+    description: "Aviation and air travel operations.",
+    logo: "/images/ventures/gm-aviation.png",
+
+    dashboards: [
+      {
+        name: "Aviation Dashboard",
+        description: "Overview of aviation operations, bookings, and revenue.",
+        href: "/dashboard/venture-dashboards/gm-aviation",
+        icon: Plane,
       },
     ],
   },
