@@ -6,418 +6,367 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { API_ENDPOINTS } from "@/config/api/api";
 import { dashboardVentures } from "@/config/dashboard/ventures";
+import { useFetch } from "@/hooks/api/useFetch";
+import { cn } from "@/lib/utils";
+import { GMAviationDashboardResponse } from "@/types/dashboard/gm-aviation.type";
 import {
-  ArrowUpRight,
   Calendar,
-  CheckCircle2,
-  Clock,
-  DollarSign,
+  ClipboardCheck,
   Plane,
   RefreshCw,
-  TrendingUp,
+  UserCircle,
   Users,
+  GraduationCap,
+  Layers,
+  FileCheck
 } from "lucide-react";
 import { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { formatCurrency, formatDate, formatNumber } from "../utils";
+import { formatDate, formatNumber } from "../utils";
+import GMAviationDashboardError from "./GMAviationDashboardError";
+import GMAviationDashboardLoader from "./GMAviationDashboardLoader";
 
-const dummyMonthlyData = [
-  { month: "Jan", bookings: 820, revenue: 6800000 },
-  { month: "Feb", bookings: 940, revenue: 7900000 },
-  { month: "Mar", bookings: 1010, revenue: 8500000 },
-  { month: "Apr", bookings: 1180, revenue: 9200000 },
-  { month: "May", bookings: 1240, revenue: 9800000 },
-  { month: "Jun", bookings: 1284, revenue: 12800000 },
-];
-
-const dummyRecentBookings = [
-  {
-    id: "BK-7892",
-    passenger: "A. Rahman",
-    route: "DAC → DXB",
-    flight: "GMA-204",
-    date: "2026-09-16",
-    status: "Confirmed",
-    amount: 285000,
-  },
-  {
-    id: "BK-7893",
-    passenger: "S. Ahmed",
-    route: "DAC → JED",
-    flight: "GMA-207",
-    date: "2026-09-15",
-    status: "Confirmed",
-    amount: 240000,
-  },
-  {
-    id: "BK-7894",
-    passenger: "R. Hossain",
-    route: "DAC → KUL",
-    flight: "GMA-211",
-    date: "2026-09-14",
-    status: "Pending",
-    amount: 265000,
-  },
-  {
-    id: "BK-7895",
-    passenger: "M. Khan",
-    route: "DAC → SIN",
-    flight: "GMA-218",
-    date: "2026-09-13",
-    status: "Cancelled",
-    amount: 295000,
-  },
-  {
-    id: "BK-7896",
-    passenger: "T. Islam",
-    route: "DAC → BKK",
-    flight: "GMA-225",
-    date: "2026-09-12",
-    status: "Confirmed",
-    amount: 205000,
-  },
-];
-
-const dummyTopRoutes = [
-  { route: "DAC → DXB", passengers: 842, bookings: 156 },
-  { route: "DAC → JED", passengers: 728, bookings: 138 },
-  { route: "DAC → KUL", passengers: 642, bookings: 122 },
-  { route: "DAC → SIN", passengers: 534, bookings: 104 },
-  { route: "DAC → BKK", passengers: 486, bookings: 98 },
-];
-
-const dummyFlightStatus = [
-  { status: "Scheduled", count: 18, color: "bg-blue-500" },
-  { status: "Boarding", count: 3, color: "bg-yellow-500" },
-  { status: "In Flight", count: 7, color: "bg-green-500" },
-  { status: "Landed", count: 12, color: "bg-purple-500" },
-  { status: "Delayed", count: 2, color: "bg-orange-500" },
-  { status: "Cancelled", count: 1, color: "bg-red-500" },
-];
+/* ========================================================================== */
+/* MAIN DASHBOARD COMPONENT                                                   */
+/* ========================================================================== */
 
 export default function GMAviationDashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const gmAviation = dashboardVentures.find(
-    (v) => v.name === "GM Aviation",
-  );
+  // Fetch dashboard statistics
+  const { data, isLoading, isError, refetch } =
+    useFetch<GMAviationDashboardResponse>(
+      API_ENDPOINTS.gmAviation.dashboard,
+    );
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
+    await refetch();
     setTimeout(() => setIsRefreshing(false), 500);
   };
 
+  // Show loading state
+  if (isLoading) {
+    return <GMAviationDashboardLoader />;
+  }
+
+  // Show error state
+  if (isError || !data?.success || !data.data) {
+    return (
+      <GMAviationDashboardError
+        message={data?.message}
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  const { courses, admissions, enrollments } = data.data;
+
+  const gmAviationVenture = dashboardVentures.find(
+    (v) => v.name === "GM Aviation",
+  );
+
   return (
-    <div className="space-y-8">
-      <VentureHeader selectedVenture={gmAviation!} />
+    <div className="w-full">
+      <div className="mx-auto w-full max-w-[1440px] space-y-8 p-6 sm:p-8 lg:p-10">
+        {/* Venture Header */}
+        {gmAviationVenture && (
+          <VentureHeader selectedVenture={gmAviationVenture} />
+        )}
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold">Aviation Operations Dashboard</h2>
-          <p className="text-sm text-muted-foreground">
-            Real-time overview of aviation operations, bookings, flights, and revenue.
-          </p>
+        {/* Dashboard Title & Quick Actions Bar */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Aviation Dashboard
+              </h1>
+              <Badge
+                variant="outline"
+                className="hidden sm:inline-flex rounded-full border-blue-500/30 bg-blue-500/[0.06] text-blue-600 dark:text-blue-400 font-medium text-xs px-2.5 py-0.5"
+              >
+                Live Overview
+              </Badge>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground flex items-center gap-2">
+              <Plane className="h-3.5 w-3.5 text-blue-500/70" />
+              Overview of aviation courses, admissions, and student enrollments.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            <div className="hidden md:flex items-center gap-2 rounded-xl border border-border/70 bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground shadow-xs">
+              <Calendar className="h-3.5 w-3.5 text-blue-500" />
+              <span>{formatDate(new Date())}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="gap-2 rounded-xl border-border/70 bg-card hover:bg-muted/60 text-xs font-medium shadow-xs"
+            >
+              <RefreshCw
+                className={cn(
+                  "h-3.5 w-3.5 text-muted-foreground",
+                  isRefreshing && "animate-spin text-blue-500",
+                )}
+              />
+              <span>
+                {isRefreshing ? "Refreshing..." : "Refresh"}
+              </span>
+            </Button>
+          </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isRefreshing}
-        >
-          <RefreshCw className={`mr-2 h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
-          Refresh Data
-        </Button>
-      </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Users className="h-4 w-4 text-blue-500" />
-              Total Bookings
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatNumber(1284)}</div>
-            <div className="mt-1 flex items-center text-xs text-muted-foreground">
-              <ArrowUpRight className="mr-1 h-3 w-3 text-green-500" />
-              +12% from last month
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Plane className="h-4 w-4 text-green-500" />
-              Active Flights
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatNumber(24)}</div>
-            <div className="mt-1 text-xs text-muted-foreground">
-              3 international, 7 regional, 14 domestic
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Users className="h-4 w-4 text-purple-500" />
-              Passengers
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatNumber(3842)}</div>
-            <div className="mt-1 flex items-center text-xs text-muted-foreground">
-              <ArrowUpRight className="mr-1 h-3 w-3 text-green-500" />
-              +8% from last month
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <DollarSign className="h-4 w-4 text-amber-500" />
-              Revenue
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">৳{formatNumber(12800000)}</div>
-            <div className="mt-1 flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-              +15% from last month
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-2 lg:col-span-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <Clock className="h-4 w-4 text-orange-500" />
-              Pending Requests
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatNumber(18)}</div>
-            <div className="mt-1 text-xs text-muted-foreground">
-              Requires approval
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-2 lg:col-span-1">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium">
-              <CheckCircle2 className="h-4 w-4 text-red-500" />
-              Cancelled
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{formatNumber(32)}</div>
-            <div className="mt-1 text-xs text-muted-foreground">
-              2.5% of total bookings
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Booking & Revenue Chart */}
-      <Card className="col-span-full">
-        <CardHeader>
-          <CardTitle>Booking & Revenue Overview</CardTitle>
-          <CardDescription>
-            Monthly booking count and revenue performance
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={dummyMonthlyData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="month" stroke="#888888" />
-                <YAxis stroke="#888888" />
-                <Tooltip
-                  formatter={(value) => [`${value}`, "Value"]}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Bar dataKey="bookings" name="Bookings" fill="#5b5fef" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="revenue" name="Revenue" fill="#00bfa6" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Flight Status & Recent Bookings */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Flight Status</CardTitle>
-            <CardDescription>Current operational status</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {dummyFlightStatus.map((status) => (
-                <div key={status.status} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`h-3 w-3 rounded-full ${status.color}`} />
-                    <span className="text-sm font-medium">{status.status}</span>
-                  </div>
-                  <Badge variant="secondary">{status.count}</Badge>
+        {/* ================================================================== */}
+        {/* TOP KPI CARDS                                                      */}
+        {/* ================================================================== */}
+        <div className="grid gap-5 sm:grid-cols-3">
+          {/* KPI 1: Total Courses */}
+          <Card className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-indigo/[0.04] via-card to-card p-5 shadow-xs transition-all hover:border-indigo/30 hover:shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Total Courses
+                </p>
+                <p className="text-3xl font-extrabold tracking-tight text-foreground">
+                  {formatNumber(courses.total ?? 0)}
+                </p>
+                <div className="flex items-center gap-2 pt-1 text-xs text-muted-foreground">
+                    <span className="font-semibold text-indigo">
+                      {courses.published}
+                    </span>{" "}
+                    Published
                 </div>
-              ))}
+              </div>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo/10 text-indigo flex-col">
+                <GraduationCap className="h-5 w-5" />
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          </Card>
 
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Bookings</CardTitle>
-            <CardDescription>Latest passenger bookings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {dummyRecentBookings.map((booking) => (
-                <div
-                  key={booking.id}
-                  className="flex items-center justify-between rounded-lg border p-3"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-sm">{booking.id}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {booking.passenger}
-                      </span>
-                    </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {booking.route} • {booking.flight} • {formatDate(booking.date)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge
-                      variant={
-                        booking.status === "Confirmed"
-                          ? "default"
-                          : booking.status === "Pending"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {booking.status}
-                    </Badge>
-                    <div className="text-right text-sm font-semibold">
-                      ৳{formatNumber(booking.amount)}
-                    </div>
-                  </div>
+          {/* KPI 2: Total Admissions */}
+          <Card className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-emerald-500/[0.04] via-card to-card p-5 shadow-xs transition-all hover:border-emerald-500/30 hover:shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Total Admissions
+                </p>
+                <p className="text-3xl font-extrabold tracking-tight text-foreground">
+                  {formatNumber(admissions.total ?? 0)}
+                </p>
+                <div className="flex items-center gap-2 pt-1 text-xs text-muted-foreground">
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                      {admissions.underReview}
+                    </span>{" "}
+                    Under Review
                 </div>
-              ))}
+              </div>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <FileCheck className="h-5 w-5" />
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </Card>
 
-      {/* Top Routes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Routes</CardTitle>
-          <CardDescription>Most popular flight routes by passenger volume</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {dummyTopRoutes.map((route) => (
-              <div key={route.route} className="rounded-lg border p-4">
+          {/* KPI 3: Total Enrollments */}
+          <Card className="relative overflow-hidden rounded-2xl border border-border/70 bg-gradient-to-br from-amber-500/[0.04] via-card to-card p-5 shadow-xs transition-all hover:border-amber-500/30 hover:shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div className="space-y-1.5 min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Total Enrollments
+                </p>
+                <p className="text-3xl font-extrabold tracking-tight text-foreground">
+                  {formatNumber(enrollments.total ?? 0)}
+                </p>
+                <div className="flex items-center gap-2 pt-1 text-xs text-muted-foreground">
+                    <span className="font-semibold text-amber-600 dark:text-amber-400">
+                      {enrollments.active}
+                    </span>{" "}
+                    Active Students
+                </div>
+              </div>
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <Users className="h-5 w-5" />
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* ================================================================== */}
+        {/* MAIN METRICS GRID                                                  */}
+        {/* ================================================================== */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Courses Overview */}
+            <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+              <CardHeader className="border-b border-border/60 pb-4">
                 <div className="flex items-center justify-between">
-                  <div className="font-medium">{route.route}</div>
-                  <Plane className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="flex items-center gap-2 text-base font-bold">
+                    <Layers className="h-4 w-4 text-indigo" />
+                    Courses Breakdown
+                  </CardTitle>
                 </div>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <div className="text-xs text-muted-foreground">Passengers</div>
-                    <div className="font-semibold">{formatNumber(route.passengers)}</div>
+              </CardHeader>
+              <CardContent className="p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 transition-all hover:bg-muted/40">
+                    <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                      <span>Total</span>
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-foreground">
+                      {formatNumber(courses.total ?? 0)}
+                    </p>
                   </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Bookings</div>
-                    <div className="font-semibold">{formatNumber(route.bookings)}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Upcoming Departures */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Upcoming Departures</CardTitle>
-          <CardDescription>Next 6 hours</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">DAC → DXB</div>
-                  <div className="text-xs text-muted-foreground">GMA-204</div>
+                  <div className="rounded-xl border border-border/60 bg-indigo-50/40 dark:bg-indigo-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-indigo-700 dark:text-indigo-400">
+                      <span>Published</span>
+                      <span className="h-2 w-2 rounded-full bg-indigo" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-indigo-700 dark:text-indigo-400">
+                      {formatNumber(courses.published ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                      <span>Unpublished</span>
+                      <span className="h-2 w-2 rounded-full bg-muted-foreground/50" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-muted-foreground">
+                      {formatNumber(courses.unpublished ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-emerald-50/40 dark:bg-emerald-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                      <span>Admission Open</span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                      {formatNumber(courses.admissionOpen ?? 0)}
+                    </p>
+                  </div>
                 </div>
-                <Clock className="h-4 w-4 text-blue-500" />
-              </div>
-              <div className="mt-2 text-sm">Departure: 14:30</div>
-              <div className="text-xs text-muted-foreground">Gate A5</div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">DAC → JED</div>
-                  <div className="text-xs text-muted-foreground">GMA-207</div>
+              </CardContent>
+            </Card>
+
+            {/* Admissions Overview */}
+            <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+              <CardHeader className="border-b border-border/60 pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base font-bold">
+                    <ClipboardCheck className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    Admissions Pipeline
+                  </CardTitle>
                 </div>
-                <Calendar className="h-4 w-4 text-green-500" />
-              </div>
-              <div className="mt-2 text-sm">Departure: 16:45</div>
-              <div className="text-xs text-muted-foreground">Gate B2</div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">DAC → KUL</div>
-                  <div className="text-xs text-muted-foreground">GMA-211</div>
+              </CardHeader>
+              <CardContent className="p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-border/60 bg-muted/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                      <span>Submitted</span>
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-foreground">
+                      {formatNumber(admissions.submitted ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-amber-50/40 dark:bg-amber-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-amber-700 dark:text-amber-400">
+                      <span>Under Review</span>
+                      <span className="h-2 w-2 rounded-full bg-amber-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-amber-700 dark:text-amber-400">
+                      {formatNumber(admissions.underReview ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-emerald-50/40 dark:bg-emerald-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                      <span>Approved</span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                      {formatNumber(admissions.approved ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-rose-50/40 dark:bg-rose-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-rose-700 dark:text-rose-400">
+                      <span>Rejected</span>
+                      <span className="h-2 w-2 rounded-full bg-rose-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-rose-700 dark:text-rose-400">
+                      {formatNumber(admissions.rejected ?? 0)}
+                    </p>
+                  </div>
+
                 </div>
-                <Users className="h-4 w-4 text-purple-500" />
-              </div>
-              <div className="mt-2 text-sm">Departure: 18:20</div>
-              <div className="text-xs text-muted-foreground">Gate A3</div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium">DAC → SIN</div>
-                  <div className="text-xs text-muted-foreground">GMA-218</div>
+              </CardContent>
+            </Card>
+
+             {/* Enrollments Overview */}
+             <Card className="rounded-2xl border border-border/70 bg-card shadow-xs">
+              <CardHeader className="border-b border-border/60 pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base font-bold">
+                    <UserCircle className="h-4 w-4 text-violet-500" />
+                    Enrollment Status
+                  </CardTitle>
                 </div>
-                <Plane className="h-4 w-4 text-amber-500" />
-              </div>
-              <div className="mt-2 text-sm">Departure: 20:10</div>
-              <div className="text-xs text-muted-foreground">Gate C1</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              </CardHeader>
+              <CardContent className="p-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-border/60 bg-violet-50/40 dark:bg-violet-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-violet-700 dark:text-violet-400">
+                      <span>Active</span>
+                      <span className="h-2 w-2 rounded-full bg-violet-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-violet-700 dark:text-violet-400">
+                      {formatNumber(enrollments.active ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-emerald-50/40 dark:bg-emerald-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-emerald-700 dark:text-emerald-400">
+                      <span>Completed</span>
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+                      {formatNumber(enrollments.completed ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-rose-50/40 dark:bg-rose-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-rose-700 dark:text-rose-400">
+                      <span>Dropped</span>
+                      <span className="h-2 w-2 rounded-full bg-rose-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-rose-700 dark:text-rose-400">
+                      {formatNumber(enrollments.dropped ?? 0)}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/60 bg-amber-50/40 dark:bg-amber-950/20 p-3.5 transition-all">
+                    <div className="flex items-center justify-between text-xs font-medium text-amber-700 dark:text-amber-400">
+                      <span>Suspended</span>
+                      <span className="h-2 w-2 rounded-full bg-amber-500" />
+                    </div>
+                    <p className="mt-2 text-2xl font-bold text-amber-700 dark:text-amber-400">
+                      {formatNumber(enrollments.suspended ?? 0)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+        </div>
+      </div>
     </div>
   );
 }

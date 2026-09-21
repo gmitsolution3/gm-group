@@ -139,7 +139,7 @@ export const dashboardVentures: DashboardVenture[] = [
   {
     name: "GM Aviation",
     description: "Aviation and air travel operations.",
-    logo: "/images/ventures/gm-aviation.png",
+    logo: "/images/ventures/gm-aviation.webp",
 
     dashboards: [
       {

@@ -29,6 +29,10 @@ export const API_ENDPOINTS = {
     dashboard: "https://gm-logistic-backend.vercel.app/api/v1/admin-dashboard",
   },
 
+  gmAviation: {
+    dashboard: "https://gm-aviation-backend.vercel.app/api/v1/dashboard/admin/overview",
+  },
+
   graphicsMultimedia: {
     dashboard: "https://www.graphicsmultimedia.net/api/admin-dashboard-analytics",
   },
